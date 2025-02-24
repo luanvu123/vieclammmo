@@ -139,86 +139,50 @@
     </script>
 
     <!-- Product Categories Section -->
-    <section class="product-categories">
-        <div class="container">
-            <h2 class="section-title">-- DANH SÁCH SẢN PHẨM --</h2>
+<section class="product-categories">
+    <div class="container">
+        <h2 class="section-title">-- DANH SÁCH SẢN PHẨM --</h2>
+        <div class="category-grid">
+            @php
+                // Mảng các class icon
+                $iconClasses = ['email-icon', 'software-icon', 'account-icon', 'other-icon'];
+            @endphp
 
-            <div class="category-grid">
+            @foreach ($productCategories as $index => $category)
                 <div class="category-card">
-                    <div class="category-icon email-icon">
-                        <i class="fas fa-envelope"></i>
+                    <div class="category-icon {{ $iconClasses[$index % count($iconClasses)] }}">
+                        <img src="{{ asset('storage/' . $category->icon) }}" alt="{{ $category->name }}"
+                            style="width: 50px; height: 50px;">
                     </div>
-                    <h3>Email</h3>
-                    <p>Gmail, yahoo mail, hot mail... và nhiều hơn thế nữa</p>
+                    <h3>{{ $category->name }}</h3>
+                    <p>{!! $category->description !!}</p>
                 </div>
-
-                <div class="category-card">
-                    <div class="category-icon software-icon">
-                        <i class="fas fa-compact-disc"></i>
-                    </div>
-                    <h3>Phần mềm</h3>
-                    <p>Các phần mềm chuyên dụng cho kiếm tiền online từ đồng code vụ tin</p>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-icon account-icon">
-                        <i class="fas fa-user-circle"></i>
-                    </div>
-                    <h3>Tài khoản</h3>
-                    <p>Fb, BM, key window, kaspersky...</p>
-                </div>
-
-                <div class="category-card">
-                    <div class="category-icon other-icon">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <h3>Khác</h3>
-                    <p>Các sản phẩm số khác</p>
-                </div>
-            </div>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Featured Products -->
+
+
+    <!-- Service Categories Section -->
     <section class="featured-products">
         <div class="container">
             <h2 class="section-title">-- DANH SÁCH DỊCH VỤ --</h2>
-
             <div class="service-grid">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-chart-line"></i>
+                @foreach ($serviceCategories as $category)
+                    <div class="service-card">
+                        <div class="service-icon">
+                            <img src="{{ asset('storage/' . $category->icon) }}" alt="{{ $category->name }}"
+                                style="width: 50px; height: 50px;">
+                        </div>
+                        <h3>{{ $category->name }}</h3>
+                        <p>{!! $category->description !!}</p>
                     </div>
-                    <h3>Tăng tương tác</h3>
-                    <p>Tăng like, view, share, comment... cho sản phẩm của bạn</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-laptop-code"></i>
-                    </div>
-                    <h3>Dịch vụ phần mềm</h3>
-                    <p>Dịch vụ code tool MMO, đồ họa, video... và các dịch vụ liên quan</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-link"></i>
-                    </div>
-                    <h3>Blockchain</h3>
-                    <p>Dịch vụ tiền ảo, NFT, coinlist... và các dịch vụ blockchain khác</p>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                    <h3>Dịch vụ khác</h3>
-                    <p>Các dịch vụ MMO phổ biến khác hiện nay</p>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>
+
 
     <!-- Recommended Products -->
     <section class="recommended-products">

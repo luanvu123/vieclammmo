@@ -124,7 +124,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     $segment = Request::segment(1);
                                 @endphp
                                 <li
-                                    class="treeview {{ Request::is('users*') ? 'active' : '' }}">
+                                    class="treeview {{ Request::is('users*') || Request::is('subcategories*') || Request::is('categories*') ? 'active' : '' }}">
                                     <a href="#">
                                         <img src="{{ asset('backend_admin/images/9165478_unbox_package_icon.svg') }}"
                                             alt="Google" width="20" height="20">
@@ -132,10 +132,22 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                         <i class="fa fa-angle-left pull-right"></i>
                                     </a>
                                     <ul class="treeview-menu">
-                                        <li class="{{ Request::is('users*') ? 'active' : '' }}">
+                                        <li class="{{ Request::is('users*')  ? 'active' : '' }}">
                                             <a href="{{ route('users.index') }}">
                                                 <img src="{{ asset('backend_admin/images/9989338_rating_evaluation_grade_ranking_rate_icon.svg') }}"
                                                     alt="Google" width="20" height="20"> Tài khoản quản trị
+                                            </a>
+                                        </li>
+                                         <li class="{{ Request::is('subcategories*')  ? 'active' : '' }}">
+                                            <a href="{{ route('subcategories.index') }}">
+                                                <img src="{{ asset('backend_admin/images/1851819_advertising_agent_banner_property_rent_icon.svg') }}"
+                                                    alt="Google" width="20" height="20">SubCategory
+                                            </a>
+                                        </li>
+                                        <li class="{{ Request::is('categories*')  ? 'active' : '' }}">
+                                            <a href="{{ route('categories.index') }}">
+                                                <img src="{{ asset('backend_admin/images/category-svgrepo-com.svg') }}"
+                                                    alt="Google" width="20" height="20">Thể loại
                                             </a>
                                         </li>
                                     </ul>

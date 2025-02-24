@@ -34,22 +34,32 @@
             <nav class="menu">
                 <ul>
                     <li class="dropdown">
-                        <a href="{{route('category.site')}}">Sản phẩm</a>
+                        <a href="{{ route('category.site') }}">Sản phẩm</a>
                         <ul class="submenu">
-                            <li><a href="#">Sản phẩm 1</a></li>
-                            <li><a href="#">Sản phẩm 2</a></li>
+                            @if (isset($layout_categories['Sản phẩm']))
+                                @foreach ($layout_categories['Sản phẩm'] as $category)
+                                    <li><a href="#">{{ $category->name }}</a></li>
+                                @endforeach
+                            @else
+                                <li><a href="#">Không có sản phẩm</a></li>
+                            @endif
                         </ul>
                     </li>
+
                     <li class="dropdown">
                         <a href="#">Dịch vụ</a>
                         <ul class="submenu">
-                            <li><a href="#">Tăng tương tác</a></li>
-                            <li><a href="#">Blockchain</a></li>
-                            <li><a href="#">Dịch vụ phần mềm</a></li>
-                            <li><a href="#">Dịch vụ khác</a></li>
+                            @if (isset($layout_categories['Dịch vụ']))
+                                @foreach ($layout_categories['Dịch vụ'] as $category)
+                                    <li><a href="#">{{ $category->name }}</a></li>
+                                @endforeach
+                            @else
+                                <li><a href="#">Không có dịch vụ</a></li>
+                            @endif
                         </ul>
                     </li>
-                    <li><a href="#">Hỗ trợ</a></li>
+
+                    <li><a href="{{route('support.site')}}">Hỗ trợ</a></li>
                     <li><a href="#">Chia sẻ</a></li>
                     <li><a href="#">Công cụ</a></li>
                     <li><a href="#">FAQs</a></li>

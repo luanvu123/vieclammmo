@@ -59,7 +59,7 @@
                         </ul>
                     </li>
 
-                    <li><a href="{{route('support.site')}}">Hỗ trợ</a></li>
+                    <li><a href="{{ route('support.site') }}">Hỗ trợ</a></li>
                     <li><a href="#">Chia sẻ</a></li>
                     <li><a href="#">Công cụ</a></li>
                     <li><a href="#">FAQs</a></li>
@@ -78,6 +78,29 @@
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
+            <div class="user-menu">
+                <div class="user-icon" onclick="toggleDropdown()">
+                    <div class="user-avatar">
+                        <img src="{{asset('img/user-icon.png')}}" alt="User" />
+                    </div>
+                    <span>eriajqqvt24060915</span>
+                </div>
+                <div class="dropdown-content" id="userDropdown">
+                    <a href="#">Thông tin tài khoản</a>
+                    <a href="#">Đơn hàng đã mua</a>
+                    <a href="#">Gian hàng yêu thích</a>
+                    <a href="#">Lịch sử thanh toán</a>
+                    <a href="#">Reseller</a>
+                    <a href="#">Quản lý nội dung</a>
+                    <a href="#">Đổi mật khẩu</a>
+                    <div class="divider"></div>
+                    <a href="#">Quản lý cửa hàng</a>
+                    <div class="divider"></div>
+                    <a href="#">Thoát</a>
+                </div>
+            </div>
+
+
         </div>
     </header>
 
@@ -160,7 +183,24 @@
             });
         });
     </script>
+<script>
+                function toggleDropdown() {
+                    document.getElementById("userDropdown").classList.toggle("show");
+                }
 
+                // Close dropdown when clicking outside
+                window.onclick = function(event) {
+                    if (!event.target.closest('.user-menu')) {
+                        var dropdowns = document.getElementsByClassName("dropdown-content");
+                        for (var i = 0; i < dropdowns.length; i++) {
+                            var openDropdown = dropdowns[i];
+                            if (openDropdown.classList.contains('show')) {
+                                openDropdown.classList.remove('show');
+                            }
+                        }
+                    }
+                }
+            </script>
 </body>
 
 </html>

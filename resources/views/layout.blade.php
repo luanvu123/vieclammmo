@@ -81,12 +81,18 @@
             <div class="user-menu">
                 <div class="user-icon" onclick="toggleDropdown()">
                     <div class="user-avatar">
-                        <img src="{{asset('img/user-icon.png')}}" alt="User" />
+                        <img src="{{ asset('img/user-icon.png') }}" alt="User" />
                     </div>
-                    <span>eriajqqvt24060915</span>
+
                 </div>
                 <div class="dropdown-content" id="userDropdown">
-                    <a href="#">Thông tin tài khoản</a>
+                    <div class="user-icon">
+                        <div class="user-avatar">
+                            <img src="{{ asset('img/user-icon.png') }}" alt="User" />
+                        </div>
+                        <span>eriajqqvt24060915</span>
+                    </div>
+                    <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
                     <a href="#">Đơn hàng đã mua</a>
                     <a href="#">Gian hàng yêu thích</a>
                     <a href="#">Lịch sử thanh toán</a>
@@ -183,24 +189,46 @@
             });
         });
     </script>
-<script>
-                function toggleDropdown() {
-                    document.getElementById("userDropdown").classList.toggle("show");
-                }
+    <script>
+        function toggleDropdown() {
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
 
-                // Close dropdown when clicking outside
-                window.onclick = function(event) {
-                    if (!event.target.closest('.user-menu')) {
-                        var dropdowns = document.getElementsByClassName("dropdown-content");
-                        for (var i = 0; i < dropdowns.length; i++) {
-                            var openDropdown = dropdowns[i];
-                            if (openDropdown.classList.contains('show')) {
-                                openDropdown.classList.remove('show');
-                            }
-                        }
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.closest('.user-menu')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
                     }
                 }
-            </script>
+            }
+        }
+    </script>
+    <!-- Toastr CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<!-- Toastr JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    @if(session('success'))
+        toastr.success("{{ session('success') }}");
+    @endif
+
+    @if(session('error'))
+        toastr.error("{{ session('error') }}");
+    @endif
+
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            toastr.error("{{ $error }}");
+        @endforeach
+    @endif
+</script>
+
 </body>
 
 </html>

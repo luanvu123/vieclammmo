@@ -44,9 +44,18 @@ Route::post('/customer/register', [CustomerAuthController::class, 'register'])->
 // Đăng xuất
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
 
-// Quên mật khẩu
+// Form yêu cầu đặt lại mật khẩu
 Route::get('/customer/password/reset', [CustomerAuthController::class, 'showForgotPasswordForm'])->name('password.request.customer');
+
+// Gửi email đặt lại mật khẩu
 Route::post('/customer/password/email', [CustomerAuthController::class, 'sendResetLink'])->name('password.email.customer');
+
+// Form nhập mật khẩu mới
+Route::get('/customer/password/reset/{token}', [CustomerAuthController::class, 'showResetForm'])->name('password.reset.customer');
+
+// Cập nhật mật khẩu mới
+Route::post('/customer/password/reset', [CustomerAuthController::class, 'resetPassword'])->name('password.update.customer');
+
 
 
 

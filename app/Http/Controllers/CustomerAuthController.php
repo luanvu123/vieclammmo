@@ -61,7 +61,9 @@ class CustomerAuthController extends Controller
 
     public function sendResetLink(Request $request)
     {
-        $request->validate(['email' => 'required|email|exists:customers,email']);
+        $request->validate([
+            'email' => 'required|email|exists:customers,email',
+        ]);
 
         $status = Password::broker('customers')->sendResetLink(
             $request->only('email')
@@ -70,5 +72,33 @@ class CustomerAuthController extends Controller
         return $status === Password::RESET_LINK_SENT
             ? back()->with('status', __($status))
             : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function showResetForm($token)
+    {
+        return view('customer.reset-password', ['token' => $token]);
+    }
+
+
+    // Cập nhật mật khẩu mới
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:customers,email',
+            'password' => 'required|confirmed|min:6',
+            'token' => 'required'
+        ]);
+
+        $status = Password::broker('customers')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($customer, $password) {
+                $customer->password = Hash::make($password);
+                $customer->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login.customer')->with('status', __($status))
+            : back()->withErrors(['email' => [__($status)]]);
     }
 }

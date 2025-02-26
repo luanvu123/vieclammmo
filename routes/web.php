@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerAuthController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\UserController;
@@ -22,16 +23,13 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [SiteController::class, 'index'])->name('/');
 Route::get('/ho-tro', [SiteController::class, 'support'])->name('support.site');
 Route::get('/danh-muc', [SiteController::class, 'category'])->name('category.site');
-Route::get('/profile', [SiteController::class, 'profile'])->name('profile.site');
-
-Route::get('/profile-edit', [SiteController::class, 'profileEdit'])->name('profile.edit.site');
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 // Đăng ký và Đăng nhập
 
 // Hiển thị form đăng nhập
-Route::get('/customer/login', function() {
+Route::get('/customer/login', function () {
     return view('customer.login');
 })->name('login.customer');
 
@@ -43,21 +41,18 @@ Route::post('/customer/register', [CustomerAuthController::class, 'register'])->
 
 // Đăng xuất
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
-
-// Form yêu cầu đặt lại mật khẩu
-Route::get('/customer/password/reset', [CustomerAuthController::class, 'showForgotPasswordForm'])->name('password.request.customer');
-
-// Gửi email đặt lại mật khẩu
-Route::post('/customer/password/email', [CustomerAuthController::class, 'sendResetLink'])->name('password.email.customer');
-
-// Form nhập mật khẩu mới
-Route::get('/customer/password/reset/{token}', [CustomerAuthController::class, 'showResetForm'])->name('password.reset.customer');
-
-// Cập nhật mật khẩu mới
-Route::post('/customer/password/reset', [CustomerAuthController::class, 'resetPassword'])->name('password.update.customer');
+// Google Login
+Route::get('/auth/google', [CustomerAuthController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('/auth/google/callback', [CustomerAuthController::class, 'handleGoogleCallback']);
 
 
 
+
+Route::middleware('auth:customer')->group(function () {
+    Route::get('/profile', [CustomerController::class, 'profile'])->name('profile.site');
+    Route::get('/profile/edit', [CustomerController::class, 'profileEdit'])->name('profile.edit.site');
+    Route::post('/profile/update', [CustomerController::class, 'profileUpdate'])->name('profile.update.site');
+});
 
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);

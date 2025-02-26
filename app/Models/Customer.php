@@ -27,7 +27,8 @@ class Customer extends Authenticatable
         'Balance',
         'isOnline',
         'Status',
-        'password'
+        'password',
+        'google_id'
     ];
 
     protected $hidden = [

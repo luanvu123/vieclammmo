@@ -1,6 +1,39 @@
 @extends('layout')
 
 @section('content')
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+    </style>
     <div class="auth-container">
         <div class="auth-form login-form">
             <h2>Đăng nhập</h2>
@@ -16,11 +49,14 @@
                 </div>
                 <button type="submit" class="btn primary-btn">Đăng nhập</button>
 
-                <a href="" class="btn google-btn">
-                    <i class="fab fa-google"></i> Đăng nhập bằng Google
-                </a>
-                <a href="{{ route('password.request.customer') }}" class="forgot-password">Quên mật khẩu?</a>
+
+                <a href="javascript:void(0);" class="forgot-password" onclick="openPopup()">Quên mật khẩu?</a>
+
             </form>
+            <a href="{{ route('login.google') }}" class="btn google-btn">
+                <i class="fab fa-google"></i> Đăng nhập bằng Google
+            </a>
+
         </div>
         <div class="auth-form register-form">
             <h2>Đăng ký</h2>
@@ -48,4 +84,28 @@
             </form>
         </div>
     </div>
+    <!-- Popup Thông báo -->
+    <div id="forgot-password-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <p>Vui lòng liên hệ Zalo: <strong>09876543211</strong> để lấy lại mật khẩu.</p>
+        </div>
+    </div>
+    <script>
+        function openPopup() {
+            document.getElementById("forgot-password-popup").style.display = "block";
+        }
+
+        function closePopup() {
+            document.getElementById("forgot-password-popup").style.display = "none";
+        }
+
+        // Đóng popup khi nhấn ra ngoài
+        window.onclick = function(event) {
+            var popup = document.getElementById("forgot-password-popup");
+            if (event.target === popup) {
+                popup.style.display = "none";
+            }
+        }
+    </script>
 @endsection

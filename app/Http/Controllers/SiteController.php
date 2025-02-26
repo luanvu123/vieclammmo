@@ -27,13 +27,5 @@ class SiteController extends Controller
     {
         return view('pages.support');
     }
-    public function profile()
-    {
-        return view('pages.profile');
-    }
-
-      public function profileEdit()
-    {
-        return view('pages.profile-edit');
-    }
+   
 }

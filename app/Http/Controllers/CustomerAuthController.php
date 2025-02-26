@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Laravel\Socialite\Facades\Socialite;
 use App\Models\Customer;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -32,19 +34,21 @@ class CustomerAuthController extends Controller
 
 
     // Đăng nhập
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+   public function login(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        if (Auth::guard('customer')->attempt($request->only('email', 'password'))) {
-            return redirect()->route('dashboard.customer');
-        }
-
-        return redirect()->back()->with('error', 'Thông tin đăng nhập không chính xác.');
+    if (Auth::guard('customer')->attempt($request->only('email', 'password'))) {
+        $customer = Auth::guard('customer')->user();
+        return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $customer->email);
     }
+
+    return redirect()->back()->with('error', 'Thông tin đăng nhập không chính xác.');
+}
+
 
     // Đăng xuất
     public function logout()
@@ -52,53 +56,39 @@ class CustomerAuthController extends Controller
         Auth::guard('customer')->logout();
         return redirect()->route('login.customer');
     }
+    // Chuyển hướng đến trang đăng nhập Google
+public function redirectToGoogle()
+{
+    return Socialite::driver('google')->redirect();
+}
 
-    // Quên mật khẩu
-    public function showForgotPasswordForm()
-    {
-        return view('customer.forgot-password');
+// Xử lý callback từ Google
+public function handleGoogleCallback()
+{
+    try {
+        $user = Socialite::driver('google')->stateless()->user();
+        $existingCustomer = Customer::where('google_id', $user->id)->first();
+
+        if ($existingCustomer) {
+            // Đăng nhập nếu đã tồn tại tài khoản
+            Auth::guard('customer')->login($existingCustomer);
+            return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $existingCustomer->email);
+        } else {
+            // Tạo tài khoản mới nếu chưa có
+            $newCustomer = Customer::create([
+                'idCustomer' => Customer::generateUniqueId(),
+                'name' => $user->name,
+                'email' => $user->email,
+                'google_id' => $user->id,
+                'password' => Hash::make('defaultpassword'), // Đặt mật khẩu mặc định (có thể thay đổi sau)
+            ]);
+
+            Auth::guard('customer')->login($newCustomer);
+            return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $newCustomer->email);
+        }
+    } catch (\Exception $e) {
+        return redirect()->route('login.customer')->with('error', 'Đăng nhập Google thất bại.');
     }
+}
 
-    public function sendResetLink(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:customers,email',
-        ]);
-
-        $status = Password::broker('customers')->sendResetLink(
-            $request->only('email')
-        );
-
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('status', __($status))
-            : back()->withErrors(['email' => __($status)]);
-    }
-
-    public function showResetForm($token)
-    {
-        return view('customer.reset-password', ['token' => $token]);
-    }
-
-
-    // Cập nhật mật khẩu mới
-    public function resetPassword(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:customers,email',
-            'password' => 'required|confirmed|min:6',
-            'token' => 'required'
-        ]);
-
-        $status = Password::broker('customers')->reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($customer, $password) {
-                $customer->password = Hash::make($password);
-                $customer->save();
-            }
-        );
-
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login.customer')->with('status', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
-    }
 }

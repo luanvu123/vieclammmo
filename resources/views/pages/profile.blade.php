@@ -2,28 +2,24 @@
 @section('content')
     <div class="profile-container">
         <div class="profile-left">
-            <div class="notification-bar">
-                Hãy mua/bán thêm 100.000đ để đạt level tiếp theo.
-            </div>
-
             <div class="profile-field">
                 <div class="field-label">Tài khoản</div>
-                <div class="field-value">@eriajqqvt24060915</div>
+                <div class="field-value">{{$customer->email }}</div>
             </div>
 
             <div class="profile-field">
                 <div class="field-label">Họ tên</div>
-                <div class="field-value">Chưa đặt tên</div>
+                <div class="field-value">{{$customer->name }}</div>
             </div>
 
             <div class="profile-field">
                 <div class="field-label">Số dư</div>
-                <div class="field-value">000 VND</div>
+                <div class="field-value">{{$customer->Balance }} VND</div>
             </div>
 
             <div class="profile-field">
                 <div class="field-label">Ngày đăng ký</div>
-                <div class="field-value">24/02/2025</div>
+                <div class="field-value">{{ $customer->created_at->format('d/m/Y') }}</div>
             </div>
 
             <div class="profile-field">
@@ -46,20 +42,34 @@
                 <div class="field-value green-text">0 bài viết</div>
             </div>
 
-            <div class="profile-field">
+             <div class="profile-field">
                 <div class="field-label">Mua hàng bằng API</div>
-                <div class="field-value red-text">✕ Tắt</div>
+                <div class="field-value {{ $customer->isApi ? 'green-text' : 'red-text' }}">
+                    {{ $customer->isApi ? '✓ Đã bật' : '✕ Tắt' }}
+                </div>
             </div>
 
             <div class="profile-field">
                 <div class="field-label">Bảo mật 2 lớp</div>
-                <div class="field-value green-text">✓ Đã bật</div>
+                <div class="field-value {{ $customer->is2Fa ? 'green-text' : 'red-text' }}">
+                    {{ $customer->is2Fa ? '✓ Đã bật' : '✕ Tắt' }}
+                </div>
+            </div>
+
+             <div class="profile-field">
+                <div class="field-label">Kết nối Telegram</div>
+                <div class="field-value {{ $customer->isTelegram ? 'green-text' : 'red-text' }}">
+                    {{ $customer->isTelegram ? '✓ Đã kết nối' : '✕ Chưa kết nối' }}
+                </div>
             </div>
 
             <div class="profile-field">
-                <div class="field-label">Kết nối Telegram</div>
-                <div class="field-value green-text">✓ Đã kết nối</div>
+                <div class="field-label">Trạng thái</div>
+                <div class="field-value {{ $customer->isOnline ? 'green-text' : 'red-text' }}">
+                    {{ $customer->isOnline ? 'Online' : 'Offline' }}
+                </div>
             </div>
+
 
             <div class="profile-field">
                 <div class="field-label">Định danh eKYC</div>
@@ -76,10 +86,10 @@
         </div>
 
         <div class="profile-right">
-            <div class="profile-avatar">
-                <img src="{{ asset('img/user-icon.png') }}" alt="User Avatar" class="avatar-image">
-                <div class="profile-username">@eriajqqvt24060915</div>
-                <div class="status-badge">Online</div>
+           <div class="profile-avatar">
+                <img src="{{ $customer->avatar ? asset('storage/' . $customer->avatar) : asset('img/user-icon.png') }}" alt="User Avatar" class="avatar-image">
+                <div class="profile-username">{{$customer->email }}</div>
+                <div class="status-badge">{{ $customer->isOnline ? 'Online' : 'Offline' }}</div>
                 <div class="status-badge" style="background: #4CAF50">Gian hàng</div>
             </div>
 

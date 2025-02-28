@@ -40,20 +40,28 @@ Route::post('/customer/login', [CustomerAuthController::class, 'login'])->name('
 Route::post('/customer/register', [CustomerAuthController::class, 'register'])->name('register.customer');
 
 // Đăng xuất
-Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
+
 // Google Login
 Route::get('/auth/google', [CustomerAuthController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('/auth/google/callback', [CustomerAuthController::class, 'handleGoogleCallback']);
+// Add these routes to your existing route definitions
+Route::get('/2fa/verify', [CustomerController::class, 'show2faVerify'])->name('2fa.verify');
+Route::post('/2fa/verify', [CustomerController::class, 'verify2fa'])->name('2fa.verify.post');
 
 
 
-
-Route::middleware('auth:customer')->group(function () {
+Route::middleware('auth:customer', '2fa')->group(function () {
     Route::get('/profile', [CustomerController::class, 'profile'])->name('profile.site');
     Route::get('/profile/edit', [CustomerController::class, 'profileEdit'])->name('profile.edit.site');
     Route::post('/profile/update', [CustomerController::class, 'profileUpdate'])->name('profile.update.site');
+    Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
+       Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard.site');
+    // Thêm các route mới cho 2FA
+    Route::post('/profile/2fa/generate', [CustomerController::class, 'generate2faSecret'])->name('2fa.generate');
+    Route::post('/profile/2fa/enable', [CustomerController::class, 'enable2fa'])->name('2fa.enable');
+    Route::post('/profile/2fa/disable', [CustomerController::class, 'disable2fa'])->name('2fa.disable');
+    Route::post('/profile/ekyc', [CustomerController::class, 'editKYC'])->name('profile.ekyc');
 });
-
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);

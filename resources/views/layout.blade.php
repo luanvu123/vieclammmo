@@ -7,6 +7,8 @@
     <title>TapHoa MMO - Sàn thương mại điện tử</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 
 <body>
@@ -68,43 +70,58 @@
             </nav>
 
 
-            <div class="user-actions">
-                <div class="balance">56.407 VND</div>
-                <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i><span
-                        class="badge">2</span></a>
-                <a href="#" class="notifications-icon"><i class="fas fa-bell"></i><span
-                        class="badge">0</span></a>
-                <button class="mobile-menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
+           @if(Auth::guard('customer')->check())
+    <!-- Nếu đã đăng nhập -->
+    <div class="user-actions">
+        <div class="balance">56.407 VND</div>
+        <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i><span class="badge">2</span></a>
+        <a href="#" class="notifications-icon"><i class="fas fa-bell"></i><span class="badge">0</span></a>
+        <button class="mobile-menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    <div class="user-menu">
+        <div class="user-icon" onclick="toggleDropdown()">
+            <div class="user-avatar">
+                <img src="{{ asset('img/user-icon.png') }}" alt="User" />
             </div>
-            <div class="user-menu">
-                <div class="user-icon" onclick="toggleDropdown()">
-                    <div class="user-avatar">
-                        <img src="{{ asset('img/user-icon.png') }}" alt="User" />
-                    </div>
+        </div>
+        <div class="dropdown-content" id="userDropdown">
+            <div class="user-icon">
+                <div class="user-avatar">
+                    <img src="{{ asset('img/user-icon.png') }}" alt="User" />
+                </div>
+                <span>{{ Auth::guard('customer')->user()->username }}</span>
+            </div>
+            <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
+            <a href="#">Đơn hàng đã mua</a>
+            <a href="#">Gian hàng yêu thích</a>
+            <a href="#">Lịch sử thanh toán</a>
+            <a href="#">Reseller</a>
+            <a href="#">Quản lý nội dung</a>
+            <a href="#">Đổi mật khẩu</a>
+            <div class="divider"></div>
+            <a href="{{ route('dashboard.site') }}">Quản lý cửa hàng</a>
+            <div class="divider"></div>
+            <a href="#"
+               onclick="event.preventDefault();
+                        if (confirm('Bạn có muốn đăng xuất?')) {
+                            document.getElementById('logout-form').submit();
+                        }">
+                Thoát
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+        </div>
+    </div>
+@else
+    <!-- Nếu chưa đăng nhập -->
+    <a href="{{ route('login.customer') }}" class="btn btn-success" style="color: white;">
+        Đăng nhập
+    </a>
+@endif
 
-                </div>
-                <div class="dropdown-content" id="userDropdown">
-                    <div class="user-icon">
-                        <div class="user-avatar">
-                            <img src="{{ asset('img/user-icon.png') }}" alt="User" />
-                        </div>
-                        <span>eriajqqvt24060915</span>
-                    </div>
-                    <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
-                    <a href="#">Đơn hàng đã mua</a>
-                    <a href="#">Gian hàng yêu thích</a>
-                    <a href="#">Lịch sử thanh toán</a>
-                    <a href="#">Reseller</a>
-                    <a href="#">Quản lý nội dung</a>
-                    <a href="#">Đổi mật khẩu</a>
-                    <div class="divider"></div>
-                    <a href="#">Quản lý cửa hàng</a>
-                    <div class="divider"></div>
-                    <a href="#">Thoát</a>
-                </div>
-            </div>
 
 
         </div>
@@ -208,26 +225,26 @@
         }
     </script>
     <!-- Toastr CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
-<!-- Toastr JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<script>
-    @if(session('success'))
-        toastr.success("{{ session('success') }}");
-    @endif
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        @if (session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
 
-    @if(session('error'))
-        toastr.error("{{ session('error') }}");
-    @endif
+        @if (session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
 
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            toastr.error("{{ $error }}");
-        @endforeach
-    @endif
-</script>
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
+    </script>
 
 </body>
 

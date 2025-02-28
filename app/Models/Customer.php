@@ -28,7 +28,8 @@ class Customer extends Authenticatable
         'isOnline',
         'Status',
         'password',
-        'google_id'
+        'google_id',
+        'isEkyc'
     ];
 
     protected $hidden = [
@@ -45,4 +46,10 @@ class Customer extends Authenticatable
 
         return $idCustomer;
     }
+
+    public function loginHistories()
+{
+    return $this->hasMany(LoginHistory::class);
+}
+
 }

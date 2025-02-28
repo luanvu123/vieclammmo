@@ -34,20 +34,36 @@ class CustomerAuthController extends Controller
 
 
     // Đăng nhập
-   public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-    if (Auth::guard('customer')->attempt($request->only('email', 'password'))) {
-        $customer = Auth::guard('customer')->user();
-        return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $customer->email);
+        if (Auth::guard('customer')->attempt($request->only('email', 'password'))) {
+            $customer = Auth::guard('customer')->user();
+
+            // Lưu lịch sử đăng nhập
+            \App\Models\LoginHistory::create([
+                'customer_id' => $customer->id,
+                'device' => $request->header('User-Agent')
+            ]);
+
+            return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $customer->email);
+        }
+
+        return redirect()->back()->with('error', 'Thông tin đăng nhập không chính xác.');
     }
 
-    return redirect()->back()->with('error', 'Thông tin đăng nhập không chính xác.');
-}
+    public function authenticated(Request $request, $customer)
+    {
+        if ($customer->is2Fa) {
+            return redirect()->route('2fa.setup');
+        }
+
+        return redirect()->route('profile.site');
+    }
 
 
     // Đăng xuất
@@ -57,38 +73,37 @@ class CustomerAuthController extends Controller
         return redirect()->route('login.customer');
     }
     // Chuyển hướng đến trang đăng nhập Google
-public function redirectToGoogle()
-{
-    return Socialite::driver('google')->redirect();
-}
-
-// Xử lý callback từ Google
-public function handleGoogleCallback()
-{
-    try {
-        $user = Socialite::driver('google')->stateless()->user();
-        $existingCustomer = Customer::where('google_id', $user->id)->first();
-
-        if ($existingCustomer) {
-            // Đăng nhập nếu đã tồn tại tài khoản
-            Auth::guard('customer')->login($existingCustomer);
-            return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $existingCustomer->email);
-        } else {
-            // Tạo tài khoản mới nếu chưa có
-            $newCustomer = Customer::create([
-                'idCustomer' => Customer::generateUniqueId(),
-                'name' => $user->name,
-                'email' => $user->email,
-                'google_id' => $user->id,
-                'password' => Hash::make('defaultpassword'), // Đặt mật khẩu mặc định (có thể thay đổi sau)
-            ]);
-
-            Auth::guard('customer')->login($newCustomer);
-            return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $newCustomer->email);
-        }
-    } catch (\Exception $e) {
-        return redirect()->route('login.customer')->with('error', 'Đăng nhập Google thất bại.');
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
     }
-}
 
+    // Xử lý callback từ Google
+    public function handleGoogleCallback()
+    {
+        try {
+            $user = Socialite::driver('google')->stateless()->user();
+            $existingCustomer = Customer::where('google_id', $user->id)->first();
+
+            if ($existingCustomer) {
+                // Đăng nhập nếu đã tồn tại tài khoản
+                Auth::guard('customer')->login($existingCustomer);
+                return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $existingCustomer->email);
+            } else {
+                // Tạo tài khoản mới nếu chưa có
+                $newCustomer = Customer::create([
+                    'idCustomer' => Customer::generateUniqueId(),
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'google_id' => $user->id,
+                    'password' => Hash::make('defaultpassword'), // Đặt mật khẩu mặc định (có thể thay đổi sau)
+                ]);
+
+                Auth::guard('customer')->login($newCustomer);
+                return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $newCustomer->email);
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('login.customer')->with('error', 'Đăng nhập Google thất bại.');
+        }
+    }
 }

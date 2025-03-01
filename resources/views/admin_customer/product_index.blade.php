@@ -139,97 +139,205 @@
                                                                             class="btn btn-primary w-100">Thêm</button>
                                                                     </div>
                                                                 </form>
-                                                              <!-- Add this to your Blade template to replace the static display -->
-<div class="modal-footer">
-    <h6 class="text-center w-100">Danh sách mặt hàng</h6>
-    <ul class="list-group w-100">
-        @foreach ($product->productVariants as $variant)
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div class="editable-container">
-                    <form id="edit-form-{{ $variant->id }}" style="display: none;"
-                          action="{{ route('product_variants.update', $variant->id) }}"
-                          method="POST" class="d-inline edit-variant-form">
-                        @csrf
-                        @method('PUT')
-                        <input type="text" name="name" value="{{ $variant->name }}" class="form-control form-control-sm d-inline" style="width: auto;">
-                        <input type="number" name="price" value="{{ $variant->price }}" step="0.01" class="form-control form-control-sm d-inline" style="width: auto;">
-                        <input type="hidden" name="expiry" value="{{ $variant->expiry }}">
-                        <input type="hidden" name="url" value="{{ $variant->url }}">
-                        <button type="submit" class="btn btn-sm btn-success"><i class="las la-check"></i></button>
-                    </form>
-                </div>
-                <form action="{{ route('product_variants.destroy', $variant->id) }}"
-                      method="POST" class="d-inline"
-                      onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger"><i class="las la-trash-alt"></i></button>
-                </form>
-            </li>
-        @endforeach
-    </ul>
-</div>
-<script>
-    function makeEditable(element, variantId) {
-        // Hide the display text
-        element.style.display = 'none';
+                                                                <!-- Add this to your Blade template to replace the static display -->
+                                                                <div class="modal-footer">
+                                                                    <h6 class="text-center w-100">Danh sách mặt hàng</h6>
+                                                                    <ul class="list-group w-100">
+                                                                        @foreach ($product->productVariants as $variant)
+                                                                            <li
+                                                                                class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                <div class="editable-container">
+                                                                                    <!-- Span hiển thị sẽ được thêm vào bằng JavaScript -->
+                                                                                    <form
+                                                                                        id="edit-form-{{ $variant->id }}"
+                                                                                        style="display: none;"
+                                                                                        action="{{ route('product_variants.update', $variant->id) }}"
+                                                                                        method="POST"
+                                                                                        class="d-inline edit-variant-form">
+                                                                                        @csrf
+                                                                                        @method('PUT')
+                                                                                        <input type="text" name="name"
+                                                                                            value="{{ $variant->name }}"
+                                                                                            class="form-control form-control-sm d-inline"
+                                                                                            style="width: auto;">
+                                                                                        <input type="number"
+                                                                                            name="price"
+                                                                                            value="{{ $variant->price }}"
+                                                                                            step="0.01"
+                                                                                            class="form-control form-control-sm d-inline"
+                                                                                            style="width: auto;">
+                                                                                        <input type="hidden"
+                                                                                            name="expiry"
+                                                                                            value="{{ $variant->expiry }}">
+                                                                                        <input type="hidden"
+                                                                                            name="url"
+                                                                                            value="{{ $variant->url }}">
+                                                                                        <button type="submit"
+                                                                                            class="btn btn-sm btn-success"><i
+                                                                                                class="las la-check"></i></button>
+                                                                                        <!-- Nút hủy sẽ được thêm vào bằng JavaScript -->
+                                                                                    </form>
+                                                                                </div>
+                                                                                <form
+                                                                                    action="{{ route('product_variants.destroy', $variant->id) }}"
+                                                                                    method="POST" class="d-inline"
+                                                                                    onsubmit="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                                                    @csrf
+                                                                                    @method('DELETE')
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-sm btn-danger"><i
+                                                                                            class="las la-trash-alt"></i></button>
+                                                                                </form>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                </div>
 
-        // Show the edit form
-        document.getElementById('edit-form-' + variantId).style.display = 'inline-block';
-    }
+                                                                <!-- Đảm bảo kích thước hiển thị phù hợp với CSS -->
+                                                                <style>
+                                                                    .editable-container {
+                                                                        flex-grow: 1;
+                                                                        margin-right: 15px;
+                                                                    }
+
+                                                                    .variant-text {
+                                                                        cursor: pointer;
+                                                                        padding: 2px 5px;
+                                                                        border-radius: 3px;
+                                                                        transition: background-color 0.2s;
+                                                                    }
+
+                                                                    .variant-text:hover {
+                                                                        background-color: #f8f9fa;
+                                                                    }
+
+                                                                    .edit-variant-form input {
+                                                                        margin-right: 5px;
+                                                                    }
+                                                                </style>
+                                                                <script>
+                                                                  
 
 
+                                                                        // Xử lý form chỉnh sửa
+                                                                        const editForms = document.querySelectorAll('.edit-variant-form');
+                                                                        editForms.forEach(form => {
+                                                                            form.addEventListener('submit', function(e) {
+                                                                                e.preventDefault();
 
-    // Optional: Add AJAX submission to avoid page reload
-    document.addEventListener('DOMContentLoaded', function() {
-        const forms = document.querySelectorAll('.edit-variant-form');
-        forms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
+                                                                                const formData = new FormData(this);
+                                                                                const variantId = this.id.split('-')[2];
+                                                                                const textDisplay = this.parentElement.querySelector('.variant-text');
 
-                fetch(this.action, {
-                    method: 'POST',
-                    body: new FormData(this),
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Get the variant ID from the form ID
-                        const variantId = this.id.split('-')[2];
+                                                                                // Thêm header AJAX
+                                                                                const headers = new Headers();
+                                                                                headers.append('X-Requested-With', 'XMLHttpRequest');
 
-                        // Update the display text with new values
-                        const nameInput = this.querySelector('input[name="name"]');
-                        const priceInput = this.querySelector('input[name="price"]');
-                        
+                                                                                fetch(this.action, {
+                                                                                        method: 'POST',
+                                                                                        body: formData,
+                                                                                        headers: headers
+                                                                                    })
+                                                                                    .then(response => response.json())
+                                                                                    .then(data => {
+                                                                                        if (data.success) {
+                                                                                            // Cập nhật giá trị hiển thị
+                                                                                            const nameInput = this.querySelector('input[name="name"]');
+                                                                                            const priceInput = this.querySelector('input[name="price"]');
 
-                        // Format the price with 2 decimal places and VNĐ
-                        const formattedPrice = new Intl.NumberFormat('vi-VN', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        }).format(priceInput.value);
+                                                                                            // Định dạng giá tiền
+                                                                                            const formattedPrice = new Intl.NumberFormat('vi-VN', {
+                                                                                                minimumFractionDigits: 2,
+                                                                                                maximumFractionDigits: 2
+                                                                                            }).format(priceInput.value);
 
-                        displayElement.textContent = `${nameInput.value} - ${formattedPrice} VNĐ`;
+                                                                                            textDisplay.textContent =
+                                                                                                `${nameInput.value} - ${formattedPrice} VNĐ`;
 
-                        // Hide the form and show the updated text
-                        cancelEdit(variantId);
+                                                                                            // Ẩn form, hiện text
+                                                                                            this.style.display = 'none';
+                                                                                            textDisplay.style.display = 'inline';
 
-                        // Show success message
-                        alert('Cập nhật thành công!');
-                    } else {
-                        alert('Đã xảy ra lỗi khi cập nhật!');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Đã xảy ra lỗi khi cập nhật!');
-                });
-            });
-        });
-    });
-</script>
+                                                                                            // Hiển thị thông báo
+                                                                                            showToast('Cập nhật thành công!', 'success');
+                                                                                        } else {
+                                                                                            showToast('Có lỗi xảy ra khi cập nhật!', 'error');
+                                                                                        }
+                                                                                    })
+                                                                                    .catch(error => {
+                                                                                        console.error('Error:', error);
+                                                                                        showToast('Có lỗi xảy ra khi cập nhật!', 'error');
+                                                                                    });
+                                                                            });
+
+                                                                            // Thêm nút hủy
+                                                                            const cancelButton = document.createElement('button');
+                                                                            cancelButton.className = 'btn btn-sm btn-secondary ml-1';
+                                                                            cancelButton.type = 'button';
+                                                                            cancelButton.innerHTML = '<i class="las la-times"></i>';
+                                                                            cancelButton.addEventListener('click', function() {
+                                                                                // Ẩn form, hiện text
+                                                                                form.style.display = 'none';
+                                                                                form.parentElement.querySelector('.variant-text').style.display = 'inline';
+                                                                            });
+
+                                                                            // Thêm nút vào form
+                                                                            form.appendChild(cancelButton);
+                                                                        });
+
+                                                                        // Xử lý phím ESC để hủy chỉnh sửa
+                                                                        document.addEventListener('keydown', function(e) {
+                                                                            if (e.key === 'Escape') {
+                                                                                const visibleForms = document.querySelectorAll(
+                                                                                    '.edit-variant-form[style="display: inline-block;"]');
+                                                                                visibleForms.forEach(form => {
+                                                                                    form.style.display = 'none';
+                                                                                    form.parentElement.querySelector('.variant-text').style.display = 'inline';
+                                                                                });
+                                                                            }
+                                                                        });
+
+                                                                        // Hàm hiển thị thông báo toast
+                                                                        function showToast(message, type) {
+                                                                            // Tạo phần tử toast
+                                                                            const toast = document.createElement('div');
+                                                                            toast.className = `toast ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white`;
+                                                                            toast.style.position = 'fixed';
+                                                                            toast.style.top = '20px';
+                                                                            toast.style.right = '20px';
+                                                                            toast.style.zIndex = '9999';
+                                                                            toast.style.minWidth = '250px';
+                                                                            toast.style.padding = '10px 15px';
+                                                                            toast.style.borderRadius = '4px';
+                                                                            toast.style.boxShadow = '0 0.5rem 1rem rgba(0, 0, 0, 0.15)';
+                                                                            toast.textContent = message;
+
+                                                                            // Thêm vào body
+                                                                            document.body.appendChild(toast);
+
+                                                                            // Tự động ẩn sau 3 giây
+                                                                            setTimeout(() => {
+                                                                                toast.style.opacity = '0';
+                                                                                toast.style.transition = 'opacity 0.5s';
+                                                                                setTimeout(() => {
+                                                                                    toast.remove();
+                                                                                }, 500);
+                                                                            }, 3000);
+                                                                        }
+                                                                    });
+
+                                                                    // Xử lý click bên ngoài để đóng form đang mở
+                                                                    document.addEventListener('click', function(e) {
+                                                                        if (!e.target.closest('.edit-variant-form') && !e.target.closest('.variant-text')) {
+                                                                            const visibleForms = document.querySelectorAll(
+                                                                            '.edit-variant-form[style="display: inline-block;"]');
+                                                                            visibleForms.forEach(form => {
+                                                                                form.style.display = 'none';
+                                                                                form.parentElement.querySelector('.variant-text').style.display = 'inline';
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                </script>
                                                             </div>
                                                         </div>
                                                     </div>

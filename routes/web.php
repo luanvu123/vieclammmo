@@ -3,11 +3,14 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Subcategory;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -50,12 +53,25 @@ Route::post('/2fa/verify', [CustomerController::class, 'verify2fa'])->name('2fa.
 
 
 
+Route::get('/get-subcategories/{category_id}', function ($category_id) {
+    return response()->json(Subcategory::where('category_id', $category_id)->get());
+});
+
+
+
 Route::middleware('auth:customer', '2fa')->group(function () {
+    Route::resource('products', ProductController::class);
+   Route::resource('product_variants', ProductVariantController::class);
+
+
     Route::get('/profile', [CustomerController::class, 'profile'])->name('profile.site');
     Route::get('/profile/edit', [CustomerController::class, 'profileEdit'])->name('profile.edit.site');
     Route::post('/profile/update', [CustomerController::class, 'profileUpdate'])->name('profile.update.site');
     Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
-       Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard.site');
+    Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard.site');
+
+
+
     // Thêm các route mới cho 2FA
     Route::post('/profile/2fa/generate', [CustomerController::class, 'generate2faSecret'])->name('2fa.generate');
     Route::post('/profile/2fa/enable', [CustomerController::class, 'enable2fa'])->name('2fa.enable');

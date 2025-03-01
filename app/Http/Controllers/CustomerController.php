@@ -17,6 +17,7 @@ class CustomerController extends Controller
         return view('admin_customer.index');
     }
 
+
     public function profile()
     {
         $customer = Auth::guard('customer')->user();

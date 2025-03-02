@@ -27,5 +27,12 @@ class SiteController extends Controller
     {
         return view('pages.support');
     }
-   
+   public function post()
+    {
+        return view('pages.post');
+    }
+     public function postDetail()
+    {
+        return view('pages.post_detail');
+    }
 }

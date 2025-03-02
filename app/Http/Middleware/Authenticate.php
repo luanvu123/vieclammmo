@@ -23,14 +23,14 @@ class Authenticate extends Middleware
             }
         }
 
-        abort(redirect()->route('login.customer'));
+        throw new \Illuminate\Auth\AuthenticationException();
     }
 
     protected function redirectTo($request)
     {
-        if (! $request->expectsJson()) {
+        if (!$request->expectsJson()) {
             if ($request->is('customer/*')) {
-                return route('login.customer');
+                return route('login.customer'); // Định tuyến riêng cho khách hàng
             }
             return route('login');
         }

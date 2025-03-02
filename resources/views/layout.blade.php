@@ -62,7 +62,7 @@
                     </li>
 
                     <li><a href="{{ route('support.site') }}">Hỗ trợ</a></li>
-                    <li><a href="#">Chia sẻ</a></li>
+                    <li><a href="{{ route('post.site') }}">Chia sẻ</a></li>
                     <li><a href="#">Công cụ</a></li>
                     <li><a href="#">FAQs</a></li>
                     <li><a href="#">Nạp tiền</a></li>
@@ -91,7 +91,7 @@
                 <div class="user-avatar">
                     <img src="{{ asset('img/user-icon.png') }}" alt="User" />
                 </div>
-                <span>{{ Auth::guard('customer')->user()->username }}</span>
+                <span>{{ Auth::guard('customer')->user()->name }}</span>
             </div>
             <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
             <a href="#">Đơn hàng đã mua</a>
@@ -244,6 +244,28 @@
                 toastr.error("{{ $error }}");
             @endforeach
         @endif
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const alertText = document.getElementById('alertMessage').textContent;
+            const alertElement = document.getElementById('alertMessage');
+
+            // Hiệu ứng chạy text
+            let position = 0;
+            const speed = 50; // milliseconds
+
+            function scrollText() {
+                let shiftedText = alertText.substring(position) + ' — ' + alertText.substring(0, position);
+                alertElement.textContent = shiftedText;
+                position++;
+                if (position > alertText.length) {
+                    position = 0;
+                }
+                setTimeout(scrollText, speed);
+            }
+
+            scrollText();
+        });
     </script>
 
 </body>

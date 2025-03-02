@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerManageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\SiteController;
@@ -26,6 +27,8 @@ use App\Models\Subcategory;
 Route::get('/', [SiteController::class, 'index'])->name('/');
 Route::get('/ho-tro', [SiteController::class, 'support'])->name('support.site');
 Route::get('/danh-muc', [SiteController::class, 'category'])->name('category.site');
+Route::get('/bai-viet', [SiteController::class, 'post'])->name('post.site');
+Route::get('/bai-viet/chi-tiet', [SiteController::class, 'postDetail'])->name('post_detail.site');
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -82,4 +85,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubCategoryController::class);
+
+      Route::resource('customer-manage', CustomerManageController::class);
 });

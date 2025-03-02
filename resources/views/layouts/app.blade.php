@@ -152,6 +152,15 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                         </li>
                                     </ul>
                                 </li>
+
+                                 <li class="treeview {{ Request::is('customer-manage*') ? 'active' : '' }}">
+                                    <a href="{{ route('customer-manage.index') }}">
+                                        <img src="{{ asset('backend_admin/images/candidate-for-elections-svgrepo-com.svg') }}"
+                                            alt="Google" width="20" height="20">
+                                        <span> Khách hàng</span>
+
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->

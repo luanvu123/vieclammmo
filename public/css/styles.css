@@ -1965,3 +1965,30 @@ h1 {
         padding-right: 0;
     }
 }
+  .bank-info {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .qr-code {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .copy-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .notes {
+            text-align: left;
+            color: red;
+            font-size: 14px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+        }

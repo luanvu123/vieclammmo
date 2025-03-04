@@ -13,7 +13,7 @@ class ProductVariantController extends Controller
             'product_id' => 'required|exists:products,id',
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'expiry' => 'nullable|date',
+            'expiry' => 'nullable|string|max:255',
             'url' => 'nullable|url',
         ]);
 

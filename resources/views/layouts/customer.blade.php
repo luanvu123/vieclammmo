@@ -410,6 +410,11 @@
         $('#datatable_1').DataTable();
     });
 </script>
+ <script src="{{ asset('backend_admin/ckeditor/ckeditor.js') }}"></script>
+    <script>
+        CKEDITOR.replace('description');
+
+    </script>
 </body>
 
 </html>

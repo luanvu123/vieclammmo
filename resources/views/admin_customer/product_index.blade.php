@@ -125,9 +125,30 @@
                                                                         @if ($product->category->name == 'Phần Mềm')
                                                                             <div class="mb-2">
                                                                                 <label>Đơn vị tính hạn sử dụng</label>
-                                                                                <input type="date" class="form-control"
-                                                                                    name="expiry">
+                                                                                <select class="form-control" name="expiry">
+                                                                                    <option value="Theo Ngày">Theo Ngày
+                                                                                    </option>
+                                                                                    <option value="Theo Tháng">Theo Tháng
+                                                                                    </option>
+                                                                                    <option value="Theo Năm">Theo Năm
+                                                                                    </option>
+                                                                                    <option value="Chỉ bán vĩnh viễn">Chỉ
+                                                                                        bán vĩnh viễn</option>
+                                                                                    <option
+                                                                                        value="Theo Ngày và có tùy chọn vĩnh viễn">
+                                                                                        Theo Ngày và có tùy chọn vĩnh viễn
+                                                                                    </option>
+                                                                                    <option
+                                                                                        value="Theo Tháng và có tùy chọn vĩnh viễn">
+                                                                                        Theo Tháng và có tùy chọn vĩnh viễn
+                                                                                    </option>
+                                                                                    <option
+                                                                                        value="Theo Năm và có tùy chọn bán vĩnh viễn">
+                                                                                        Theo Năm và có tùy chọn bán vĩnh
+                                                                                        viễn</option>
+                                                                                </select>
                                                                             </div>
+
 
                                                                             <div class="mb-2">
                                                                                 <label>Đường dẫn tải phần mềm</label>
@@ -156,7 +177,8 @@
                                                                                         class="d-inline edit-variant-form">
                                                                                         @csrf
                                                                                         @method('PUT')
-                                                                                        <input type="text" name="name"
+                                                                                        <input type="text"
+                                                                                            name="name"
                                                                                             value="{{ $variant->name }}"
                                                                                             class="form-control form-control-sm d-inline"
                                                                                             style="width: auto;">
@@ -216,121 +238,109 @@
                                                                     }
                                                                 </style>
                                                                 <script>
-                                                                  
+                                                                    // Xử lý form chỉnh sửa
+                                                                    const editForms = document.querySelectorAll('.edit-variant-form');
+                                                                    editForms.forEach(form => {
+                                                                        form.addEventListener('submit', function(e) {
+                                                                            e.preventDefault();
 
+                                                                            const formData = new FormData(this);
+                                                                            const variantId = this.id.split('-')[2];
+                                                                            const textDisplay = this.parentElement.querySelector('.variant-text');
 
-                                                                        // Xử lý form chỉnh sửa
-                                                                        const editForms = document.querySelectorAll('.edit-variant-form');
-                                                                        editForms.forEach(form => {
-                                                                            form.addEventListener('submit', function(e) {
-                                                                                e.preventDefault();
+                                                                            // Thêm header AJAX
+                                                                            const headers = new Headers();
+                                                                            headers.append('X-Requested-With', 'XMLHttpRequest');
 
-                                                                                const formData = new FormData(this);
-                                                                                const variantId = this.id.split('-')[2];
-                                                                                const textDisplay = this.parentElement.querySelector('.variant-text');
+                                                                            fetch(this.action, {
+                                                                                    method: 'POST',
+                                                                                    body: formData,
+                                                                                    headers: headers
+                                                                                })
+                                                                                .then(response => response.json())
+                                                                                .then(data => {
+                                                                                    if (data.success) {
+                                                                                        // Cập nhật giá trị hiển thị
+                                                                                        const nameInput = this.querySelector('input[name="name"]');
+                                                                                        const priceInput = this.querySelector('input[name="price"]');
 
-                                                                                // Thêm header AJAX
-                                                                                const headers = new Headers();
-                                                                                headers.append('X-Requested-With', 'XMLHttpRequest');
+                                                                                        // Định dạng giá tiền
+                                                                                        const formattedPrice = new Intl.NumberFormat('vi-VN', {
+                                                                                            minimumFractionDigits: 2,
+                                                                                            maximumFractionDigits: 2
+                                                                                        }).format(priceInput.value);
 
-                                                                                fetch(this.action, {
-                                                                                        method: 'POST',
-                                                                                        body: formData,
-                                                                                        headers: headers
-                                                                                    })
-                                                                                    .then(response => response.json())
-                                                                                    .then(data => {
-                                                                                        if (data.success) {
-                                                                                            // Cập nhật giá trị hiển thị
-                                                                                            const nameInput = this.querySelector('input[name="name"]');
-                                                                                            const priceInput = this.querySelector('input[name="price"]');
+                                                                                        textDisplay.textContent =
+                                                                                            `${nameInput.value} - ${formattedPrice} VNĐ`;
 
-                                                                                            // Định dạng giá tiền
-                                                                                            const formattedPrice = new Intl.NumberFormat('vi-VN', {
-                                                                                                minimumFractionDigits: 2,
-                                                                                                maximumFractionDigits: 2
-                                                                                            }).format(priceInput.value);
+                                                                                        // Ẩn form, hiện text
+                                                                                        this.style.display = 'none';
+                                                                                        textDisplay.style.display = 'inline';
 
-                                                                                            textDisplay.textContent =
-                                                                                                `${nameInput.value} - ${formattedPrice} VNĐ`;
-
-                                                                                            // Ẩn form, hiện text
-                                                                                            this.style.display = 'none';
-                                                                                            textDisplay.style.display = 'inline';
-
-                                                                                            // Hiển thị thông báo
-                                                                                            showToast('Cập nhật thành công!', 'success');
-                                                                                        } else {
-                                                                                            showToast('Có lỗi xảy ra khi cập nhật!', 'error');
-                                                                                        }
-                                                                                    })
-                                                                                    .catch(error => {
-                                                                                        console.error('Error:', error);
+                                                                                        // Hiển thị thông báo
+                                                                                        showToast('Cập nhật thành công!', 'success');
+                                                                                    } else {
                                                                                         showToast('Có lỗi xảy ra khi cập nhật!', 'error');
-                                                                                    });
-                                                                            });
+                                                                                    }
+                                                                                })
+                                                                                .catch(error => {
+                                                                                    console.error('Error:', error);
+                                                                                    showToast('Có lỗi xảy ra khi cập nhật!', 'error');
+                                                                                });
+                                                                        });
 
-                                                                            // Thêm nút hủy
-                                                                            const cancelButton = document.createElement('button');
-                                                                            cancelButton.className = 'btn btn-sm btn-secondary ml-1';
-                                                                            cancelButton.type = 'button';
-                                                                            cancelButton.innerHTML = '<i class="las la-times"></i>';
-                                                                            cancelButton.addEventListener('click', function() {
-                                                                                // Ẩn form, hiện text
+                                                                       
+
+                                                                        // Thêm nút vào form
+                                                                        form.appendChild(cancelButton);
+                                                                    });
+
+                                                                    // Xử lý phím ESC để hủy chỉnh sửa
+                                                                    document.addEventListener('keydown', function(e) {
+                                                                        if (e.key === 'Escape') {
+                                                                            const visibleForms = document.querySelectorAll(
+                                                                                '.edit-variant-form[style="display: inline-block;"]');
+                                                                            visibleForms.forEach(form => {
                                                                                 form.style.display = 'none';
                                                                                 form.parentElement.querySelector('.variant-text').style.display = 'inline';
                                                                             });
-
-                                                                            // Thêm nút vào form
-                                                                            form.appendChild(cancelButton);
-                                                                        });
-
-                                                                        // Xử lý phím ESC để hủy chỉnh sửa
-                                                                        document.addEventListener('keydown', function(e) {
-                                                                            if (e.key === 'Escape') {
-                                                                                const visibleForms = document.querySelectorAll(
-                                                                                    '.edit-variant-form[style="display: inline-block;"]');
-                                                                                visibleForms.forEach(form => {
-                                                                                    form.style.display = 'none';
-                                                                                    form.parentElement.querySelector('.variant-text').style.display = 'inline';
-                                                                                });
-                                                                            }
-                                                                        });
-
-                                                                        // Hàm hiển thị thông báo toast
-                                                                        function showToast(message, type) {
-                                                                            // Tạo phần tử toast
-                                                                            const toast = document.createElement('div');
-                                                                            toast.className = `toast ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white`;
-                                                                            toast.style.position = 'fixed';
-                                                                            toast.style.top = '20px';
-                                                                            toast.style.right = '20px';
-                                                                            toast.style.zIndex = '9999';
-                                                                            toast.style.minWidth = '250px';
-                                                                            toast.style.padding = '10px 15px';
-                                                                            toast.style.borderRadius = '4px';
-                                                                            toast.style.boxShadow = '0 0.5rem 1rem rgba(0, 0, 0, 0.15)';
-                                                                            toast.textContent = message;
-
-                                                                            // Thêm vào body
-                                                                            document.body.appendChild(toast);
-
-                                                                            // Tự động ẩn sau 3 giây
-                                                                            setTimeout(() => {
-                                                                                toast.style.opacity = '0';
-                                                                                toast.style.transition = 'opacity 0.5s';
-                                                                                setTimeout(() => {
-                                                                                    toast.remove();
-                                                                                }, 500);
-                                                                            }, 3000);
                                                                         }
                                                                     });
+
+                                                                    // Hàm hiển thị thông báo toast
+                                                                    function showToast(message, type) {
+                                                                        // Tạo phần tử toast
+                                                                        const toast = document.createElement('div');
+                                                                        toast.className = `toast ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white`;
+                                                                        toast.style.position = 'fixed';
+                                                                        toast.style.top = '20px';
+                                                                        toast.style.right = '20px';
+                                                                        toast.style.zIndex = '9999';
+                                                                        toast.style.minWidth = '250px';
+                                                                        toast.style.padding = '10px 15px';
+                                                                        toast.style.borderRadius = '4px';
+                                                                        toast.style.boxShadow = '0 0.5rem 1rem rgba(0, 0, 0, 0.15)';
+                                                                        toast.textContent = message;
+
+                                                                        // Thêm vào body
+                                                                        document.body.appendChild(toast);
+
+                                                                        // Tự động ẩn sau 3 giây
+                                                                        setTimeout(() => {
+                                                                            toast.style.opacity = '0';
+                                                                            toast.style.transition = 'opacity 0.5s';
+                                                                            setTimeout(() => {
+                                                                                toast.remove();
+                                                                            }, 500);
+                                                                        }, 3000);
+                                                                    }
+
 
                                                                     // Xử lý click bên ngoài để đóng form đang mở
                                                                     document.addEventListener('click', function(e) {
                                                                         if (!e.target.closest('.edit-variant-form') && !e.target.closest('.variant-text')) {
                                                                             const visibleForms = document.querySelectorAll(
-                                                                            '.edit-variant-form[style="display: inline-block;"]');
+                                                                                '.edit-variant-form[style="display: inline-block;"]');
                                                                             visibleForms.forEach(form => {
                                                                                 form.style.display = 'none';
                                                                                 form.parentElement.querySelector('.variant-text').style.display = 'inline';

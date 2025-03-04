@@ -77,7 +77,7 @@
 
                                         <div class="mb-3">
                                             <label class="form-label">Mô tả chi tiết</label>
-                                            <textarea name="description" class="form-control" rows="5"></textarea>
+                                            <textarea name="description" class="form-control" rows="5" id="description"></textarea>
                                         </div>
                                     </div>
 

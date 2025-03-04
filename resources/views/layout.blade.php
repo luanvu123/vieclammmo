@@ -63,9 +63,9 @@
 
                     <li><a href="{{ route('support.site') }}">Hỗ trợ</a></li>
                     <li><a href="{{ route('post.site') }}">Chia sẻ</a></li>
-                    <li><a href="#">Công cụ</a></li>
-                    <li><a href="#">FAQs</a></li>
-                    <li><a href="#">Nạp tiền</a></li>
+                    <li><a href="https://2fa.live/">Công cụ</a></li>
+                    <li><a href="{{ route('faqs')}}">FAQs</a></li>
+                    <li><a href="{{route('checkout')}}">Nạp tiền</a></li>
                 </ul>
             </nav>
 
@@ -110,7 +110,7 @@
                         }">
                 Thoát
             </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            <form id="logout-form" action="{{ route('logout.customer') }}" method="POST" style="display: none;">
                 @csrf
             </form>
         </div>

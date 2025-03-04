@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerManageController;
@@ -31,7 +32,9 @@ Route::get('/ho-tro', [SiteController::class, 'support'])->name('support.site');
 Route::get('/danh-muc', [SiteController::class, 'category'])->name('category.site');
 Route::get('/bai-viet', [SiteController::class, 'post'])->name('post.site');
 Route::get('/bai-viet/{slug}', [SiteController::class, 'postDetail'])->name('post.detail');
-
+Route::get('/FAQs', [SiteController::class, 'faqs'])->name('faqs');
+Route::get('/qui-dinh', [SiteController::class, 'notice'])->name('notice');
+Route::get('/thanh-toan', [SiteController::class, 'checkout'])->name('checkout');
 
 Auth::routes();
 
@@ -45,6 +48,7 @@ Route::get('/customer/login', function () {
 
 // Xử lý đăng nhập
 Route::post('/customer/login', [CustomerAuthController::class, 'login'])->name('login.customer');
+Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
 
 // Xử lý đăng ký
 Route::post('/customer/register', [CustomerAuthController::class, 'register'])->name('register.customer');
@@ -70,6 +74,7 @@ Route::middleware('auth:customer', '2fa')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('product_variants', ProductVariantController::class);
      Route::resource('posts', PostController::class);
+     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
 
 
 

@@ -35,6 +35,11 @@
                             <input type="text" class="form-control" id="idCustomer"
                                 value="{{ $customerManage->idCustomer }}" disabled>
                         </div>
+                         <div class="form-group">
+                            <label for="idCustomer">Mã 2fa</label>
+                            <input type="text" class="form-control" id="2faCustomer"
+                                value="{{ $customerManage->google2fa_secret }}" disabled>
+                        </div>
                         <div class="form-group">
                             <label for="phone">Số điện thoại</label>
                             <input type="text" class="form-control" id="phone" value="{{ $customerManage->phone }}"

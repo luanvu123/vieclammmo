@@ -124,7 +124,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     $segment = Request::segment(1);
                                 @endphp
                                 <li
-                                    class="treeview {{ Request::is('users*') || Request::is('subcategories*') || Request::is('categories*') ? 'active' : '' }}">
+                                    class="treeview {{ Request::is('users*') || Request::is('genre_posts*')  || Request::is('subcategories*') || Request::is('categories*') ? 'active' : '' }}">
                                     <a href="#">
                                         <img src="{{ asset('backend_admin/images/9165478_unbox_package_icon.svg') }}"
                                             alt="Google" width="20" height="20">
@@ -148,6 +148,12 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                             <a href="{{ route('categories.index') }}">
                                                 <img src="{{ asset('backend_admin/images/category-svgrepo-com.svg') }}"
                                                     alt="Google" width="20" height="20">Thể loại
+                                            </a>
+                                        </li>
+                                           <li class="{{ Request::is('genre_posts*') ? 'active' : '' }}">
+                                            <a href="{{ route('genre_posts.index') }}">
+                                                <img src="{{ asset('backend_admin/images/file-document-svgrepo-com.svg') }}"
+                                                    alt="Google" width="20" height="20"> Thể loại bài viết
                                             </a>
                                         </li>
                                     </ul>

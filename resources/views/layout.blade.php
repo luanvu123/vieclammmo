@@ -98,7 +98,7 @@
             <a href="#">Gian hàng yêu thích</a>
             <a href="#">Lịch sử thanh toán</a>
             <a href="#">Reseller</a>
-            <a href="#">Quản lý nội dung</a>
+            <a href="{{ route('posts.create') }}">Quản lý nội dung</a>
             <a href="#">Đổi mật khẩu</a>
             <div class="divider"></div>
             <a href="{{ route('dashboard.site') }}">Quản lý cửa hàng</a>
@@ -267,7 +267,20 @@
             scrollText();
         });
     </script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
 
+    <!-- Include DataTables JavaScript -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#user-table').DataTable();
+        });
+    </script>
+  <script src="{{ asset('backend_admin/ckeditor/ckeditor.js') }}"></script>
+    <script>
+        CKEDITOR.replace('description');
+
+    </script>
 </body>
 
 </html>

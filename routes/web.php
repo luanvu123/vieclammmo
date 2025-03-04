@@ -4,6 +4,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerManageController;
+use App\Http\Controllers\GenrePostController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\SiteController;
@@ -28,7 +30,9 @@ Route::get('/', [SiteController::class, 'index'])->name('/');
 Route::get('/ho-tro', [SiteController::class, 'support'])->name('support.site');
 Route::get('/danh-muc', [SiteController::class, 'category'])->name('category.site');
 Route::get('/bai-viet', [SiteController::class, 'post'])->name('post.site');
-Route::get('/bai-viet/chi-tiet', [SiteController::class, 'postDetail'])->name('post_detail.site');
+Route::get('/bai-viet/{slug}', [SiteController::class, 'postDetail'])->name('post.detail');
+
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -64,7 +68,10 @@ Route::get('/get-subcategories/{category_id}', function ($category_id) {
 
 Route::middleware('auth:customer', '2fa')->group(function () {
     Route::resource('products', ProductController::class);
-   Route::resource('product_variants', ProductVariantController::class);
+    Route::resource('product_variants', ProductVariantController::class);
+     Route::resource('posts', PostController::class);
+
+
 
 
     Route::get('/profile', [CustomerController::class, 'profile'])->name('profile.site');
@@ -85,6 +92,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubCategoryController::class);
-
-      Route::resource('customer-manage', CustomerManageController::class);
+    Route::resource('genre_posts', GenrePostController::class);
+    Route::resource('customer-manage', CustomerManageController::class);
 });

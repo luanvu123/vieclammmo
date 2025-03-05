@@ -12,12 +12,19 @@ use PragmaRX\Google2FA\Google2FA;
 
 class CustomerController extends Controller
 {
+     public function __construct()
+    {
+        $this->middleware(['customer', '2fa']);
+    }
     public function dashboard()
     {
         return view('admin_customer.index');
     }
+    public function checkout()
+    {
+        return view('pages.checkout');
+    }
 
-   
 
 
     public function profile()

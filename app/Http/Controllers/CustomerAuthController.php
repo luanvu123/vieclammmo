@@ -35,26 +35,30 @@ class CustomerAuthController extends Controller
 
     // Đăng nhập
     public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    if (Auth::guard('customer')->attempt($request->only('email', 'password'))) {
+        $customer = Auth::guard('customer')->user();
+
+        // Cập nhật thời gian hoạt động gần nhất
+        $customer->update(['last_active_at' => now()]);
+
+        // Lưu lịch sử đăng nhập
+        \App\Models\LoginHistory::create([
+            'customer_id' => $customer->id,
+            'device' => $request->header('User-Agent'),
         ]);
 
-        if (Auth::guard('customer')->attempt($request->only('email', 'password'))) {
-            $customer = Auth::guard('customer')->user();
-
-            // Lưu lịch sử đăng nhập
-            \App\Models\LoginHistory::create([
-                'customer_id' => $customer->id,
-                'device' => $request->header('User-Agent')
-            ]);
-
-            return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $customer->email);
-        }
-
-        return redirect()->back()->with('error', 'Thông tin đăng nhập không chính xác.');
+        return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $customer->email);
     }
+
+    return redirect()->back()->with('error', 'Thông tin đăng nhập không chính xác.');
+}
+
 
     public function authenticated(Request $request, $customer)
     {

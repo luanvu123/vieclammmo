@@ -35,10 +35,7 @@ class SiteController extends Controller
         return view('pages.notice');
     }
 
-     public function checkout()
-    {
-        return view('pages.checkout');
-    }
+    
     public function support()
     {
         return view('pages.support');

@@ -8,10 +8,15 @@ use App\Http\Controllers\CustomerManageController;
 use App\Http\Controllers\GenrePostController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductManageController;
 use App\Http\Controllers\ProductVariantController;
+use App\Http\Controllers\ProductVariantManageController;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\StockManageController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\UserController;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Subcategory;
@@ -34,19 +39,15 @@ Route::get('/bai-viet', [SiteController::class, 'post'])->name('post.site');
 Route::get('/bai-viet/{slug}', [SiteController::class, 'postDetail'])->name('post.detail');
 Route::get('/FAQs', [SiteController::class, 'faqs'])->name('faqs');
 Route::get('/qui-dinh', [SiteController::class, 'notice'])->name('notice');
-Route::get('/thanh-toan', [SiteController::class, 'checkout'])->name('checkout');
+
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-// Đăng ký và Đăng nhập
-
-// Hiển thị form đăng nhập
 Route::get('/customer/login', function () {
     return view('customer.login');
 })->name('login.customer');
 
-// Xử lý đăng nhập
 Route::post('/customer/login', [CustomerAuthController::class, 'login'])->name('login.customer');
 Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
 
@@ -70,12 +71,15 @@ Route::get('/get-subcategories/{category_id}', function ($category_id) {
 
 
 
-Route::middleware('auth:customer', '2fa')->group(function () {
+Route::middleware('customer', '2fa')->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('product_variants', ProductVariantController::class);
-     Route::resource('posts', PostController::class);
-     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
-
+    Route::resource('posts', PostController::class);
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::get('/thanh-toan', [CustomerController::class, 'checkout'])->name('checkout');
+    Route::prefix('product_variants/{variant}')->group(function () {
+        Route::resource('stocks', StockController::class)->except(['show']);
+    });
 
 
 
@@ -99,4 +103,20 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('subcategories', SubCategoryController::class);
     Route::resource('genre_posts', GenrePostController::class);
     Route::resource('customer-manage', CustomerManageController::class);
+    Route::resource('product-manage', ProductManageController::class)
+        ->parameters(['product-manage' => 'product'])
+        ->except(['create', 'show']);
+    Route::get('product/{product}/variants', [ProductVariantManageController::class, 'listByProduct'])
+        ->name('product-variants.list');
+    Route::resource('product-variant-manage', ProductVariantManageController::class)
+        ->parameters(['product-variant-manage' => 'productVariant'])
+        ->except(['create', 'show']);
+
+        Route::get('stock-manage/{variant}', [StockManageController::class, 'index'])
+    ->name('stock-manage.index');
+    Route::get('stock/{stock}/uid', [StockManageController::class, 'UidIndex'])->name('stock.uid_index');
+Route::get('stock/{stock}/uid/create', [StockManageController::class, 'UidCreate'])->name('stock.uid_create');
+Route::post('stock/{stock}/uid', [StockManageController::class, 'UidStore'])->name('stock.uid_store');
+
+
 });

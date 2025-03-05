@@ -5,12 +5,16 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
-                        <h4 class="page-title">Taxes</h4>
+                        <h4 class="page-title">Quản lý gian hàng</h4>
                         <div class="">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="#">Approx</a>
+                                <li class="breadcrumb-item"><a
+                                        href="
+
+                                    {{ route('products.index') }}">Danh sách
+                                        gian hàng</a>
                                 </li><!--end nav-item-->
-                                <li class="breadcrumb-item active">Taxes</li>
+                                <li class="breadcrumb-item active">Quản lý gian hàng</li>
                             </ol>
                         </div>
                     </div><!--end page-title-box-->
@@ -23,12 +27,14 @@
                         <div class="card-header">
                             <div class="row align-items-center">
                                 <div class="col">
-                                    <h4 class="card-title">Taxes Details</h4>
+                                    <h4 class="card-title">Quản lý gian hàng</h4>
                                 </div><!--end col-->
                                 <div class="col-auto">
-                                    <button class="btn bg-primary text-white"><i class="fas fa-plus me-1"></i> Add
-                                        Rate</button>
-                                </div><!--end col-->
+                                    <a href="{{ route('products.create') }}" class="btn bg-primary text-white">
+                                        <i class="fas fa-plus me-1"></i> Thêm gian hàng
+                                    </a>
+                                </div>
+                                <!--end col-->
                             </div><!--end row-->
                         </div><!--end card-header-->
                         <div class="card-body pt-0">
@@ -197,7 +203,7 @@
                                                                                         <button type="submit"
                                                                                             class="btn btn-sm btn-success"><i
                                                                                                 class="las la-check"></i></button>
-                                                                                        <!-- Nút hủy sẽ được thêm vào bằng JavaScript -->
+
                                                                                     </form>
                                                                                 </div>
                                                                                 <form
@@ -209,34 +215,21 @@
                                                                                     <button type="submit"
                                                                                         class="btn btn-sm btn-danger"><i
                                                                                             class="las la-trash-alt"></i></button>
+                                                                                    <div class="col-auto">
+                                                                                        <a href="{{ route('stocks.create', $variant->id) }}"
+                                                                                            class="btn btn-sm btn-warning">
+                                                                                            <i
+                                                                                                class="fas fa-plus me-1"></i>
+                                                                                        </a>
+                                                                                    </div>
+
                                                                                 </form>
                                                                             </li>
                                                                         @endforeach
                                                                     </ul>
                                                                 </div>
 
-                                                                <!-- Đảm bảo kích thước hiển thị phù hợp với CSS -->
-                                                                <style>
-                                                                    .editable-container {
-                                                                        flex-grow: 1;
-                                                                        margin-right: 15px;
-                                                                    }
-
-                                                                    .variant-text {
-                                                                        cursor: pointer;
-                                                                        padding: 2px 5px;
-                                                                        border-radius: 3px;
-                                                                        transition: background-color 0.2s;
-                                                                    }
-
-                                                                    .variant-text:hover {
-                                                                        background-color: #f8f9fa;
-                                                                    }
-
-                                                                    .edit-variant-form input {
-                                                                        margin-right: 5px;
-                                                                    }
-                                                                </style>
+                                                                
                                                                 <script>
                                                                     // Xử lý form chỉnh sửa
                                                                     const editForms = document.querySelectorAll('.edit-variant-form');
@@ -289,7 +282,7 @@
                                                                                 });
                                                                         });
 
-                                                                       
+
 
                                                                         // Thêm nút vào form
                                                                         form.appendChild(cancelButton);

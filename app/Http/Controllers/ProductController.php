@@ -12,12 +12,12 @@ class ProductController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:customer', '2fa']);
+        $this->middleware(['customer', '2fa']);
     }
 
     public function index()
     {
-        $customerId = Auth::id();
+        $customerId = Auth::guard('customer')->id();
         $products = Product::where('customer_id', $customerId)->latest()->get();
 
         return view('admin_customer.product_index', compact('products'));
@@ -48,7 +48,7 @@ class ProductController extends Controller
         $imagePath = $request->file('image')->store('products', 'public');
 
         Product::create([
-            'customer_id' => Auth::id(),
+            'customer_id' => Auth::guard('customer')->id(),
             'category_id' => $request->category_id,
             'subcategory_id' => $request->subcategory_id,
             'name' => $request->name,

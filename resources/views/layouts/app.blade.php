@@ -167,6 +167,18 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
 
                                     </a>
                                 </li>
+
+                                  <li class="treeview {{ Request::is('product-manage*')|| Request::is('product-variant-manage*') ? 'active' : '' }}">
+                                    <a href="{{ route('product-manage.index') }}">
+                                        <img src="{{ asset('backend_admin/images/job-search-svgrepo-com.svg') }}"
+                                            alt="Google" width="20" height="20">
+                                        <span> Gian hàng</span>
+
+                                    </a>
+                                </li>
+
+
+
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->

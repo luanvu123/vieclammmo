@@ -97,7 +97,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Mô tả chi tiết</label>
-                            <textarea name="description" class="form-control" rows="5">{{ $product->description }}</textarea>
+                            <textarea id="description" name="description" class="form-control" rows="5">{!! $product->description !!}</textarea>
                         </div>
                     </div>
 
@@ -127,7 +127,7 @@
                 });
             </script>
         </div>
-   
+
 
 
                     </div><!--end card-->

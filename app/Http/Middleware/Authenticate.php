@@ -29,9 +29,11 @@ class Authenticate extends Middleware
     protected function redirectTo($request)
     {
         if (!$request->expectsJson()) {
-            if ($request->is('customer/*')) {
-                return route('login.customer'); // Định tuyến riêng cho khách hàng
+            // Nếu guard là 'customer', chuyển hướng đến login.customer
+            if (Auth::guard('customer')->check() === false) {
+                return route('login.customer');
             }
+
             return route('login');
         }
     }

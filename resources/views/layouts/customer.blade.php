@@ -15,6 +15,7 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
 
 
+        <link href="{{ asset('assets/libs/uppy/uppy.min.css')}}" rel="stylesheet" type="text/css" />
 
     <link href="{{ asset('assets/libs/simple-datatables/style.css')}}" rel="stylesheet" type="text/css" />
     <!-- App css -->
@@ -400,6 +401,8 @@
     <script src="{{ asset('assets/js/pages/index.init.js') }}"></script>
     <script src="{{ asset('assets/js/DynamicSelect.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
+     <script src="{{ asset('assets/libs/uppy/uppy.legacy.min.js')}}"></script>
+        <script src="{{ asset('assets/js/pages/file-upload.init.js')}}"></script>
 
 
     <script src="{{ asset('assets/libs/quill/quill.js') }}"></script>

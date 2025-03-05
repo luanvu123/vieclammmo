@@ -30,14 +30,15 @@ class Customer extends Authenticatable
         'Status',
         'password',
         'google_id',
-        'isEkyc'
+        'isEkyc',
+        'last_active_at'
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
+  protected $dates = ['last_active_at'];
     public static function generateUniqueId()
     {
         do {

@@ -1992,3 +1992,27 @@ h1 {
                 padding: 10px;
             }
         }
+
+        .modal-footer .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap; /* Giữ tất cả trên cùng một hàng */
+    gap: 10px;
+}
+
+.modal-footer form {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.modal-footer input {
+    width: 100px; /* Định kích thước input để tránh tràn */
+    min-width: 70px;
+}
+
+.modal-footer button {
+    white-space: nowrap; /* Đảm bảo nút không bị vỡ dòng */
+}
+

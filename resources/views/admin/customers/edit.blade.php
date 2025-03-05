@@ -35,7 +35,7 @@
                             <input type="text" class="form-control" id="idCustomer"
                                 value="{{ $customerManage->idCustomer }}" disabled>
                         </div>
-                         <div class="form-group">
+                        <div class="form-group">
                             <label for="idCustomer">Mã 2fa</label>
                             <input type="text" class="form-control" id="2faCustomer"
                                 value="{{ $customerManage->google2fa_secret }}" disabled>
@@ -58,6 +58,25 @@
                                 value="{{ $customerManage->last_active_at ? $customerManage->last_active_at->diffForHumans() : 'Chưa hoạt động' }}"
                                 disabled>
                         </div>
+
+                        <h4 class="mt-3">Lịch sử đăng nhập</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Thiết bị</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($customerManage->loginHistories as $history)
+                                    <tr>
+                                        <td>{{ $history->created_at->format('d/m/Y H:i:s') }}</td>
+                                        <td>{{ $history->device }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
                     </div>
 
                     <div class="col-md-6">

@@ -15,14 +15,7 @@
                             <label><input type="checkbox"> Dịch vụ Facebook</label>
                             <label><input type="checkbox"> Dịch vụ Tiktok</label>
                             <label><input type="checkbox"> Dịch vụ Google</label>
-                            <label><input type="checkbox"> Dịch vụ Telegram</label>
-                            <label><input type="checkbox"> Dịch vụ Shopee</label>
-                            <label><input type="checkbox"> Dịch vụ Discord</label>
-                            <label><input type="checkbox"> Dịch vụ Twitter</label>
-                            <label><input type="checkbox"> Dịch vụ Youtube</label>
-                            <label><input type="checkbox"> Dịch vụ Zalo</label>
-                            <label><input type="checkbox"> Dịch vụ Instagram</label>
-                            <label><input type="checkbox"> Tương tác khác</label>
+                
                         </div>
                     </div>
                     <button class="search-btn">Tìm kiếm</button>
@@ -134,17 +127,6 @@
 
                 <!-- Pagination -->
                 <div class="pagination">
-                    <a href="#" class="prev-page"><i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i></a>
-                    <a href="#" class="active">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#">6</a>
-                    <a href="#">7</a>
-                    <span>...</span>
-                    <a href="#">55</a>
-                    <a href="#" class="next-page"><i class="fas fa-chevron-right"></i><i class="fas fa-chevron-right"></i></a>
                 </div>
             </div>
         </div>

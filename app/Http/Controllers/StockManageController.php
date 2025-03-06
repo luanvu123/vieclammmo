@@ -42,22 +42,31 @@ class StockManageController extends Controller
         $duplicateCount = 0; // Đếm UID trùng lặp
 
         foreach ($uids as $uid) {
-            // Kiểm tra UID đã tồn tại chưa
-            $exists = UidFacebook::where('stock_id', $stock->id)->where('uid', $uid)->exists();
+    // Kiểm tra xem UID đã tồn tại với bất kỳ stock_id nào chưa
+    $existsInAnyStock = UidFacebook::where('uid', $uid)->exists();
 
-            if (!$exists) {
-                // Lưu vào database
-                UidFacebook::create([
-                    'stock_id' => $stock->id,
-                    'uid' => $uid,
-                ]);
-                $results[] = "Success|$uid"; // Thêm vào danh sách Success
-                $successCount++; // Tăng số lượng thành công
-            } else {
-                $results[] = "Duplicate|$uid"; // Thêm vào danh sách Duplicate
-                $duplicateCount++; // Tăng số lượng trùng lặp
-            }
-        }
+    // Kiểm tra xem UID đã tồn tại với stock_id hiện tại chưa
+    $existsInCurrentStock = UidFacebook::where('stock_id', $stock->id)->where('uid', $uid)->exists();
+
+    if ($existsInCurrentStock) {
+        // Nếu đã tồn tại trong cùng stock_id thì coi là trùng lặp
+        $results[] = "Duplicate|$uid";
+        $duplicateCount++;
+    } elseif ($existsInAnyStock) {
+        // Nếu UID tồn tại với stock_id khác thì cũng coi là trùng lặp
+        $results[] = "Duplicate (Exists in another stock)|$uid";
+        $duplicateCount++;
+    } else {
+        // Nếu UID chưa tồn tại trong bất kỳ stock nào, lưu vào database
+        UidFacebook::create([
+            'stock_id' => $stock->id,
+            'uid' => $uid,
+        ]);
+        $results[] = "Success|$uid";
+        $successCount++;
+    }
+}
+
 
         // Thêm dòng thống kê cuối file
         $results[] = "TOTAL:" . count($uids) . "|SUCCESS:$successCount|DUPLICATE:$duplicateCount";
@@ -79,7 +88,7 @@ class StockManageController extends Controller
             'file' => $filePath,
             'quantity_success' => $successCount,
             'quantity_error' => $duplicateCount,
-            'status' => 1,
+            'status' => 'active',
         ]);
 
         return redirect()->route('stock.uid_index', $stock->id)

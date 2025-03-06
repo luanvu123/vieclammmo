@@ -29,7 +29,7 @@
         </div>
 
         <div class="main-nav container">
-            <a href="index.html" class="logo">
+            <a href="{{route('/')}}" class="logo">
                 <h1>TapHoa<span class="highlight">MMO</span></h1>
             </a>
 

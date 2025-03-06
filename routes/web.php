@@ -112,11 +112,9 @@ Route::group(['middleware' => ['auth']], function () {
         ->parameters(['product-variant-manage' => 'productVariant'])
         ->except(['create', 'show']);
 
-        Route::get('stock-manage/{variant}', [StockManageController::class, 'index'])
-    ->name('stock-manage.index');
+    Route::get('stock-manage/{variant}', [StockManageController::class, 'index'])
+        ->name('stock-manage.index');
     Route::get('stock/{stock}/uid', [StockManageController::class, 'UidIndex'])->name('stock.uid_index');
-Route::get('stock/{stock}/uid/create', [StockManageController::class, 'UidCreate'])->name('stock.uid_create');
-Route::post('stock/{stock}/uid', [StockManageController::class, 'UidStore'])->name('stock.uid_store');
-
-
+    Route::get('stock/{stock}/uid/create', [StockManageController::class, 'UidCreate'])->name('stock.uid_create');
+    Route::post('stock/{stock}/uid', [StockManageController::class, 'UidStore'])->name('stock.uid_store');
 });

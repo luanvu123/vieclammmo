@@ -43,29 +43,46 @@
 
                 <!-- Message Form Section -->
                 <div class="message-form">
-                    <h2>Tin nhắn</h2>
-                    <form action="#" method="POST" class="contact-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" id="email" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Số điện thoại</label>
-                                <input type="tel" id="phone" name="phone" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="subject">Chủ đề</label>
-                            <input type="text" id="subject" name="subject" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Nội dung</label>
-                            <textarea id="message" name="message" rows="6" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn">Gửi</button>
-                    </form>
-                </div>
+    <h2>Tin nhắn</h2>
+    @if(session('success'))
+        <p style="color: green;">{{ session('success') }}</p>
+    @endif
+    <form action="{{ route('support.site') }}" method="POST" class="contact-form">
+    @csrf
+    <div class="form-row">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Số điện thoại</label>
+            <input type="tel" id="phone" name="phone" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="subject">Chủ đề</label>
+        <select id="subject" name="subject" class="form-control" required>
+            <option value="" disabled selected>Chọn chủ đề</option>
+            <option value="Quên Mật khẩu">Quên Mật khẩu</option>
+            <option value="Quên 2FA">Quên 2FA</option>
+            <option value="Làm sao để mua hàng">Làm sao để mua hàng</option>
+            <option value="Hỗ trợ bài viết">Hỗ trợ bài viết</option>
+             <option value="Hỗ trợ bán hàng">Hỗ trợ bán hàng</option>
+            <option value="Hỗ trợ khác">Hỗ trợ khác</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="message">Nội dung</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn">Gửi</button>
+</form>
+
+</div>
+
             </div>
         </div>
 

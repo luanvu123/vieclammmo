@@ -15,6 +15,7 @@ use App\Http\Controllers\SiteController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockManageController;
 use App\Http\Controllers\SubCategoryController;
+use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserController;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Route;
@@ -34,7 +35,11 @@ use App\Models\Subcategory;
 
 Route::get('/', [SiteController::class, 'index'])->name('/');
 Route::get('/ho-tro', [SiteController::class, 'support'])->name('support.site');
-Route::get('/danh-muc', [SiteController::class, 'category'])->name('category.site');
+
+Route::get('/category/{slug}', [SiteController::class, 'showProductsByCategory'])->name('category.products');
+Route::get('/product/{slug}', [SiteController::class, 'showProductDetail'])->name('product.detail');
+Route::post('/ho-tro', [SiteController::class, 'storeSupport'])->name('support.site');
+
 Route::get('/bai-viet', [SiteController::class, 'post'])->name('post.site');
 Route::get('/bai-viet/{slug}', [SiteController::class, 'postDetail'])->name('post.detail');
 Route::get('/FAQs', [SiteController::class, 'faqs'])->name('faqs');
@@ -73,6 +78,7 @@ Route::get('/get-subcategories/{category_id}', function ($category_id) {
 
 Route::middleware('customer', '2fa')->group(function () {
     Route::resource('products', ProductController::class);
+
     Route::resource('product_variants', ProductVariantController::class);
     Route::resource('posts', PostController::class);
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
@@ -98,6 +104,7 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::post('/profile/ekyc', [CustomerController::class, 'editKYC'])->name('profile.ekyc');
 });
 Route::group(['middleware' => ['auth']], function () {
+     Route::resource('supports', SupportController::class);
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubCategoryController::class);

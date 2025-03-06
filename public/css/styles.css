@@ -2016,3 +2016,86 @@ h1 {
     white-space: nowrap; /* Đảm bảo nút không bị vỡ dòng */
 }
 
+ .filter-section {
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .filter-group {
+        margin-bottom: 15px;
+    }
+
+    .filter-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 0;
+    }
+
+    .filter-options label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .search-btn, .reset-btn {
+        padding: 8px 15px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.3s;
+    }
+
+    .reset-btn {
+        background: #6c757d;
+        margin-left: 10px;
+        display: inline-block;
+        text-decoration: none;
+    }
+
+    .search-btn:hover {
+        background: #0069d9;
+    }
+
+    .reset-btn:hover {
+        background: #5a6268;
+    }
+
+    /* Loading và error states */
+    .loading, .error, .no-products {
+        padding: 30px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .loading {
+        color: #007bff;
+    }
+
+    .error {
+        color: #dc3545;
+    }
+
+    .no-products {
+        padding: 40px 0;
+        color: #6c757d;
+        font-size: 1.1em;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .container.category-page {
+            flex-direction: column;
+        }
+
+        .sidebar {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    }

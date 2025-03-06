@@ -36,11 +36,11 @@
             <nav class="menu">
                 <ul>
                     <li class="dropdown">
-                        <a href="{{ route('category.site') }}">Sản phẩm</a>
+                        <a href="#">Sản phẩm</a>
                         <ul class="submenu">
                             @if (isset($layout_categories['Sản phẩm']))
                                 @foreach ($layout_categories['Sản phẩm'] as $category)
-                                    <li><a href="#">{{ $category->name }}</a></li>
+                               <li><a href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a></li>
                                 @endforeach
                             @else
                                 <li><a href="#">Không có sản phẩm</a></li>
@@ -53,7 +53,7 @@
                         <ul class="submenu">
                             @if (isset($layout_categories['Dịch vụ']))
                                 @foreach ($layout_categories['Dịch vụ'] as $category)
-                                    <li><a href="#">{{ $category->name }}</a></li>
+                                    <li><a href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a></li>
                                 @endforeach
                             @else
                                 <li><a href="#">Không có dịch vụ</a></li>

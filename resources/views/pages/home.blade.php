@@ -41,14 +41,14 @@
             @endphp
 
             @foreach ($productCategories as $index => $category)
-                <div class="category-card">
+                <a href="{{ route('category.products', ['slug' => $category->slug]) }}" class="category-card">
                     <div class="category-icon {{ $iconClasses[$index % count($iconClasses)] }}">
                         <img src="{{ asset('storage/' . $category->icon) }}" alt="{{ $category->name }}"
                             style="width: 50px; height: 50px;">
                     </div>
                     <h3>{{ $category->name }}</h3>
                     <p>{!! $category->description !!}</p>
-                </div>
+                </a>
             @endforeach
         </div>
     </div>
@@ -57,23 +57,24 @@
 
 
     <!-- Service Categories Section -->
-    <section class="featured-products">
-        <div class="container">
-            <h2 class="section-title">-- DANH SÁCH DỊCH VỤ --</h2>
-            <div class="service-grid">
-                @foreach ($serviceCategories as $category)
-                    <div class="service-card">
-                        <div class="service-icon">
-                            <img src="{{ asset('storage/' . $category->icon) }}" alt="{{ $category->name }}"
-                                style="width: 50px; height: 50px;">
-                        </div>
-                        <h3>{{ $category->name }}</h3>
-                        <p>{!! $category->description !!}</p>
+  <section class="featured-products">
+    <div class="container">
+        <h2 class="section-title">-- DANH SÁCH DỊCH VỤ --</h2>
+        <div class="service-grid">
+            @foreach ($serviceCategories as $category)
+                <a href="{{ route('category.products', ['slug' => $category->slug]) }}" class="service-card">
+                    <div class="service-icon">
+                        <img src="{{ asset('storage/' . $category->icon) }}" alt="{{ $category->name }}"
+                            style="width: 50px; height: 50px;">
                     </div>
-                @endforeach
-            </div>
+                    <h3>{{ $category->name }}</h3>
+                    <p>{!! $category->description !!}</p>
+                </a>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
+
 
 
     <!-- Recommended Products -->

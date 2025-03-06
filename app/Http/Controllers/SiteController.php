@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\GenrePost;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\Subcategory;
+use App\Models\Support;
 use Illuminate\Http\Request;
 
 class SiteController extends Controller
@@ -21,21 +25,82 @@ class SiteController extends Controller
 
         return view('pages.home', compact('productCategories', 'serviceCategories'));
     }
+    public function showProductDetail($slug)
+{
+    // Tìm sản phẩm theo slug
+    $product = Product::where('slug', $slug)
+        ->with(['category', 'subcategory', 'productVariants.stocks'])
+        ->firstOrFail();
 
-    public function category()
+    // Lấy các sản phẩm liên quan cùng danh mục
+    $relatedProducts = Product::where('category_id', $product->category_id)
+        ->where('id', '!=', $product->id)
+        ->with('productVariants')
+        ->take(4)
+        ->get();
+
+    return view('pages.product_detail', compact('product', 'relatedProducts'));
+}
+
+    public function showProductsByCategory($slug, Request $request)
     {
-        return view('pages.category');
+        // Find the category by slug
+        $category = Category::where('slug', $slug)->firstOrFail();
+
+        // Khởi tạo query để lấy sản phẩm
+        $query = Product::where('category_id', $category->id)
+            ->where('status', 1)
+            ->with('productVariants');
+
+        // Lọc theo subcategory nếu có filter được chọn
+        if ($request->has('subcategories') && !empty($request->subcategories)) {
+            $query->whereIn('subcategory_id', $request->subcategories);
+        }
+
+        // Lấy sản phẩm với phân trang
+        $products = $query->paginate(12);
+
+        // Get subcategories for filtering
+        $subcategories = Subcategory::where('category_id', $category->id)->get();
+
+        return view('pages.category', [
+            'category' => $category,
+            'products' => $products,
+            'subcategories' => $subcategories,
+            'totalProducts' => $products->total(),
+            'selectedSubcategories' => $request->subcategories ?? []
+        ]);
     }
-     public function faqs()
+
+
+    public function faqs()
     {
         return view('pages.faqs');
     }
-      public function notice()
+    public function notice()
     {
         return view('pages.notice');
     }
 
-    
+ public function storeSupport(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'phone' => 'required',
+            'subject' => 'required',
+            'message' => 'required',
+        ]);
+
+        Support::create([
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'status' => 'Chưa phản hồi', // Mặc định chưa phản hồi
+        ]);
+
+        return back()->with('success', 'Tin nhắn của bạn đã được gửi!');
+    }
     public function support()
     {
         return view('pages.support');

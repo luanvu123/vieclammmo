@@ -107,7 +107,8 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                             </button>
                             <h1>
                                 <a class="navbar-brand" href="{{ url('/') }}"><span
-                                        class="fa fa-area-chart"></span> HOME<span class="dashboard_text">TapHoaMMO</span></a>
+                                        class="fa fa-area-chart"></span> HOME<span
+                                        class="dashboard_text">TapHoaMMO</span></a>
                             </h1>
                         </div>
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -124,7 +125,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     $segment = Request::segment(1);
                                 @endphp
                                 <li
-                                    class="treeview {{ Request::is('users*') || Request::is('genre_posts*')  || Request::is('subcategories*') || Request::is('categories*') ? 'active' : '' }}">
+                                    class="treeview {{ Request::is('users*') || Request::is('genre_posts*') || Request::is('subcategories*') || Request::is('categories*') ? 'active' : '' }}">
                                     <a href="#">
                                         <img src="{{ asset('backend_admin/images/9165478_unbox_package_icon.svg') }}"
                                             alt="Google" width="20" height="20">
@@ -132,25 +133,25 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                         <i class="fa fa-angle-left pull-right"></i>
                                     </a>
                                     <ul class="treeview-menu">
-                                        <li class="{{ Request::is('users*')  ? 'active' : '' }}">
+                                        <li class="{{ Request::is('users*') ? 'active' : '' }}">
                                             <a href="{{ route('users.index') }}">
                                                 <img src="{{ asset('backend_admin/images/9989338_rating_evaluation_grade_ranking_rate_icon.svg') }}"
                                                     alt="Google" width="20" height="20"> Tài khoản quản trị
                                             </a>
                                         </li>
-                                         <li class="{{ Request::is('subcategories*')  ? 'active' : '' }}">
+                                        <li class="{{ Request::is('subcategories*') ? 'active' : '' }}">
                                             <a href="{{ route('subcategories.index') }}">
                                                 <img src="{{ asset('backend_admin/images/1851819_advertising_agent_banner_property_rent_icon.svg') }}"
                                                     alt="Google" width="20" height="20">SubCategory
                                             </a>
                                         </li>
-                                        <li class="{{ Request::is('categories*')  ? 'active' : '' }}">
+                                        <li class="{{ Request::is('categories*') ? 'active' : '' }}">
                                             <a href="{{ route('categories.index') }}">
                                                 <img src="{{ asset('backend_admin/images/category-svgrepo-com.svg') }}"
                                                     alt="Google" width="20" height="20">Thể loại
                                             </a>
                                         </li>
-                                           <li class="{{ Request::is('genre_posts*') ? 'active' : '' }}">
+                                        <li class="{{ Request::is('genre_posts*') ? 'active' : '' }}">
                                             <a href="{{ route('genre_posts.index') }}">
                                                 <img src="{{ asset('backend_admin/images/file-document-svgrepo-com.svg') }}"
                                                     alt="Google" width="20" height="20"> Thể loại bài viết
@@ -159,7 +160,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     </ul>
                                 </li>
 
-                                 <li class="treeview {{ Request::is('customer-manage*') ? 'active' : '' }}">
+                                <li class="treeview {{ Request::is('customer-manage*') ? 'active' : '' }}">
                                     <a href="{{ route('customer-manage.index') }}">
                                         <img src="{{ asset('backend_admin/images/candidate-for-elections-svgrepo-com.svg') }}"
                                             alt="Google" width="20" height="20">
@@ -167,8 +168,15 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
 
                                     </a>
                                 </li>
+                                <li class="treeview {{ Request::is('supports*') ? 'active' : '' }}">
+                                    <a href="{{ route('supports.index') }}">
+                                        <img src="{{ asset('backend_admin/images/support-svgrepo-com.svg') }}"
+                                            alt="Google" width="20" height="20"> Hỗ trợ
 
-                                  <li class="treeview {{ Request::is('product-manage*')|| Request::is('product-variant-manage*') ? 'active' : '' }}">
+                                    </a>
+                                </li>
+                                <li
+                                    class="treeview {{ Request::is('product-manage*') || Request::is('product-variant-manage*') ? 'active' : '' }}">
                                     <a href="{{ route('product-manage.index') }}">
                                         <img src="{{ asset('backend_admin/images/job-search-svgrepo-com.svg') }}"
                                             alt="Google" width="20" height="20">
@@ -430,4 +438,3 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
 </body>
 
 </html>
-

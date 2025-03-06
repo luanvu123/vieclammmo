@@ -1,133 +1,173 @@
 @extends('layout')
 @section('content')
 
-  <div class="alert-banner">
-            <p>Lưu ý đầu, có nghĩa là hàng đó đang có pass hệ thống check trùng của sàn, hãy nhanh chóng khiếu nại đơn hàng và báo cho bên mình nhé, vì sản phẩm bạn mua có thể đã từng bán cho người khác trên sàn.</p>
-        </div>
+    <div class="alert-banner">
+        <p>Lưu ý đầu, có nghĩa là hàng đó đang có pass hệ thống check trùng của sàn, hãy nhanh chóng khiếu nại đơn hàng và
+            báo cho bên mình nhé, vì sản phẩm bạn mua có thể đã từng bán cho người khác trên sàn.</p>
+    </div>
 
-        <div class="container category-page">
-            <div class="sidebar">
-                <div class="filter-section">
-                    <h3>Bộ lọc</h3>
+    <div class="container category-page">
+        <div class="sidebar">
+            <div class="filter-section">
+                <h3>Bộ lọc</h3>
+                <form action="{{ route('category.products', $category->slug) }}" method="GET" id="filter-form">
                     <div class="filter-group">
-                        <h4>Chọn 1 hoặc nhiều sản phẩm <i class="fas fa-chevron-down"></i></h4>
+                        <h4>Chọn 1 hoặc nhiều danh mục con <i class="fas fa-chevron-down"></i></h4>
                         <div class="filter-options">
-                            <label><input type="checkbox"> Dịch vụ Facebook</label>
-                            <label><input type="checkbox"> Dịch vụ Tiktok</label>
-                            <label><input type="checkbox"> Dịch vụ Google</label>
-                
+                            @foreach ($subcategories as $subcategory)
+                                <label>
+                                    <input type="checkbox" name="subcategories[]" value="{{ $subcategory->id }}"
+                                        {{ in_array($subcategory->id, $selectedSubcategories) ? 'checked' : '' }}>
+                                    {{ $subcategory->name }}
+                                </label>
+                            @endforeach
                         </div>
                     </div>
-                    <button class="search-btn">Tìm kiếm</button>
-                </div>
-            </div>
-
-            <div class="main-category-content">
-                <div class="category-header">
-                    <h2>Gian hàng tăng tương tác <span class="store-count">Tổng 1084 gian hàng</span></h2>
-                    <div class="category-tabs">
-                        <a href="#" class="active">Phổ biến</a>
-                        <a href="#">Giá tăng dần</a>
-                        <a href="#">Giá giảm dần</a>
-                    </div>
-                </div>
-
-                <div class="product-grid">
-                    <!-- Product Item 1 -->
-                    <div class="product-card">
-                        <div class="product-badge">
-                            <span class="service-badge">Dịch vụ</span>
-                        </div>
-                        <div class="product-img">
-                            <img src="images/telegram-group.jpg" alt="Telegram Group Members">
-                            <div class="price-tag">35 đ - 109 đ</div>
-                        </div>
-                        <div class="product-info">
-                            <div class="service-title">Telegram Group Members, Chanel Subs GIÁ RẺ ▶ BH 365 ngày</div>
-                            <div class="rating">
-                                <span class="stars">★★★★★</span>
-                                <span class="reviews">3 Reviews | Đơn hoàn thành: 92 | Khiếu nại: 0.0%</span>
-                            </div>
-                            <div class="seller">Người bán: <a href="#">hoangphithien</a></div>
-                            <div class="product-category">Sản phẩm: <a href="#">Dịch vụ Telegram</a></div>
-                            <div class="product-features">
-                                <p>◦ SIÊU TỐC - SIÊU RẺ - BẢO HÀNH UY TÍN 24/7</p>
-                                <p>◦ Kinh doanh: Members, Sub KHÔNG TUT Bảo hành 15 ngày ▶ Min 500 | Members, Sub KHÔNG TUT Bảo Hành 30 ngày ▶ Min 500 | Members, Sub KHÔNG TUT Bảo Hành 90 ngày ▶ Min 500 | Members, Sub KHÔNG TUT Bảo Hành 180 ngày ▶ Min 500 | Members, Sub KHÔNG TUT Bảo Hành 365 ngày ▶ Min 500</p>
-                            </div>
-                            <div class="action-button">
-                                <button class="buy-now">Tải trọ</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Item 2 -->
-                    <div class="product-card">
-                        <div class="product-badge">
-                            <span class="service-badge">Dịch vụ</span>
-                        </div>
-                        <div class="product-img">
-                            <img src="images/twitter-x.jpg" alt="Twitter X Buff">
-                        </div>
-                        <div class="product-info">
-                            <div class="service-title">Dịch Vụ Twttier X Buff Follow SIÊU RẺ</div>
-                            <div class="rating">
-                                <span class="stars">★★★★☆</span>
-                                <span class="reviews">484 Reviews | Đơn hoàn thành: 3144 | Khiếu nại: 0.0%</span>
-                            </div>
-                            <div class="seller">Người bán: <a href="#">0bietpass</a></div>
-                            <div class="product-category">Sản phẩm: <a href="#">Dịch vụ Twitter</a></div>
-                            <div class="product-features">
-                                <p>◦ Buff Follow - View - Giải Unlock SIÊU RẺ Twitter X</p>
-                                <p>◦ Kinh doanh: Combo 500 Follow (BH 30 ngày)</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Item 3 -->
-                    <div class="product-card">
-                        <div class="product-badge">
-                            <span class="service-badge">Dịch vụ</span>
-                        </div>
-                        <div class="product-img">
-                            <img src="images/telegram-premium.jpg" alt="Telegram Premium">
-                        </div>
-                        <div class="product-info">
-                            <div class="service-title">Nâng cấp Telegram Premium 3 tháng 6 tháng 12 tháng, Bảo hành FULL TIME</div>
-                            <div class="rating">
-                                <span class="stars">★★★★☆</span>
-                                <span class="reviews">209 Reviews | Đơn hoàn thành: 2009 | Khiếu nại: 0.0%</span>
-                            </div>
-                            <div class="seller">Người bán: <a href="#">anhhuy101</a></div>
-                            <div class="product-category">Sản phẩm: <a href="#">Dịch vụ Telegram</a></div>
-                            <div class="product-features">
-                                <p>◦ Dịch vụ Telegram Premium Chính Chủ</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Item 4 - TikTok Service -->
-                    <div class="product-card">
-                        <div class="product-badge">
-                            <span class="service-badge">Dịch vụ</span>
-                        </div>
-                        <div class="product-img">
-                            <img src="images/tiktok-service.jpg" alt="TikTok Service">
-                            <div class="price-tag">14 đ - 15.000 đ</div>
-                        </div>
-                        <div class="product-info">
-                            <div class="service-title">DỊCH VỤ TIKTOK GIÁ RẺ</div>
-                            <div class="product-category">Sản phẩm: <a href="#">Dịch vụ Tiktok</a></div>
-                            <div class="product-features">
-                                <p>◦ DỊCH VỤ TIKTOK GIÁ RẺ</p>
-                                <p>◦ Kinh doanh: FOLLOW TIKTOK Người Việt Lên Cực nhanh Có Bảo Hành | TYM VIDEOS Siêu Rẻ Siêu Tốc | VIEW TIKTOK Siêu Tốc Độ ComBo 10000 view | Tăng Coment TIKTOK siêu nhanh | MÁT LIVE combo 100 Mắt 60p MẮT VIỆT LOẠI XỊN LÊN NGAY</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination">
-                </div>
+                    <button type="submit" class="search-btn">Tìm kiếm</button>
+                    <a href="{{ route('category.products', $category->slug) }}" class="reset-btn">Đặt lại</a>
+                </form>
             </div>
         </div>
+
+        <div class="main-category-content">
+            <div class="category-header">
+                <h2>{{ $category->name }} <span class="store-count">Tổng {{ $totalProducts }} sản phẩm</span></h2>
+            </div>
+
+            <div class="product-grid" id="product-container">
+                @if ($products->count() > 0)
+                    @foreach ($products as $product)
+                        <div class="product-card">
+                            <div class="product-badge">
+                                <span class="service-badge">{{ $product->category->type ?? 'Sản phẩm' }}</span>
+                            </div>
+                            <div class="product-img">
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                            </div>
+                            <div class="product-info">
+                                <div class="service-title">{{ $product->name }}</div>
+                                @if ($product->productVariants->count() > 0)
+                                    {{ number_format($product->productVariants->min('price'), 0, ',', '.') }}đ -
+                                    {{ number_format($product->productVariants->max('price'), 0, ',', '.') }}đ
+                                @else
+                                    Chưa có giá
+                                @endif
+                                <div class="rating">
+                                    <span class="stars">
+                                        @for ($i = 0; $i < 5; $i++)
+                                            @if ($i < ($product->rating ?? 5))
+                                                ★
+                                            @else
+                                                ☆
+                                            @endif
+                                        @endfor
+                                    </span>
+                                    <span class="reviews">
+                                        {{ $product->reviews_count ?? 0 }} Reviews |
+                                        Đơn hoàn thành: {{ $product->completed_orders ?? 0 }} |
+                                        Khiếu nại: {{ $product->complaint_percentage ?? '0.0' }}%
+                                    </span>
+                                </div>
+                                <div class="seller">Người bán: <a
+                                        href="#">{{ $product->customer->name ?? 'Unknown' }}</a></div>
+                                <div class="product-category">Sản phẩm: <a
+                                        href="#">{{ $product->subcategory->name ?? $product->category->name }}</a>
+                                </div>
+                                <div class="product-features">
+                                    <p>{{ $product->short_description }}</p>
+                                </div>
+                                <div class="action-button">
+                                    <a href="{{ route('product.detail', $product->slug) }}" class="buy-now">Xem chi
+                                        tiết</a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="no-products">
+                        <p>Không tìm thấy sản phẩm nào phù hợp với bộ lọc.</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="pagination-container">
+                {{ $products->appends(request()->query())->links() }}
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function() {
+            // Xử lý khi form được submit
+            $('#filter-form').on('submit', function(e) {
+                e.preventDefault();
+
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = form.serialize();
+
+                // Hiển thị loading
+                $('#product-container').html('<div class="loading">Đang tải...</div>');
+
+                // Gửi AJAX request
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: formData,
+                    success: function(response) {
+                        // Cập nhật chỉ phần sản phẩm và phân trang từ response
+                        var newContent = $(response).find('#product-container').html();
+                        var newPagination = $(response).find('#pagination-container').html();
+                        var totalProducts = $(response).find('.store-count').html();
+
+                        $('#product-container').html(newContent);
+                        $('#pagination-container').html(newPagination);
+                        $('.store-count').html(totalProducts);
+
+                        // Cập nhật URL trình duyệt mà không cần tải lại trang
+                        window.history.pushState({}, '', url + '?' + formData);
+                    },
+                    error: function() {
+                        $('#product-container').html(
+                            '<div class="error">Đã xảy ra lỗi. Vui lòng thử lại.</div>');
+                    }
+                });
+            });
+
+            // Xử lý phân trang AJAX
+            $(document).on('click', '.pagination a', function(e) {
+                e.preventDefault();
+
+                var url = $(this).attr('href');
+
+                // Hiển thị loading
+                $('#product-container').html('<div class="loading">Đang tải...</div>');
+
+                // Gửi AJAX request
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(response) {
+                        var newContent = $(response).find('#product-container').html();
+                        var newPagination = $(response).find('#pagination-container').html();
+
+                        $('#product-container').html(newContent);
+                        $('#pagination-container').html(newPagination);
+
+                        // Cuộn lên đầu danh sách sản phẩm
+                        $('html, body').animate({
+                            scrollTop: $('.product-grid').offset().top - 20
+                        }, 500);
+
+                        // Cập nhật URL
+                        window.history.pushState({}, '', url);
+                    },
+                    error: function() {
+                        $('#product-container').html(
+                            '<div class="error">Đã xảy ra lỗi. Vui lòng thử lại.</div>');
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

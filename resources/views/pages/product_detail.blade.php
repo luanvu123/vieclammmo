@@ -375,61 +375,131 @@
         .review .rating {
             color: #ff9800;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal-content {
+            position: absolute;
+            background: white;
+            padding: 20px;
+            width: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 10px;
+        }
+.related-products {
+    display: flex;
+    overflow: hidden;
+}
+.related-product {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+}
+.related-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+        #description-site {
+            max-height: 300px;
+            /* Giới hạn chiều cao */
+            overflow-y: auto;
+            /* Thêm thanh cuộn nếu nội dung dài */
+            padding-right: 10px;
+            /* Giúp tránh che khuất nội dung */
+        }
     </style>
 
     <div class="detail-container">
         <!-- Product Banner -->
         <div class="product-banner">
             <div class="product-image">
-                <svg class="telegram-logo" viewBox="0 0 240 240" fill="white">
-                    <path d="M120,5 L8,115 L112,140 L80,235 L192,125 L88,100z" />
-                </svg>
+                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
             </div>
 
             <div class="product-info">
                 <span class="tag-label">Sản phẩm</span>
-                <h1 class="product-title">Telegram 1DATA/SESSION ngăm trải, spam khỏe</h1>
+                <h1 class="product-title">{{ $product->name }}</h1>
 
                 <div class="rating">
                     ★★★★★ <span style="color: #666; font-size: 14px;">(4.8/5)</span>
                 </div>
 
                 <div class="description">
-                    MÓ TẢ GIAN HÀNG TRƯỚC KHI MUA, SI GỞ SẼ KHÔNG BẢO HÀNH VỚI KHÁCH HÀNG LÀM SAI NHÉ
+                    {{ $product->short_description }}
                 </div>
 
                 <div class="seller-info">
                     <span>Người bán: </span>
-                    <a href="#">lamvinaki</a>
+                    <a href="javascript:void(0);" onclick="showSellerInfo('{{ $product->customer->id }}')">
+                        {{ $product->customer->name }}
+                    </a>
                     <span>|</span>
+
                     <span>Online:</span>
-                    <span class="status">Có sẵn</span>
+                    <span class="status">
+                        {{ \Carbon\Carbon::parse($product->customer->last_active_at)->diffForHumans() }}
+                    </span>
                 </div>
+
+
+
+
 
                 <div class="product-category">
                     <span>Danh mục: </span>
-                    <a href="#" class="category-link">Tài khoản Telegram</a>
+                    <a href="#" class="category-link">{{ $product->category->name }}</a>
                 </div>
 
-                <div class="product-code">
-                    <span>Kho: 64</span>
-                </div>
-                <div class="price">35.000 VNĐ</div>
-                <div class="product-action">
-                    <label class="radio-option">
-                        <input type="radio" name="tddata_option" value="30" checked> TDDATA 30 ngày hoặc 5 lần gửi về
-                        tất cả các thiết bị
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="tddata_option" value="10"> TDDATA 10 ngày hoặc 3 lần gửi về tất cả
-                        các thiết bị
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="tddata_option" value="50"> TDDATA 50 ngày
-                    </label>
+                <div class="product-stock">
+                    <span>Kho: <span id="stock-quantity">
+                            {{ $product->productVariants->first()->stocks->sum('quantity_success') ?? 0 }}
+                        </span></span>
                 </div>
 
+                <div class="price">
+                    <span id="product-price">
+                        {{ number_format($product->productVariants->first()->price ?? 0, 0, ',', '.') }} VNĐ
+                    </span>
+                </div>
 
+                <!-- Hiển thị danh sách biến thể -->
+                @if ($product->productVariants->count() > 0)
+                    <div class="product-action">
+                        @foreach ($product->productVariants as $variant)
+                            <label class="radio-option">
+                                <input type="radio" name="product_variant" value="{{ $variant->id }}"
+                                    data-price="{{ $variant->price }}"
+                                    data-stock="{{ $variant->stocks->sum('quantity_success') }}"
+                                    {{ $loop->first ? 'checked' : '' }}>
+                                {{ $variant->name }} - {{ number_format($variant->price, 0, ',', '.') }} VNĐ
+                                @if ($variant->stocks->sum('quantity_success') > 0)
+                                    (Còn hàng: {{ $variant->stocks->sum('quantity_success') }})
+                                @else
+                                    (Hết hàng)
+                                @endif
+                            </label>
+                        @endforeach
+                    </div>
+                @endif
 
 
                 @if (Auth::guard('customer')->check())
@@ -443,7 +513,6 @@
                     </div>
                     <a href="{{ route('login') }}" class="buy-button">Đăng nhập</a>
                 @endif
-
             </div>
         </div>
 
@@ -454,17 +523,14 @@
             <button class="tab" data-tab="api">API</button>
         </div>
 
-        <!-- Tab Content Sections -->
+        <!-- Nội dung Tabs -->
         <div class="tab-content active" id="description-site">
             <h3>Thông tin sản phẩm</h3>
-            <p>Chi tiết về sản phẩm...</p>
+            <p>{!! $product->description !!}</p>
         </div>
 
         <div class="tab-content" id="reviews">
             <h3>Đánh giá từ khách hàng</h3>
-            <div id="reviews-container">
-                <!-- Đánh giá sẽ được hiển thị tại đây -->
-            </div>
         </div>
 
         <div class="tab-content" id="api">
@@ -472,94 +538,64 @@
             <div class="api-info">Vui lòng đăng nhập để mua bằng API.</div>
             <button class="action-button">Đăng nhập</button>
         </div>
+       <div class="related-title">
+    <h3>Sản phẩm tương tự</h3>
+</div>
 
+<div class="related-products slider">
+    @foreach ($relatedProducts as $product)
+    <div class="product-card">
+        <div class="product-badge">
+            <span class="service-badge">{{ $product->category->type ?? 'Sản phẩm' }}</span>
+        </div>
+        <div class="product-img">
+            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+        </div>
+        <div class="product-info">
+            <div class="service-title">{{ $product->name }}</div>
 
-        <!-- Related Products -->
-        <div class="related-title">
-            <h3>Sản phẩm tương tự</h3>
-            <div class="navigation">
-                <div class="nav-button">◀</div>
-                <div class="nav-button">▶</div>
+            @php
+                $minPrice = $product->productVariants->min('price') ?? 0;
+                $maxPrice = $product->productVariants->max('price') ?? 0;
+            @endphp
+
+            @if ($minPrice > 0 && $maxPrice > 0)
+                {{ number_format($minPrice, 0, ',', '.') }}đ - {{ number_format($maxPrice, 0, ',', '.') }}đ
+            @else
+                Chưa có giá
+            @endif
+
+            <div class="rating">
+                <span class="stars">
+                    @for ($i = 0; $i < 5; $i++)
+                        @if ($i < ($product->rating ?? 5))
+                            ★
+                        @else
+                            ☆
+                        @endif
+                    @endfor
+                </span>
+                <span class="reviews">
+                    {{ $product->reviews_count ?? 0 }} Reviews |
+                    Đơn hoàn thành: {{ $product->completed_orders ?? 0 }} |
+                    Khiếu nại: {{ $product->complaint_percentage ?? '0.0' }}%
+                </span>
+            </div>
+
+            <div class="seller">Người bán: <a href="#">{{ $product->customer->name ?? 'Unknown' }}</a></div>
+            <div class="product-category">Sản phẩm: <a href="#">{{ $product->subcategory->name ?? $product->category->name }}</a></div>
+            <div class="product-features">
+                <p>{{ $product->short_description }}</p>
+            </div>
+            <div class="action-button">
+                <a href="{{ route('product.detail', $product->slug) }}" class="buy-now">Xem chi tiết</a>
             </div>
         </div>
+    </div>
+@endforeach
 
-        <div class="related-products">
-            <!-- TikTok Product -->
-            <div class="related-product">
-                <div class="related-image">
-                    <img src="/api/placeholder/200/150" alt="TikTok"
-                        style="background-color: black; width: 100%; height: 100%;" />
-                </div>
-                <div class="related-info">
-                    <div class="related-title-text">Tài khoản QC và mô Ads TikTok cực khỏe đã lên ID</div>
-                    <div class="related-rating">★★★★☆ (4.7/5)</div>
-                    <div class="related-seller">Sản phẩm: <a href="#" class="category-link">Tài khoản</a></div>
-                    <div class="related-seller">Người bán: <a href="#">lamvinaki</a></div>
-                    <div class="related-price">12.000 đ - 1.000.000 đ</div>
-                </div>
-            </div>
+</div>
 
-            <!-- Facebook Product -->
-            <div class="related-product">
-                <div class="related-image">
-                    <img src="/api/placeholder/200/150" alt="Facebook"
-                        style="background-color: #3b5998; width: 100%; height: 100%;" />
-                </div>
-                <div class="related-info">
-                    <div class="related-title-text">FB NET | ID LUCK | PIN | 1 ID 150.000 PT 2019-2024</div>
-                    <div class="related-rating">★★★★☆ (4.5/5)</div>
-                    <div class="related-seller">Sản phẩm: <a href="#" class="category-link">Tài khoản FB</a></div>
-                    <div class="related-seller">Người bán: <a href="#">lamvinaki</a></div>
-                    <div class="related-price">170.000 đ - 255.000 đ</div>
-                </div>
-            </div>
-
-            <!-- Spotify Product -->
-            <div class="related-product">
-                <div class="related-image">
-                    <img src="/api/placeholder/200/150" alt="Spotify"
-                        style="background-color: #1ED760; width: 100%; height: 100%;" />
-                </div>
-                <div class="related-info">
-                    <div class="related-title-text">SPOTIFY PREMIUM 6 THÁNG + Ngẫu nhiên đến 1 năm</div>
-                    <div class="related-rating">★★★★★ (5/5)</div>
-                    <div class="related-seller">Sản phẩm: <a href="#" class="category-link">Tài khoản Spotify</a>
-                    </div>
-                    <div class="related-seller">Người bán: <a href="#">lamvinaki</a></div>
-                    <div class="related-price">100.000 đ - 190.000 đ</div>
-                </div>
-            </div>
-
-            <!-- Meta/Facebook Product -->
-            <div class="related-product">
-                <div class="related-image">
-                    <img src="/api/placeholder/200/150" alt="Meta"
-                        style="background-color: #4267B2; width: 100%; height: 100%;" />
-                </div>
-                <div class="related-info">
-                    <div class="related-title-text">Clone Facebook 2023 Việt Bật BM ẩn MAILFB</div>
-                    <div class="related-rating">★★★★☆ (4.6/5)</div>
-                    <div class="related-seller">Sản phẩm: <a href="#" class="category-link">Tài khoản FB</a></div>
-                    <div class="related-seller">Người bán: <a href="#">lamvinaki</a></div>
-                    <div class="related-price">10 đ - 35.000 đ</div>
-                </div>
-            </div>
-
-            <!-- Fanpage Product -->
-            <div class="related-product">
-                <div class="related-image">
-                    <img src="/api/placeholder/200/150" alt="Fanpage"
-                        style="background-color: #4267B2; width: 100%; height: 100%;" />
-                </div>
-                <div class="related-info">
-                    <div class="related-title-text">Page Full CS.98->100k Followers/Người Việt</div>
-                    <div class="related-rating">★★★★★ (5/5)</div>
-                    <div class="related-seller">Sản phẩm: <a href="#" class="category-link">Tài khoản FB</a></div>
-                    <div class="related-seller">Người bán: <a href="#">lamvinaki</a></div>
-                    <div class="related-price">700.000 đ - 2.400.000 đ</div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -610,4 +646,16 @@
             }
         });
     </script>
+    <script>
+        document.querySelectorAll("input[name='product_variant']").forEach(input => {
+            input.addEventListener("change", function() {
+                document.getElementById("product-price").innerText =
+                    new Intl.NumberFormat('vi-VN').format(this.dataset.price) + " VNĐ";
+
+                document.getElementById("stock-quantity").innerText = this.dataset.stock;
+            });
+        });
+    </script>
+
+
 @endsection

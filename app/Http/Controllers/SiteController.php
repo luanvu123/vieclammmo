@@ -26,21 +26,23 @@ class SiteController extends Controller
         return view('pages.home', compact('productCategories', 'serviceCategories'));
     }
     public function showProductDetail($slug)
-{
-    // Tìm sản phẩm theo slug
-    $product = Product::where('slug', $slug)
-        ->with(['category', 'subcategory', 'productVariants.stocks'])
-        ->firstOrFail();
+    {
+        // Tìm sản phẩm theo slug
+        $product = Product::where('slug', $slug)
+            ->with(['category', 'subcategory', 'productVariants.stocks'])
+            ->firstOrFail();
 
-    // Lấy các sản phẩm liên quan cùng danh mục
-    $relatedProducts = Product::where('category_id', $product->category_id)
-        ->where('id', '!=', $product->id)
-        ->with('productVariants')
-        ->take(4)
-        ->get();
+        // Lấy sản phẩm tương tự cùng customer_id, trừ sản phẩm hiện tại
+        $relatedProducts = Product::where('customer_id', $product->customer_id)
+            ->where('id', '!=', $product->id)
+            ->with('productVariants')
+            ->inRandomOrder()
+            ->take(10) // Lấy nhiều hơn để hiển thị slider
+            ->get();
 
-    return view('pages.product_detail', compact('product', 'relatedProducts'));
-}
+        return view('pages.product_detail', compact('product', 'relatedProducts'));
+    }
+
 
     public function showProductsByCategory($slug, Request $request)
     {
@@ -82,7 +84,7 @@ class SiteController extends Controller
         return view('pages.notice');
     }
 
- public function storeSupport(Request $request)
+    public function storeSupport(Request $request)
     {
         $request->validate([
             'email' => 'required|email',

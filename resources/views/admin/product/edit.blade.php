@@ -79,7 +79,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Mô tả</label>
-                            <textarea class="form-control" rows="3" readonly>{{ $product->description }}</textarea>
+                            <textarea class="form-control" rows="3" id="summary4" readonly>{!! $product->description !!}</textarea>
                         </div>
                     </div>
 

@@ -44,7 +44,17 @@ Route::get('/bai-viet', [SiteController::class, 'post'])->name('post.site');
 Route::get('/bai-viet/{slug}', [SiteController::class, 'postDetail'])->name('post.detail');
 Route::get('/FAQs', [SiteController::class, 'faqs'])->name('faqs');
 Route::get('/qui-dinh', [SiteController::class, 'notice'])->name('notice');
-
+Route::get('/seller/{id}', function ($id) {
+    $customer = Customer::findOrFail($id);
+    return response()->json([
+        'name' => $customer->name,
+        'email' => $customer->email,
+        'phone' => $customer->phone,
+        'avatar' => asset($customer->avatar),
+        'url_facebook' => $customer->url_facebook,
+        'isOnline' => $customer->isOnline,
+    ]);
+});
 
 Auth::routes();
 

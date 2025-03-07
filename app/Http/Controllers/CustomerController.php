@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Message;
 use App\Models\Order;
 use App\Models\Post;
 use App\Models\Product;
@@ -19,10 +20,44 @@ class CustomerController extends Controller
     {
         $this->middleware(['customer', '2fa']);
     }
-    public function message()
+    public function message(Request $request)
     {
-        return view('message.index');
+        $customer = Auth::guard('customer')->user();
+        $chatTo = Customer::where('name', $request->query('chat_to'))->first();
+
+        if (!$chatTo) {
+            return abort(404, 'Người dùng không tồn tại');
+        }
+
+        // Lấy tin nhắn giữa 2 người
+        $messages = Message::where(function ($query) use ($customer, $chatTo) {
+            $query->where('sender_id', $customer->id)->where('receiver_id', $chatTo->id);
+        })->orWhere(function ($query) use ($customer, $chatTo) {
+            $query->where('sender_id', $chatTo->id)->where('receiver_id', $customer->id);
+        })->orderBy('created_at', 'asc')->get();
+
+        return view('message.index', compact('customer', 'chatTo', 'messages'));
     }
+
+    public function sendMessage(Request $request)
+    {
+        $customer = Auth::guard('customer')->user();
+
+        $request->validate([
+            'receiver_id' => 'required|exists:customers,id',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        Message::create([
+            'sender_id' => $customer->id,
+            'receiver_id' => $request->receiver_id,
+            'message' => $request->message,
+            'status' => 'sent',
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
     public function dashboard()
     {
         return view('admin_customer.index');

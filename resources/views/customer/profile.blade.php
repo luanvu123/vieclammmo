@@ -92,8 +92,8 @@
                     <p class="text-muted small">Online {{ $lastActiveTime ?? 'hiện tại' }}</p>
 
                     <div class="d-flex justify-content-center mt-3">
-                       
-                        <a href="#" class="btn btn-outline-primary">Nhắn tin</a>
+
+                      <a href="{{ url('/chat-bot') }}?chat_to={{ $customer->name }}" class="btn btn-outline-primary">Nhắn tin</a>
                     </div>
                 </div>
             </div>

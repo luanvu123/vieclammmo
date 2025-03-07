@@ -76,6 +76,7 @@ Route::get('/get-subcategories/{category_id}', function ($category_id) {
 
 
 Route::middleware('customer', '2fa')->group(function () {
+     Route::get('/chat-bot', [CustomerController::class, 'message'])->name('message.index');
     Route::resource('products', ProductController::class);
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
     Route::resource('product_variants', ProductVariantController::class);

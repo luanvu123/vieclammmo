@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Order;
+use App\Models\Post;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -12,9 +15,13 @@ use PragmaRX\Google2FA\Google2FA;
 
 class CustomerController extends Controller
 {
-     public function __construct()
+    public function __construct()
     {
         $this->middleware(['customer', '2fa']);
+    }
+    public function message()
+    {
+        return view('message.index');
     }
     public function dashboard()
     {
@@ -30,10 +37,37 @@ class CustomerController extends Controller
     public function profile()
     {
         $customer = Auth::guard('customer')->user();
+        // Đếm số sản phẩm đã mua
+        // Đếm số sản phẩm đã bán (các sản phẩm có đơn hàng)
+        $productsSold = Product::where('customer_id', $customer->id)
+            ->whereHas('productVariants.orders')
+            ->count();
+
+        // Đếm số gian hàng đã bán (số sản phẩm của khách có ít nhất 1 đơn hàng)
+        $storesCount = Product::where('customer_id', $customer->id)
+            ->whereHas('productVariants.orders')
+            ->distinct()
+            ->count();
+
+        // Đếm số gian hàng đã mua (dựa trên số lượng đơn hàng của khách)
+        $productsBought = Order::where('customer_id', $customer->id)->count();
+
+        // Đếm số bài viết
+        $postsCount = Post::where('customer_id', $customer->id)->count();
+
+        // Kiểm tra trạng thái online
+        $isOnline = $customer->last_active_at && $customer->last_active_at->diffInHours(now()) <= 8;
+        $lastActiveTime = $isOnline ? $customer->last_active_at->diffInHours(now()) . ' giờ trước' : null;
 
         $loginHistories = $customer->loginHistories()->orderBy('login_time', 'desc')->take(5)->get();
 
-        return view('pages.profile', compact('customer', 'loginHistories'));
+        return view('pages.profile', compact('customer', 'loginHistories',
+        'productsSold',
+        'storesCount',
+        'productsBought',
+        'postsCount',
+        'isOnline',
+        'lastActiveTime'));
     }
     public function profileEdit()
     {

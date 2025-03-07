@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TapHoa MMO - Sàn thương mại điện tử</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<!-- Slick Slider CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css"/>
+    <!-- Slick Slider CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css" />
 
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -33,7 +33,7 @@
         </div>
 
         <div class="main-nav container">
-            <a href="{{route('/')}}" class="logo">
+            <a href="{{ route('/') }}" class="logo">
                 <h1>TapHoa<span class="highlight">MMO</span></h1>
             </a>
 
@@ -44,7 +44,9 @@
                         <ul class="submenu">
                             @if (isset($layout_categories['Sản phẩm']))
                                 @foreach ($layout_categories['Sản phẩm'] as $category)
-                               <li><a href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a></li>
+                                    <li><a
+                                            href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a>
+                                    </li>
                                 @endforeach
                             @else
                                 <li><a href="#">Không có sản phẩm</a></li>
@@ -57,7 +59,9 @@
                         <ul class="submenu">
                             @if (isset($layout_categories['Dịch vụ']))
                                 @foreach ($layout_categories['Dịch vụ'] as $category)
-                                    <li><a href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a></li>
+                                    <li><a
+                                            href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a>
+                                    </li>
                                 @endforeach
                             @else
                                 <li><a href="#">Không có dịch vụ</a></li>
@@ -68,63 +72,66 @@
                     <li><a href="{{ route('support.site') }}">Hỗ trợ</a></li>
                     <li><a href="{{ route('post.site') }}">Chia sẻ</a></li>
                     <li><a href="https://2fa.live/">Công cụ</a></li>
-                    <li><a href="{{ route('faqs')}}">FAQs</a></li>
-                    <li><a href="{{route('checkout')}}">Nạp tiền</a></li>
+                    <li><a href="{{ route('faqs') }}">FAQs</a></li>
+                    <li><a href="{{ route('checkout') }}">Nạp tiền</a></li>
                 </ul>
             </nav>
 
 
-           @if(Auth::guard('customer')->check())
-    <!-- Nếu đã đăng nhập -->
-    <div class="user-actions">
-        <div class="balance">56.407 VND</div>
-        <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i><span class="badge">2</span></a>
-        <a href="#" class="notifications-icon"><i class="fas fa-bell"></i><span class="badge">0</span></a>
-        <button class="mobile-menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-    <div class="user-menu">
-        <div class="user-icon" onclick="toggleDropdown()">
-            <div class="user-avatar">
-                <img src="{{ asset('img/user-icon.png') }}" alt="User" />
-            </div>
-        </div>
-        <div class="dropdown-content" id="userDropdown">
-            <div class="user-icon">
-                <div class="user-avatar">
-                    <img src="{{ asset('img/user-icon.png') }}" alt="User" />
+            @if (Auth::guard('customer')->check())
+                <!-- Nếu đã đăng nhập -->
+                <div class="user-actions">
+                    <div class="balance">
+                        {{ number_format(Auth::guard('customer')->user()->Balance, 0, ',', '.') }} VND
+                    </div>
+                    <a href="{{route('message.index')}}" class="notifications-icon"><i class="fas fa-message"></i><span
+                            class="badge">0</span></a>
+                    <button class="mobile-menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
                 </div>
-                <span>{{ Auth::guard('customer')->user()->name }}</span>
-            </div>
-            <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
-            <a href="#">Đơn hàng đã mua</a>
-            <a href="#">Gian hàng yêu thích</a>
-            <a href="#">Lịch sử thanh toán</a>
-            <a href="#">Reseller</a>
-            <a href="{{ route('posts.create') }}">Quản lý nội dung</a>
-            <a href="#">Đổi mật khẩu</a>
-            <div class="divider"></div>
-            <a href="{{ route('dashboard.site') }}">Quản lý cửa hàng</a>
-            <div class="divider"></div>
-            <a href="#"
-               onclick="event.preventDefault();
+                <div class="user-menu">
+                    <div class="user-icon" onclick="toggleDropdown()">
+                        <div class="user-avatar">
+                            <img src="{{ asset('img/user-icon.png') }}" alt="User" />
+                        </div>
+                    </div>
+                    <div class="dropdown-content" id="userDropdown">
+                        <div class="user-icon">
+                            <div class="user-avatar">
+                                <img src="{{ asset('img/user-icon.png') }}" alt="User" />
+                            </div>
+                            <span>{{ Auth::guard('customer')->user()->name }}</span>
+                        </div>
+                        <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
+                        <a href="#">Đơn hàng đã mua</a>
+                        <a href="#">Gian hàng yêu thích</a>
+                        <a href="#">Lịch sử thanh toán</a>
+                        <a href="#">Reseller</a>
+                        <a href="{{ route('posts.create') }}">Quản lý nội dung</a>
+                        <a href="#">Đổi mật khẩu</a>
+                        <div class="divider"></div>
+                        <a href="{{ route('dashboard.site') }}">Quản lý cửa hàng</a>
+                        <div class="divider"></div>
+                        <a href="#"
+                            onclick="event.preventDefault();
                         if (confirm('Bạn có muốn đăng xuất?')) {
                             document.getElementById('logout-form').submit();
                         }">
-                Thoát
-            </a>
-            <form id="logout-form" action="{{ route('logout.customer') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
-        </div>
-    </div>
-@else
-    <!-- Nếu chưa đăng nhập -->
-    <a href="{{ route('login.customer') }}" class="btn btn-success" style="color: white;">
-        Đăng nhập
-    </a>
-@endif
+                            Thoát
+                        </a>
+                        <form id="logout-form" action="{{ route('logout.customer') }}" method="POST"
+                            style="display: none;">
+                            @csrf
+                        </form>
+                    </div>
+                </div>
+            @else
+                <!-- Nếu chưa đăng nhập -->
+                <a href="{{ route('login.customer') }}" class="btn btn-success" style="color: white;">
+                    Đăng nhập
+                </a>
+            @endif
 
 
 
@@ -145,7 +152,8 @@
                 <ul>
                     <li><i class="fab fa-facebook"></i> <a href="#">Tạp hóa MMO</a></li>
                     <li><i class="fas fa-comment"></i> <a href="#">Chat với hỗ trợ viên</a></li>
-                    <li><i class="fas fa-envelope"></i> <a href="mailto:support@taphoammo.net">support@taphoammo.net</a>
+                    <li><i class="fas fa-envelope"></i> <a
+                            href="mailto:support@taphoammo.net">support@taphoammo.net</a>
                     </li>
                     <li><i class="far fa-clock"></i> Mon-Sat 08:00am - 10:00pm</li>
                 </ul>
@@ -154,7 +162,8 @@
             <div class="footer-section">
                 <h3>Thông tin</h3>
                 <ul>
-                    <li><a href="#">Mọi ứng dụng nhắm kết nối, trao đổi, mua trong cộng đồng kiếm tiền online.</a>
+                    <li><a href="#">Mọi ứng dụng nhắm kết nối, trao đổi, mua trong cộng đồng kiếm tiền
+                            online.</a>
                     </li>
                     <li><a href="#">Thanh toán tự động, nhận hàng ngay tức thì.</a></li>
                     <li><a href="#">Câu hỏi thường gặp</a></li>
@@ -280,53 +289,52 @@
             $('#user-table').DataTable();
         });
     </script>
-  <script src="{{ asset('backend_admin/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('backend_admin/ckeditor/ckeditor.js') }}"></script>
     <script>
         CKEDITOR.replace('description');
-
     </script>
 
 
 
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css" />
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css" />
 
-<!-- Thêm jQuery (bắt buộc) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Thêm jQuery (bắt buộc) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Thêm JS của Slick -->
-<script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
+    <!-- Thêm JS của Slick -->
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
 
-<script>
-    $(document).ready(function(){
-        $('.product-slides').slick({
-            slidesToShow: 3,  // Hiển thị 3 sản phẩm cùng lúc
-            slidesToScroll: 3, // Mỗi lần lướt sẽ cuộn 3 sản phẩm
-            infinite: true,
-            dots: true,
-            arrows: true,
-            prevArrow: $('.carousel-nav.prev'),
-            nextArrow: $('.carousel-nav.next'),
-            responsive: [
-                {
-                    breakpoint: 1024,
-                    settings: {
-                        slidesToShow: 2,
-                        slidesToScroll: 2
+    <script>
+        $(document).ready(function() {
+            $('.product-slides').slick({
+                slidesToShow: 3, // Hiển thị 3 sản phẩm cùng lúc
+                slidesToScroll: 3, // Mỗi lần lướt sẽ cuộn 3 sản phẩm
+                infinite: true,
+                dots: true,
+                arrows: true,
+                prevArrow: $('.carousel-nav.prev'),
+                nextArrow: $('.carousel-nav.next'),
+                responsive: [{
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 2,
+                            slidesToScroll: 2
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 1,
+                            slidesToScroll: 1
+                        }
                     }
-                },
-                {
-                    breakpoint: 768,
-                    settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1
-                    }
-                }
-            ]
+                ]
+            });
         });
-    });
-</script>
-<script>
+    </script>
+    <script>
         $(document).ready(function() {
             $('.slider').slick({
                 slidesToShow: 4, // Số sản phẩm hiển thị cùng lúc

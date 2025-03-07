@@ -528,7 +528,7 @@
                     <div class="delivery-info">
                         Vui lòng đăng nhập để mua hàng từ shop.
                     </div>
-                    <a href="{{ route('login') }}" class="buy-button">Đăng nhập</a>
+                    <a href="{{ route('login.customer') }}" class="buy-button">Đăng nhập</a>
                 @endif
 
             </div>

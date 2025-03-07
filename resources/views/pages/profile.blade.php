@@ -14,7 +14,8 @@
 
             <div class="profile-field">
                 <div class="field-label">Số dư</div>
-                <div class="field-value">{{ $customer->Balance }} VND</div>
+                <div class="field-value">{{ number_format($customer->Balance, 0, ',', '.') }} VND</div>
+
             </div>
 
             <div class="profile-field">
@@ -24,22 +25,22 @@
 
             <div class="profile-field">
                 <div class="field-label">Đã mua</div>
-                <div class="field-value">0 sản phẩm</div>
+                <div class="field-value">{{ $productsBought }} sản phẩm</div>
             </div>
 
             <div class="profile-field">
                 <div class="field-label">Số gian hàng</div>
-                <div class="field-value">0 gian hàng</div>
+                <div class="field-value">{{ $storesCount }} gian hàng</div>
             </div>
 
             <div class="profile-field">
                 <div class="field-label">Đã bán</div>
-                <div class="field-value">0 sản phẩm</div>
+                <div class="field-value">{{ $productsSold }} sản phẩm</div>
             </div>
 
             <div class="profile-field">
                 <div class="field-label">Số bài viết</div>
-                <div class="field-value green-text">0 bài viết</div>
+                <div class="field-value green-text">{{ $postsCount }} bài viết</div>
             </div>
 
             <div class="profile-field">
@@ -65,11 +66,10 @@
 
             <div class="profile-field">
                 <div class="field-label">Trạng thái</div>
-                <div class="field-value {{ $customer->isOnline ? 'green-text' : 'red-text' }}">
-                    {{ $customer->isOnline ? 'Online' : 'Offline' }}
+                <div class="field-value {{ $isOnline ? 'green-text' : 'red-text' }}">
+                    {{ $isOnline ? 'Online' : 'Offline' }}
                 </div>
             </div>
-
 
             <div class="profile-field">
                 <div class="field-label">Định danh eKYC</div>
@@ -92,7 +92,7 @@
                 <img src="{{ $customer->avatar ? asset('storage/' . $customer->avatar) : asset('img/user-icon.png') }}"
                     alt="User Avatar" class="avatar-image">
                 <div class="profile-username">{{ $customer->email }}</div>
-                <div class="status-badge">{{ $customer->isOnline ? 'Online' : 'Offline' }}</div>
+                <div class="status-badge">{{ $isOnline ? 'Online' : 'Offline' }}</div>
                 <div class="status-badge" style="background: #4CAF50">Gian hàng</div>
             </div>
 

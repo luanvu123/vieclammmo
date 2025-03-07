@@ -6,7 +6,6 @@
             <h2>Tin nhắn</h2>
             <p>Quản lý tin nhắn và hỗ trợ của bạn</p>
         </div>
-
         <div class="message-content">
             <div class="message-sidebar">
                 <div class="message-search">
@@ -15,21 +14,32 @@
                 </div>
                 <div class="conversation-list">
                     <!-- Danh sách các cuộc trò chuyện -->
-                    <div class="conversation-item active">
-                        <div class="avatar">
-                            <img src="{{ asset('img/user-icon.png') }}" alt="User">
-                        </div>
-                        <div class="conversation-info">
-                            <div class="conversation-header">
-                                <h4>chuyensitemailus</h4>
-                                <span class="date">10/11/2024</span>
+                    @foreach ($conversations as $conversation)
+                        @php
+                            $otherUser =
+                                $conversation->sender_id == $customer->id
+                                    ? $conversation->receiver
+                                    : $conversation->sender;
+                        @endphp
+                        <div class="conversation-item @if (request('chat_to') == $otherUser->name) active @endif"
+                            data-user-id="{{ $otherUser->id }}" data-user-name="{{ $otherUser->name }}">
+                            <div class="avatar">
+                                <img src="{{ asset('img/user-icon.png') }}" alt="User">
                             </div>
-                            <p class="preview">Đơn hàng khiếu nại: TNMYHSM8WD đã...</p>
+                            <div class="conversation-info">
+                                <div class="conversation-header">
+                                    <h4>{{ $otherUser->name }}</h4>
+                                    <span class="date">{{ $conversation->created_at->format('d/m/Y') }}</span>
+                                </div>
+                                <p class="preview">{{ \Str::limit($conversation->message, 30) }}</p>
+                            </div>
+                            @if ($conversation->status == 'sent' && $conversation->receiver_id == $customer->id)
+                                <div class="conversation-status">
+                                    <span class="unread-badge">1</span>
+                                </div>
+                            @endif
                         </div>
-                        <div class="conversation-status">
-                            <span class="unread-badge">1</span>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -41,8 +51,8 @@
                                 <img src="{{ asset('img/user-icon.png') }}" alt="User">
                             </div>
                             <div class="user-details">
-                                <h3>samir_43ah9q</h3>
-                                <span class="status online">Online 59 ngày trước</span>
+                                <h3 id="chat-recipient-name">{{ request('chat_to') ?? 'Chọn người để nhắn tin' }}</h3>
+                                <span class="status online">Online</span>
                             </div>
                         </div>
                         <div class="chat-actions">
@@ -51,104 +61,38 @@
                         </div>
                     </div>
 
-                    <div class="chat-messages">
-                        <!-- Tin nhắn từ người dùng -->
-                        <div class="message-row user-message">
-                            <div class="avatar">
-                                <img src="{{ asset('img/user-icon.png') }}" alt="User">
-                            </div>
-                            <div class="message-content">
-                                <div class="message-bubble">
-                                    <p>nó xoá mail rồi shop ơi</p>
-                                </div>
-                                <div class="message-info">
-                                    <span class="time">16:10 - 06/11</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tin nhắn từ shop -->
-                        <div class="message-row shop-message">
-                            <div class="message-content">
-                                <div class="message-info">
-                                    <span class="time">16:10 - 06/11</span>
-                                </div>
-                                <div class="message-bubble">
-                                    <p>Nó xóa mail luôn rồi</p>
-                                </div>
-
-                            </div>
-                            <div class="avatar">
-                                <img src="{{ asset('img/user-icon.png') }}" alt="Shop">
-                            </div>
-
-                        </div>
-
-                        <!-- Tin nhắn từ người dùng -->
-                        <div class="message-row user-message">
-                            <div class="avatar">
-                                <img src="{{ asset('img/user-icon.png') }}" alt="User">
-                            </div>
-                            <div class="message-content">
-                                <div class="message-bubble">
-                                    <p>Đổi bằng cách nào ?</p>
-                                </div>
-                                <div class="message-info">
-                                    <span class="time">16:10 - 06/11</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Tin nhắn từ shop -->
-                        <div class="message-row shop-message">
-                            <div class="message-content">
-                                <div class="message-info">
-                                    <span class="time">18:19 - 06/11</span>
-                                </div>
-                                <div class="message-bubble alert-message">
-                                    <p>QUÊN MẬT KHẨU</p>
-                                </div>
-
-                            </div>
-                            <div class="avatar">
-                                <img src="{{ asset('img/user-icon.png') }}" alt="Shop">
-                            </div>
-
-                        </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Tin nhắn sẽ được tải AJAX khi chọn người dùng -->
                     </div>
-                    <div id="filePreview"></div>
+
+                    <div id="filePreview" class="file-preview"></div>
+
                     <div class="chat-input">
-                        <div class="input-actions">
-                            <button class="attachment-btn"><i class="fas fa-paperclip"></i></button>
-                            <button class="emoji-btn"><i class="far fa-smile"></i></button>
-                        </div>
-                        <input type="file" id="fileInput" accept="image/*, .pdf, .doc, .docx, .xlsx"
-                            style="display: none;">
-
-                        <!-- Hiển thị file đã chọn -->
-
-                        <input type="text" id="messageInput" placeholder="Type a message">
-                        <button class="send-btn"><i class="fas fa-paper-plane"></i></button>
-                        <!-- Input file ẩn -->
-
-                        <!-- Emoji Picker -->
-                        <!-- Emoji Picker -->
-                        <div class="emoji-picker">
-                            <div class="emoji-list">
-                                <span>😀</span> <span>😃</span> <span>😄</span> <span>😁</span> <span>😆</span>
-                                <span>😅</span>
-                                <span>😂</span> <span>🤣</span> <span>😊</span> <span>😇</span> <span>🙂</span>
-                                <span>🙃</span>
-                                <span>😉</span> <span>😌</span> <span>😍</span> <span>🥰</span> <span>😘</span>
-                                <span>😗</span>
-                                <span>😙</span> <span>😚</span> <span>🤗</span> <span>🤩</span> <span>😏</span>
-                                <span>😞</span>
-                                <span>😟</span> <span>😠</span> <span>😡</span> <span>🤬</span> <span>🤯</span>
-                                <span>😳</span>
+                        <form id="messageForm" enctype="multipart/form-data">
+                            @csrf
+                            <input type="hidden" id="receiver_id" name="receiver_id">
+                            <div class="input-actions">
+                                <button type="button" class="attachment-btn"><i class="fas fa-paperclip"></i></button>
+                                <button type="button" class="emoji-btn"><i class="far fa-smile"></i></button>
                             </div>
-                        </div>
+                            <input type="file" id="fileInput" name="attachment"
+                                accept="image/*, .pdf, .doc, .docx, .xlsx" style="display: none;">
+                            <input type="text" id="messageInput" name="message" placeholder="Type a message">
+                            <button type="button" class="send-btn"><i class="fas fa-paper-plane"></i></button>
 
+                            <!-- Emoji Picker -->
+                            <div class="emoji-picker">
+                                <div class="emoji-list">
+                                    <span>😀</span> <span>😃</span> <span>😄</span> <span>😁</span> <span>😆</span>
+                                    <span>😅</span> <span>😂</span> <span>🤣</span> <span>😊</span> <span>😇</span>
+                                    <span>🙂</span> <span>🙃</span> <span>😉</span> <span>😌</span> <span>😍</span>
+                                    <span>🥰</span> <span>😘</span> <span>😗</span> <span>😙</span> <span>😚</span>
+                                    <span>🤗</span> <span>🤩</span> <span>😏</span> <span>😞</span> <span>😟</span>
+                                    <span>😠</span> <span>😡</span> <span>🤬</span> <span>🤯</span> <span>😳</span>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -221,6 +165,213 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Xử lý hiển thị emoji picker
+            $('.emoji-btn').click(function() {
+                $('.emoji-picker').toggle();
+            });
+
+            // Chọn emoji
+            $('.emoji-list span').click(function() {
+                const emoji = $(this).text();
+                $('#messageInput').val($('#messageInput').val() + emoji);
+                $('.emoji-picker').hide();
+            });
+
+            // Xử lý chọn file
+            $('.attachment-btn').click(function() {
+                $('#fileInput').click();
+            });
+
+            // Xử lý hiển thị preview khi chọn file
+            $('#fileInput').change(function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    $('#filePreview').html('');
+
+                    if (file.type.startsWith('image/')) {
+                        reader.onload = function(e) {
+                            $('#filePreview').html(`
+                        <div class="preview-item">
+                            <img src="${e.target.result}" alt="Preview">
+                            <span class="file-name">${file.name}</span>
+                            <button type="button" class="remove-file">&times;</button>
+                        </div>
+                    `);
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        $('#filePreview').html(`
+                    <div class="preview-item">
+                        <div class="file-icon"><i class="fas fa-file"></i></div>
+                        <span class="file-name">${file.name}</span>
+                        <button type="button" class="remove-file">&times;</button>
+                    </div>
+                `);
+                    }
+                }
+            });
+
+            // Xóa file được chọn
+            $(document).on('click', '.remove-file', function() {
+                $('#fileInput').val('');
+                $('#filePreview').html('');
+            });
+
+            // Chọn người nhận tin nhắn
+            $('.conversation-item').click(function() {
+                const userId = $(this).data('user-id');
+                const userName = $(this).data('user-name');
+
+                $('.conversation-item').removeClass('active');
+                $(this).addClass('active');
+
+                $('#receiver_id').val(userId);
+                $('#chat-recipient-name').text(userName);
+
+                // Tải tin nhắn với người này
+                loadMessages(userId);
+            });
+
+            // Tự động chọn người dùng từ query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const chatTo = urlParams.get('chat_to');
+            if (chatTo) {
+                const userItem = $(`.conversation-item[data-user-name="${chatTo}"]`);
+                if (userItem.length) {
+                    userItem.click();
+                }
+            }
+
+            // Gửi tin nhắn khi nhấn nút gửi
+            $('.send-btn').click(function() {
+                sendMessage();
+            });
+
+            // Gửi tin nhắn khi nhấn Enter
+            $('#messageInput').keypress(function(e) {
+                if (e.which === 13) { // Enter key
+                    sendMessage();
+                    return false;
+                }
+            });
+
+            // Hàm gửi tin nhắn
+            function sendMessage() {
+                const receiverId = $('#receiver_id').val();
+                const message = $('#messageInput').val().trim();
+
+                if (!receiverId) {
+                    alert('Vui lòng chọn người nhận');
+                    return;
+                }
+
+                if (!message && !$('#fileInput')[0].files[0]) {
+                    alert('Vui lòng nhập tin nhắn hoặc chọn file');
+                    return;
+                }
+
+                const formData = new FormData($('#messageForm')[0]);
+
+                $.ajax({
+                    url: "{{ route('send.message') }}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            // Thêm tin nhắn vào khung chat
+                            const messageHtml = `
+                        <div class="message-row shop-message">
+                            <div class="message-content">
+                                <div class="message-info">
+                                    <span class="time">${getCurrentTime()}</span>
+                                </div>
+                                <div class="message-bubble">
+                                    <p>${response.message.message || ''}</p>
+                                    ${response.message.attachment ? getAttachmentPreview(response.message.attachment) : ''}
+                                </div>
+                            </div>
+                            <div class="avatar">
+                                <img src="{{ asset('img/user-icon.png') }}" alt="${response.customer_name}">
+                            </div>
+                        </div>
+                    `;
+
+                            $('#chat-messages').append(messageHtml);
+
+                            // Xóa nội dung input và file
+                            $('#messageInput').val('');
+                            $('#fileInput').val('');
+                            $('#filePreview').html('');
+
+                            // Scroll xuống cuối
+                            scrollToBottom();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        alert('Có lỗi xảy ra khi gửi tin nhắn');
+                    }
+                });
+            }
+
+            // Lấy định dạng thời gian hiện tại
+            function getCurrentTime() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+
+                return `${hours}:${minutes} - ${day}/${month}`;
+            }
+
+            // Lấy HTML cho file đính kèm
+            function getAttachmentPreview(attachment) {
+                const ext = attachment.split('.').pop().toLowerCase();
+                const isImage = ['jpg', 'jpeg', 'png', 'gif'].includes(ext);
+
+                if (isImage) {
+                    return `<div class="attachment-preview">
+                <img src="{{ asset('storage') }}/${attachment}" alt="Attachment">
+            </div>`;
+                } else {
+                    return `<div class="attachment-file">
+                <a href="{{ asset('storage') }}/${attachment}" target="_blank">
+                    <i class="fas fa-file"></i> Xem tập tin đính kèm
+                </a>
+            </div>`;
+                }
+            }
+
+            // Tải tin nhắn với một người dùng
+            function loadMessages(userId) {
+                // API route cần được tạo
+                $.ajax({
+                    url: `/load-messages/${userId}`,
+                    type: "GET",
+                    success: function(response) {
+                        $('#chat-messages').html(response);
+                        scrollToBottom();
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        $('#chat-messages').html('<p class="text-center">Không thể tải tin nhắn</p>');
+                    }
+                });
+            }
+
+            // Cuộn xuống cuối khung chat
+            function scrollToBottom() {
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
         });
     </script>
 @endsection

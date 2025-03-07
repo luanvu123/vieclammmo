@@ -76,8 +76,9 @@ Route::get('/get-subcategories/{category_id}', function ($category_id) {
 
 
 Route::middleware(['customer', '2fa'])->group(function () {
-     Route::get('/chat-bot', [CustomerController::class, 'message'])->name('message.index');
-     Route::post('/send-message', [CustomerController::class, 'sendMessage'])->name('message.send');
+    Route::get('/chat-bot', [CustomerController::class, 'message'])->name('message.index');
+    Route::post('/send-message', [CustomerController::class, 'sendMessage'])->name('send.message');
+    Route::get('/load-messages/{user}', 'CustomerController@loadMessages')->name('load.messages');
 
     Route::resource('products', ProductController::class);
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');

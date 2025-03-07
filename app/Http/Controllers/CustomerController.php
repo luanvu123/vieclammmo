@@ -20,42 +20,74 @@ class CustomerController extends Controller
     {
         $this->middleware(['customer', '2fa']);
     }
-    public function message(Request $request)
+    public function message()
     {
         $customer = Auth::guard('customer')->user();
-        $chatTo = Customer::where('name', $request->query('chat_to'))->first();
+        $conversations = Message::where('sender_id', $customer->id)
+            ->orWhere('receiver_id', $customer->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->unique(function ($item) use ($customer) {
+                return $item->sender_id == $customer->id ? $item->receiver_id : $item->sender_id;
+            });
 
-        if (!$chatTo) {
-            return abort(404, 'Người dùng không tồn tại');
-        }
+        return view('message.index', compact('customer', 'conversations'));
+    }
+    public function loadMessages($userId)
+    {
+        $customer = Auth::guard('customer')->user();
 
-        // Lấy tin nhắn giữa 2 người
-        $messages = Message::where(function ($query) use ($customer, $chatTo) {
-            $query->where('sender_id', $customer->id)->where('receiver_id', $chatTo->id);
-        })->orWhere(function ($query) use ($customer, $chatTo) {
-            $query->where('sender_id', $chatTo->id)->where('receiver_id', $customer->id);
+        $messages = Message::where(function ($query) use ($customer, $userId) {
+            $query->where('sender_id', $customer->id)
+                ->where('receiver_id', $userId);
+        })->orWhere(function ($query) use ($customer, $userId) {
+            $query->where('sender_id', $userId)
+                ->where('receiver_id', $customer->id);
         })->orderBy('created_at', 'asc')->get();
 
-        return view('message.index', compact('customer', 'chatTo', 'messages'));
-    }
+        // Đánh dấu tin nhắn đã đọc
+        Message::where('sender_id', $userId)
+            ->where('receiver_id', $customer->id)
+            ->where('status', '!=', 'read')
+            ->update(['status' => 'read']);
 
+        return view('message.partials.messages', compact('messages', 'customer'));
+    }
     public function sendMessage(Request $request)
     {
         $customer = Auth::guard('customer')->user();
 
-        $request->validate([
+        $validated = $request->validate([
             'receiver_id' => 'required|exists:customers,id',
-            'message' => 'required|string|max:1000',
+            'message' => 'required_without:attachment',
+            'attachment' => 'nullable|file|max:5120', // 5MB max
         ]);
 
-        Message::create([
-            'sender_id' => $customer->id,
-            'receiver_id' => $request->receiver_id,
-            'message' => $request->message,
-            'status' => 'sent',
-        ]);
+        $message = new Message();
+        $message->sender_id = $customer->id;
+        $message->receiver_id = $validated['receiver_id'];
+        $message->message = $validated['message'] ?? null;
 
-        return response()->json(['success' => true]);
+        // Xử lý file đính kèm nếu có
+        if ($request->hasFile('attachment')) {
+            $attachment = $request->file('attachment');
+            $fileName = time() . '_' . $attachment->getClientOriginalName();
+            $attachment->storeAs('message_attachments', $fileName, 'public');
+            $message->attachment = 'message_attachments/' . $fileName;
+        }
+
+        $message->status = 'sent';
+        $message->save();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'customer_name' => $customer->name
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Tin nhắn đã được gửi');
     }
 
     public function dashboard()
@@ -96,13 +128,16 @@ class CustomerController extends Controller
 
         $loginHistories = $customer->loginHistories()->orderBy('login_time', 'desc')->take(5)->get();
 
-        return view('pages.profile', compact('customer', 'loginHistories',
-        'productsSold',
-        'storesCount',
-        'productsBought',
-        'postsCount',
-        'isOnline',
-        'lastActiveTime'));
+        return view('pages.profile', compact(
+            'customer',
+            'loginHistories',
+            'productsSold',
+            'storesCount',
+            'productsBought',
+            'postsCount',
+            'isOnline',
+            'lastActiveTime'
+        ));
     }
     public function profileEdit()
     {

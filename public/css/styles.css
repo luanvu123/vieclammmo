@@ -2099,3 +2099,33 @@ h1 {
             margin-bottom: 20px;
         }
     }
+
+    .product-carousel {
+    position: relative;
+}
+
+.carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.carousel-nav.prev {
+    left: -40px;
+}
+
+.carousel-nav.next {
+    right: -40px;
+}
+
+.product-slides .product-card {
+    padding: 10px;
+}
+

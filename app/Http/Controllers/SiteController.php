@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Post;
 use App\Models\GenrePost;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Subcategory;
@@ -23,8 +25,16 @@ class SiteController extends Controller
             ->where('type', 'Dịch vụ')
             ->get();
 
-        return view('pages.home', compact('productCategories', 'serviceCategories'));
+        // Lấy danh sách sản phẩm nổi bật
+        $hotProducts = Product::where('is_hot', 1)
+            ->where('status', 'active')
+            ->with(['category', 'productVariants', 'customer', 'subcategory'])
+            ->limit(10)
+            ->get();
+
+        return view('pages.home', compact('productCategories', 'serviceCategories', 'hotProducts'));
     }
+
     public function showProductDetail($slug)
     {
         // Tìm sản phẩm theo slug
@@ -157,4 +167,41 @@ class SiteController extends Controller
 
         return view('pages.post_detail', compact('post', 'relatedPosts'));
     }
+
+public function profile($username)
+{
+    $customer = Customer::where('name', $username)->firstOrFail();
+
+    // Đếm số sản phẩm đã bán (các sản phẩm có đơn hàng)
+    $productsSold = Product::where('customer_id', $customer->id)
+        ->whereHas('productVariants.orders')
+        ->count();
+
+    // Đếm số gian hàng đã bán (số sản phẩm của khách có ít nhất 1 đơn hàng)
+    $storesCount = Product::where('customer_id', $customer->id)
+        ->whereHas('productVariants.orders')
+        ->distinct()
+        ->count();
+
+    // Đếm số gian hàng đã mua (dựa trên số lượng đơn hàng của khách)
+    $productsBought = Order::where('customer_id', $customer->id)->count();
+
+    // Đếm số bài viết
+    $postsCount = Post::where('customer_id', $customer->id)->count();
+
+    // Kiểm tra trạng thái online
+    $isOnline = $customer->last_active_at && $customer->last_active_at->diffInHours(now()) <= 8;
+    $lastActiveTime = $isOnline ? $customer->last_active_at->diffInHours(now()) . ' giờ trước' : null;
+
+    return view('customer.profile', compact(
+        'customer',
+        'productsSold',
+        'storesCount',
+        'productsBought',
+        'postsCount',
+        'isOnline',
+        'lastActiveTime'
+    ));
+}
+
 }

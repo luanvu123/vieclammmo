@@ -69,7 +69,7 @@
                                     </span>
                                 </div>
                                 <div class="seller">Người bán: <a
-                                        href="#">{{ $product->customer->name ?? 'Unknown' }}</a></div>
+                                        href="{{ route('profile.name.site', $product->customer->name ?? '') }}">{{ $product->customer->name ?? 'Unknown' }}</a></div>
                                 <div class="product-category">Sản phẩm: <a
                                         href="#">{{ $product->subcategory->name ?? $product->category->name }}</a>
                                 </div>

@@ -38,7 +38,11 @@ class Customer extends Authenticatable
         'password',
         'remember_token',
     ];
-  protected $dates = ['last_active_at'];
+    protected $dates = ['last_active_at'];
+    protected $casts = [
+    'last_active_at' => 'datetime',
+];
+
     public static function generateUniqueId()
     {
         do {
@@ -63,7 +67,11 @@ class Customer extends Authenticatable
         return $this->hasMany(Post::class);
     }
     public function comments()
-{
-    return $this->hasMany(Comment::class);
-}
+    {
+        return $this->hasMany(Comment::class);
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

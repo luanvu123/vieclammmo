@@ -403,20 +403,23 @@
             transform: translate(-50%, -50%);
             border-radius: 10px;
         }
-.related-products {
-    display: flex;
-    overflow: hidden;
-}
-.related-product {
-    width: 100%;
-    text-align: center;
-    padding: 10px;
-}
-.related-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-}
+
+        .related-products {
+            display: flex;
+            overflow: hidden;
+        }
+
+        .related-product {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .related-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
 
         #description-site {
             max-height: 300px;
@@ -449,9 +452,9 @@
 
                 <div class="seller-info">
                     <span>Người bán: </span>
-                    <a href="javascript:void(0);" onclick="showSellerInfo('{{ $product->customer->id }}')">
-                        {{ $product->customer->name }}
-                    </a>
+
+                    <a
+                        href="{{ route('profile.name.site', $product->customer->name ?? '') }}">{{ $product->customer->name ?? 'Unknown' }}</a>
                     <span>|</span>
 
                     <span>Online:</span>
@@ -474,6 +477,7 @@
                             {{ $product->productVariants->first()->stocks->sum('quantity_success') ?? 0 }}
                         </span></span>
                 </div>
+
 
                 <div class="price">
                     <span id="product-price">
@@ -501,10 +505,23 @@
                     </div>
                 @endif
 
+                <!-- Nhập số lượng -->
+                <div class="quantity-box">
+                    <label for="quantity">Số lượng:</label>
+                    <input type="number" id="quantity" min="1" value="1">
+
+                </div>
+
+                <!-- Hiển thị tổng tiền -->
+                <div class="total-price">
+                    Tổng tiền: <span
+                        id="total-price">{{ number_format($product->productVariants->first()->price ?? 0, 0, ',', '.') }}
+                        VNĐ</span>
+                </div>
 
                 @if (Auth::guard('customer')->check())
                     <div class="action-buttons">
-                        <button class="buy-button">Mua hàng</button>
+                        <button class="buy-button" id="buy-now">Mua hàng</button>
                         <button class="favorite-button">Thêm yêu thích ❤️</button>
                     </div>
                 @else
@@ -513,6 +530,7 @@
                     </div>
                     <a href="{{ route('login') }}" class="buy-button">Đăng nhập</a>
                 @endif
+
             </div>
         </div>
 
@@ -538,63 +556,67 @@
             <div class="api-info">Vui lòng đăng nhập để mua bằng API.</div>
             <button class="action-button">Đăng nhập</button>
         </div>
-       <div class="related-title">
-    <h3>Sản phẩm tương tự</h3>
-</div>
-
-<div class="related-products slider">
-    @foreach ($relatedProducts as $product)
-    <div class="product-card">
-        <div class="product-badge">
-            <span class="service-badge">{{ $product->category->type ?? 'Sản phẩm' }}</span>
+        <div class="related-title">
+            <h3>Sản phẩm tương tự</h3>
         </div>
-        <div class="product-img">
-            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
-        </div>
-        <div class="product-info">
-            <div class="service-title">{{ $product->name }}</div>
 
-            @php
-                $minPrice = $product->productVariants->min('price') ?? 0;
-                $maxPrice = $product->productVariants->max('price') ?? 0;
-            @endphp
+        <div class="related-products slider">
+            @foreach ($relatedProducts as $product)
+                <div class="product-card">
+                    <div class="product-badge">
+                        <span class="service-badge">{{ $product->category->type ?? 'Sản phẩm' }}</span>
+                    </div>
+                    <div class="product-img">
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                    </div>
+                    <div class="product-info">
+                        <div class="service-title"> {{ Str::limit($product->name, 20, '...') }}</div>
 
-            @if ($minPrice > 0 && $maxPrice > 0)
-                {{ number_format($minPrice, 0, ',', '.') }}đ - {{ number_format($maxPrice, 0, ',', '.') }}đ
-            @else
-                Chưa có giá
-            @endif
+                        @php
+                            $minPrice = $product->productVariants->min('price') ?? 0;
+                            $maxPrice = $product->productVariants->max('price') ?? 0;
+                        @endphp
 
-            <div class="rating">
-                <span class="stars">
-                    @for ($i = 0; $i < 5; $i++)
-                        @if ($i < ($product->rating ?? 5))
-                            ★
+                        @if ($minPrice > 0 && $maxPrice > 0)
+                            {{ number_format($minPrice, 0, ',', '.') }}đ - {{ number_format($maxPrice, 0, ',', '.') }}đ
                         @else
-                            ☆
+                            Chưa có giá
                         @endif
-                    @endfor
-                </span>
-                <span class="reviews">
-                    {{ $product->reviews_count ?? 0 }} Reviews |
-                    Đơn hoàn thành: {{ $product->completed_orders ?? 0 }} |
-                    Khiếu nại: {{ $product->complaint_percentage ?? '0.0' }}%
-                </span>
-            </div>
 
-            <div class="seller">Người bán: <a href="#">{{ $product->customer->name ?? 'Unknown' }}</a></div>
-            <div class="product-category">Sản phẩm: <a href="#">{{ $product->subcategory->name ?? $product->category->name }}</a></div>
-            <div class="product-features">
-                <p>{{ $product->short_description }}</p>
-            </div>
-            <div class="action-button">
-                <a href="{{ route('product.detail', $product->slug) }}" class="buy-now">Xem chi tiết</a>
-            </div>
+                        <div class="rating">
+                            <span class="stars">
+                                @for ($i = 0; $i < 5; $i++)
+                                    @if ($i < ($product->rating ?? 5))
+                                        ★
+                                    @else
+                                        ☆
+                                    @endif
+                                @endfor
+                            </span>
+                            <span class="reviews">
+                                {{ $product->reviews_count ?? 0 }} Reviews |
+                                Đơn hoàn thành: {{ $product->completed_orders ?? 0 }} |
+                                Khiếu nại: {{ $product->complaint_percentage ?? '0.0' }}%
+                            </span>
+                        </div>
+
+                        <div class="seller">
+                            Người bán: <a
+                                href="{{ route('profile.site', $product->customer->name ?? '') }}">{{ $product->customer->name ?? 'Unknown' }}</a>
+                        </div>
+                        <div class="product-category">Sản phẩm: <a
+                                href="#">{{ $product->subcategory->name ?? $product->category->name }}</a></div>
+                        <div class="product-features">
+                            <p>{{ $product->short_description }}</p>
+                        </div>
+                        <div class="action-button">
+                            <a href="{{ route('product.detail', $product->slug) }}" class="buy-now">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
         </div>
-    </div>
-@endforeach
-
-</div>
 
     </div>
 
@@ -654,6 +676,68 @@
 
                 document.getElementById("stock-quantity").innerText = this.dataset.stock;
             });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let quantityInput = document.getElementById('quantity');
+            let productPrice = document.getElementById('product-price');
+            let totalPriceElement = document.getElementById('total-price');
+            let buyButton = document.getElementById('buy-now');
+
+            // Cập nhật tổng tiền khi chọn biến thể hoặc thay đổi số lượng
+            function updateTotalPrice() {
+                let selectedVariant = document.querySelector('input[name="product_variant"]:checked');
+                let quantity = parseInt(quantityInput.value) || 1;
+                let price = selectedVariant ? parseInt(selectedVariant.dataset.price) : 0;
+                let total = price * quantity;
+                totalPriceElement.innerText = total.toLocaleString('vi-VN') + " VNĐ";
+            }
+
+            // Lắng nghe sự kiện thay đổi số lượng
+            quantityInput.addEventListener('input', updateTotalPrice);
+
+            // Lắng nghe sự kiện chọn biến thể
+            document.querySelectorAll('input[name="product_variant"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    productPrice.innerText = parseInt(this.dataset.price).toLocaleString('vi-VN') +
+                        " VNĐ";
+                    updateTotalPrice();
+                });
+            });
+
+            // Xử lý khi nhấn nút "Mua hàng"
+            document.getElementById('buy-now').addEventListener('click', function() {
+                let selectedVariant = document.querySelector('input[name="product_variant"]:checked');
+                let quantity = document.getElementById('quantity').value;
+
+                if (!selectedVariant) {
+                    alert('Vui lòng chọn biến thể sản phẩm!');
+                    return;
+                }
+
+                fetch("{{ route('order.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        },
+                        body: JSON.stringify({
+                            product_variant_id: selectedVariant.value,
+                            quantity: quantity,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Đơn hàng đã được tạo thành công!");
+                        } else {
+                            alert(data.error || "Có lỗi xảy ra!");
+                        }
+                    });
+            });
+
         });
     </script>
 

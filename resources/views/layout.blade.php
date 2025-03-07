@@ -288,38 +288,76 @@
 
 
 
-
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css"/>
-<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+
+<!-- Thêm jQuery (bắt buộc) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Thêm JS của Slick -->
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
+
 <script>
     $(document).ready(function(){
-        $('.slider').slick({
-            slidesToShow: 4, // Số sản phẩm hiển thị cùng lúc
-            slidesToScroll: 1,
-            autoplay: true,
-            autoplaySpeed: 3000,
+        $('.product-slides').slick({
+            slidesToShow: 3,  // Hiển thị 3 sản phẩm cùng lúc
+            slidesToScroll: 3, // Mỗi lần lướt sẽ cuộn 3 sản phẩm
+            infinite: true,
+            dots: true,
             arrows: true,
-            prevArrow: '<button class="nav-button prev">◀</button>',
-            nextArrow: '<button class="nav-button next">▶</button>',
+            prevArrow: $('.carousel-nav.prev'),
+            nextArrow: $('.carousel-nav.next'),
             responsive: [
                 {
                     breakpoint: 1024,
-                    settings: { slidesToShow: 3 }
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2
+                    }
                 },
                 {
                     breakpoint: 768,
-                    settings: { slidesToShow: 2 }
-                },
-                {
-                    breakpoint: 480,
-                    settings: { slidesToShow: 1 }
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
                 }
             ]
         });
     });
 </script>
+<script>
+        $(document).ready(function() {
+            $('.slider').slick({
+                slidesToShow: 4, // Số sản phẩm hiển thị cùng lúc
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                arrows: true,
+                prevArrow: '<button class="nav-button prev">◀</button>',
+                nextArrow: '<button class="nav-button next">▶</button>',
+                responsive: [{
+                        breakpoint: 1024,
+                        settings: {
+                            slidesToShow: 3
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 480,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
 
 </body>
 

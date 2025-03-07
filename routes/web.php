@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerManageController;
 use App\Http\Controllers\GenrePostController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductManageController;
@@ -35,7 +36,7 @@ use App\Models\Subcategory;
 
 Route::get('/', [SiteController::class, 'index'])->name('/');
 Route::get('/ho-tro', [SiteController::class, 'support'])->name('support.site');
-
+Route::get('/profile-site/{username}', [SiteController::class, 'profile'])->name('profile.name.site');
 Route::get('/category/{slug}', [SiteController::class, 'showProductsByCategory'])->name('category.products');
 Route::get('/product/{slug}', [SiteController::class, 'showProductDetail'])->name('product.detail');
 Route::post('/ho-tro', [SiteController::class, 'storeSupport'])->name('support.site');
@@ -44,18 +45,6 @@ Route::get('/bai-viet', [SiteController::class, 'post'])->name('post.site');
 Route::get('/bai-viet/{slug}', [SiteController::class, 'postDetail'])->name('post.detail');
 Route::get('/FAQs', [SiteController::class, 'faqs'])->name('faqs');
 Route::get('/qui-dinh', [SiteController::class, 'notice'])->name('notice');
-Route::get('/seller/{id}', function ($id) {
-    $customer = Customer::findOrFail($id);
-    return response()->json([
-        'name' => $customer->name,
-        'email' => $customer->email,
-        'phone' => $customer->phone,
-        'avatar' => asset($customer->avatar),
-        'url_facebook' => $customer->url_facebook,
-        'isOnline' => $customer->isOnline,
-    ]);
-});
-
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -88,7 +77,7 @@ Route::get('/get-subcategories/{category_id}', function ($category_id) {
 
 Route::middleware('customer', '2fa')->group(function () {
     Route::resource('products', ProductController::class);
-
+    Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
     Route::resource('product_variants', ProductVariantController::class);
     Route::resource('posts', PostController::class);
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
@@ -114,7 +103,7 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::post('/profile/ekyc', [CustomerController::class, 'editKYC'])->name('profile.ekyc');
 });
 Route::group(['middleware' => ['auth']], function () {
-     Route::resource('supports', SupportController::class);
+    Route::resource('supports', SupportController::class);
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('subcategories', SubCategoryController::class);

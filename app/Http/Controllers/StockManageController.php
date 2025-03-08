@@ -27,56 +27,118 @@ class StockManageController extends Controller
     }
 
     // Lưu UID Facebook vào Stock
-    public function uidStore(Request $request, Stock $stock)
-    {
-        $request->validate([
-            'uids' => 'required|string',
-        ]);
-        $uids = preg_split('/\r\n|\r|\n/', $request->uids);
-        $uids = array_filter(array_map('trim', $uids));
+   public function uidStore(Request $request, Stock $stock)
+{
+    $request->validate([
+        'uids' => 'required|string',
+    ]);
 
-        $results = [];
-        $successCount = 0;
-        $duplicateCount = 0;
+    $uids = preg_split('/\r\n|\r|\n/', $request->uids);
+    $uids = array_filter(array_map('trim', $uids));
 
-        foreach ($uids as $uid) {
-            $existsInAnyStock = UidFacebook::where('uid', $uid)->exists();
-            $existsInCurrentStock = UidFacebook::where('stock_id', $stock->id)->where('uid', $uid)->exists();
+    $results = [];
+    $successCount = 0;
+    $duplicateCount = 0;
 
-            if ($existsInCurrentStock) {
-                $results[] = "Duplicate|$uid";
-                $duplicateCount++;
-            } elseif ($existsInAnyStock) {
-                $results[] = "Duplicate (Exists in another stock)|$uid";
-                $duplicateCount++;
-            } else {
-                UidFacebook::create([
-                    'stock_id' => $stock->id,
-                    'uid' => $uid,
-                ]);
-                $results[] = "Success|$uid";
-                $successCount++;
-            }
-        }
-        $results[] = "TOTAL:" . count($uids) . "|SUCCESS:$successCount|DUPLICATE:$duplicateCount";
-
-        if ($stock->file) {
-            Storage::disk('public')->delete($stock->file);
+    foreach ($uids as $line) {
+        $parts = explode('|', $line);
+        if (count($parts) < 2) {
+            continue; // Bỏ qua dòng không hợp lệ
         }
 
-        $fileName = "{$successCount}_uids.txt";
-        $filePath = "stocks/$fileName";
+        $uid = trim($parts[0]);
+        $value = implode('|', array_slice($parts, 1)); // Ghép phần còn lại thành value
 
-        Storage::disk('public')->put($filePath, implode("\n", $results));
-        $stock->update([
-            'file' => $filePath,
-            'quantity_success' => $successCount,
-            'quantity_error' => $duplicateCount,
-            'status' => 'active',
-        ]);
+        $existsInCurrentStock = UidFacebook::where('stock_id', $stock->id)->where('uid', $uid)->exists();
 
-        return redirect()->route('stock.uid_index', $stock->id)
-            ->with('success', "Đã lưu UID và tạo file thành công! ($successCount UID mới)")
-            ->with('file_url', asset("storage/$filePath")); // Trả về đường dẫn file
+        if ($existsInCurrentStock) {
+            $results[] = "Duplicate|$uid";
+            $duplicateCount++;
+        } else {
+            UidFacebook::create([
+                'stock_id' => $stock->id,
+                'uid' => $uid,
+                'value' => $value,
+            ]);
+            $results[] = "Success|$uid";
+            $successCount++;
+        }
     }
+
+    $results[] = "TOTAL:" . count($uids) . "|SUCCESS:$successCount|DUPLICATE:$duplicateCount";
+
+    // Lưu kết quả vào file
+    $fileName = "{$successCount}_uids.txt";
+    $filePath = "stocks/$fileName";
+    Storage::disk('public')->put($filePath, implode("\n", $results));
+
+    $stock->update([
+        'file' => $filePath,
+        'quantity_success' => $successCount,
+        'quantity_error' => $duplicateCount,
+        'status' => 'active',
+    ]);
+
+    return redirect()->route('stock.uid_index', $stock->id)
+        ->with('success', "Đã lưu UID thành công! ($successCount UID mới)")
+        ->with('file_url', asset("storage/$filePath"));
 }
+public function uidEmailStore(Request $request, Stock $stock)
+{
+    $request->validate([
+        'uids' => 'required|string',
+    ]);
+
+    $uids = preg_split('/\r\n|\r|\n/', $request->uids);
+    $uids = array_filter(array_map('trim', $uids));
+
+    $results = [];
+    $successCount = 0;
+    $duplicateCount = 0;
+
+    foreach ($uids as $line) {
+        $parts = explode('|', $line);
+        if (count($parts) < 2) {
+            continue; // Bỏ qua dòng không hợp lệ
+        }
+
+        $email = trim($parts[0]);
+        $value = implode('|', array_slice($parts, 1)); // Ghép phần còn lại thành value
+
+        $existsInCurrentStock = UidEmail::where('stock_id', $stock->id)->where('email', $email)->exists();
+
+        if ($existsInCurrentStock) {
+            $results[] = "Duplicate|$email";
+            $duplicateCount++;
+        } else {
+            UidEmail::create([
+                'stock_id' => $stock->id,
+                'email' => $email,
+                'value' => $value,
+            ]);
+            $results[] = "Success|$email";
+            $successCount++;
+        }
+    }
+
+    $results[] = "TOTAL:" . count($uids) . "|SUCCESS:$successCount|DUPLICATE:$duplicateCount";
+
+    // Lưu kết quả vào file
+    $fileName = "{$successCount}_uids_email.txt";
+    $filePath = "stocks/$fileName";
+    Storage::disk('public')->put($filePath, implode("\n", $results));
+
+    $stock->update([
+        'file' => $filePath,
+        'quantity_success' => $successCount,
+        'quantity_error' => $duplicateCount,
+        'status' => 'active',
+    ]);
+
+    return redirect()->route('stock.uid_index', $stock->id)
+        ->with('success', "Đã lưu Email thành công! ($successCount email mới)")
+        ->with('file_url', asset("storage/$filePath"));
+}
+
+}
+

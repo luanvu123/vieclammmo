@@ -130,4 +130,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('stock/{stock}/uid', [StockManageController::class, 'UidIndex'])->name('stock.uid_index');
     Route::get('stock/{stock}/uid/create', [StockManageController::class, 'UidCreate'])->name('stock.uid_create');
     Route::post('stock/{stock}/uid', [StockManageController::class, 'UidStore'])->name('stock.uid_store');
+     Route::post('stock/{stock}/uid-email', [StockManageController::class, 'uidEmailStore'])->name('stock.uid_email_store');
 });

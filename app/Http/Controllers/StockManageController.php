@@ -30,60 +30,44 @@ class StockManageController extends Controller
     public function uidStore(Request $request, Stock $stock)
     {
         $request->validate([
-            'uids' => 'required|string', // Dữ liệu phải là chuỗi
+            'uids' => 'required|string',
         ]);
-
-        // Tách các UID từ request
         $uids = preg_split('/\r\n|\r|\n/', $request->uids);
-        $uids = array_filter(array_map('trim', $uids)); // Loại bỏ UID trống
+        $uids = array_filter(array_map('trim', $uids));
 
         $results = [];
-        $successCount = 0; // Đếm UID lưu thành công
-        $duplicateCount = 0; // Đếm UID trùng lặp
+        $successCount = 0;
+        $duplicateCount = 0;
 
         foreach ($uids as $uid) {
-    // Kiểm tra xem UID đã tồn tại với bất kỳ stock_id nào chưa
-    $existsInAnyStock = UidFacebook::where('uid', $uid)->exists();
+            $existsInAnyStock = UidFacebook::where('uid', $uid)->exists();
+            $existsInCurrentStock = UidFacebook::where('stock_id', $stock->id)->where('uid', $uid)->exists();
 
-    // Kiểm tra xem UID đã tồn tại với stock_id hiện tại chưa
-    $existsInCurrentStock = UidFacebook::where('stock_id', $stock->id)->where('uid', $uid)->exists();
-
-    if ($existsInCurrentStock) {
-        // Nếu đã tồn tại trong cùng stock_id thì coi là trùng lặp
-        $results[] = "Duplicate|$uid";
-        $duplicateCount++;
-    } elseif ($existsInAnyStock) {
-        // Nếu UID tồn tại với stock_id khác thì cũng coi là trùng lặp
-        $results[] = "Duplicate (Exists in another stock)|$uid";
-        $duplicateCount++;
-    } else {
-        // Nếu UID chưa tồn tại trong bất kỳ stock nào, lưu vào database
-        UidFacebook::create([
-            'stock_id' => $stock->id,
-            'uid' => $uid,
-        ]);
-        $results[] = "Success|$uid";
-        $successCount++;
-    }
-}
-
-
-        // Thêm dòng thống kê cuối file
+            if ($existsInCurrentStock) {
+                $results[] = "Duplicate|$uid";
+                $duplicateCount++;
+            } elseif ($existsInAnyStock) {
+                $results[] = "Duplicate (Exists in another stock)|$uid";
+                $duplicateCount++;
+            } else {
+                UidFacebook::create([
+                    'stock_id' => $stock->id,
+                    'uid' => $uid,
+                ]);
+                $results[] = "Success|$uid";
+                $successCount++;
+            }
+        }
         $results[] = "TOTAL:" . count($uids) . "|SUCCESS:$successCount|DUPLICATE:$duplicateCount";
 
-        // Xóa file cũ nếu có
         if ($stock->file) {
             Storage::disk('public')->delete($stock->file);
         }
 
-        // Tạo tên file theo số lượng UID thành công
         $fileName = "{$successCount}_uids.txt";
         $filePath = "stocks/$fileName";
 
-        // Lưu file vào thư mục `storage/app/public/stocks/`
         Storage::disk('public')->put($filePath, implode("\n", $results));
-
-        // Cập nhật stock với file mới, số lượng, và trạng thái
         $stock->update([
             'file' => $filePath,
             'quantity_success' => $successCount,

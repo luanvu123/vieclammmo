@@ -26,7 +26,11 @@
                             <tr>
                                 <td>{{ $customer->id }}</td>
                                 <td>{{ $customer->idCustomer }}</td>
-                                <td>{{ $customer->name }}</td>
+                                <td>{{ $customer->name }}
+                                     @if ($customer->email == 'bgntmrqph24111516@vnetwork.io.vn')
+        <i class="fa fa-check-circle" style="color:red; font-size: 80%;" title="Thuộc hệ thống"></i>
+    @endif
+                                </td>
                                 <td>{{ $customer->email }}</td>
                                 <td>{{ $customer->phone }}</td>
                                 <td>{{ number_format($customer->Balance) }} VNĐ</td>
@@ -41,7 +45,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                   
+
                                     <a href="{{ route('customer-manage.edit', $customer->id) }}"
                                         class="btn btn-primary btn-sm">
                                         <i class="fas fa-edit"></i> Sửa

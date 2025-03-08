@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerManageController;
 use App\Http\Controllers\GenrePostController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\StockManageController;
 use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WishlistController;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -76,15 +78,16 @@ Route::get('/get-subcategories/{category_id}', function ($category_id) {
 
 
 Route::middleware(['customer', '2fa'])->group(function () {
-    Route::get('/chat-bot', [CustomerController::class, 'message'])->name('message.index');
-    Route::post('/send-message', [CustomerController::class, 'sendMessage'])->name('send.message');
-    Route::get('/load-messages/{user}', 'CustomerController@loadMessages')->name('load.messages');
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::resource('wishlist', WishlistController::class);
 
+
+    Route::post('/messages/{receiverId}', [MessageController::class, 'store'])->name('messages.store');
+    Route::get('/messages/create/{customerId}', [MessageController::class, 'create'])->name('messages.create');
     Route::resource('products', ProductController::class);
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
     Route::resource('product_variants', ProductVariantController::class);
     Route::resource('posts', PostController::class);
-    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::get('/thanh-toan', [CustomerController::class, 'checkout'])->name('checkout');
     Route::prefix('product_variants/{variant}')->group(function () {
         Route::resource('stocks', StockController::class)->except(['show']);

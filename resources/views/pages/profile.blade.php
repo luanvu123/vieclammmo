@@ -9,7 +9,9 @@
 
             <div class="profile-field">
                 <div class="field-label">Họ tên</div>
-                <div class="field-value">{{ $customer->name }}</div>
+                <div class="field-value">{{ $customer->name }}  @if ($customer->email == 'bgntmrqph24111516@vnetwork.io.vn')
+        <i class="fa fa-check-circle" style="color:red; font-size: 80%;" title="Thuộc hệ thống"></i>
+    @endif</div>
             </div>
 
             <div class="profile-field">

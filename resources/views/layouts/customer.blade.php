@@ -322,10 +322,9 @@
                     <img src="{{ asset('assets/images/logo-sm.png') }}" alt="logo-small" class="logo-sm">
                 </span>
                 <span class="">
-                    <img src="{{ asset('assets/images/logo-light.png') }}" alt="logo-large"
-                        class="logo-lg logo-light">
-                    <img src="{{ asset('assets/images/logo-dark.png') }}" alt="logo-large"
-                        class="logo-lg logo-dark">
+                   <a href="{{ route('/') }}" class="logo">
+                <h1>TapHoa<span class="highlight">MMO</span></h1>
+            </a>
                 </span>
             </a>
         </div>

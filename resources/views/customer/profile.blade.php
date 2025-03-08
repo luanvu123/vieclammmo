@@ -18,7 +18,12 @@
                             </div>
                         </div>
                         @if (isset($customer))
-                            <h5 class="mb-0">{{ '@' . $customer->name }}</h5>
+                            <h5 class="mb-0">{{ '@' . $customer->name }}
+                                @if ($customer->email == 'bgntmrqph24111516@vnetwork.io.vn')
+                                    <i class="fa fa-check-circle" style="color:red; font-size: 80%;"
+                                        title="Thuộc hệ thống"></i>
+                                @endif
+                            </h5>
                         @endif
                         @if (isset($isWarned) && $isWarned)
                             <span class="text-danger ms-2"><i class="fa fa-exclamation-circle"></i></span>
@@ -29,7 +34,13 @@
                         <tbody>
                             <tr>
                                 <td width="30%">Tài khoản</td>
-                                <td>{{ '@' . $customer->name }}</td>
+                                <td>{{ '@' . $customer->name }}
+                                    @if ($customer->email == 'bgntmrqph24111516@vnetwork.io.vn')
+                                        <i class="fa fa-check-circle" style="color:red; font-size: 80%;"
+                                            title="Thuộc hệ thống"></i>
+                                    @endif
+
+                                </td>
                             </tr>
                             <tr>
                                 <td>Ngày đăng ký</td>
@@ -85,15 +96,25 @@
             <div class="card text-center">
                 <div class="card-body">
                     <div class="mb-3">
-                        <img src="{{ $customer->avatar ? asset('storage/' . $customer->avatar) : asset('img/user-icon.png') }}"
-                            class="rounded-circle img-thumbnail" style="width: 120px; height: 120px;">
+                        <img src="{{
+    $customer->email == 'bgntmrqph24111516@vnetwork.io.vn'
+        ? asset('img/admin-icon.png')
+        : ($customer->avatar ? asset('storage/' . $customer->avatar) : asset('img/user-icon.png'))
+}}"
+class="rounded-circle img-thumbnail" style="width: 120px; height: 120px;">
+
                     </div>
-                    <h5 class="mb-2">{{ '@' . $customer->name }}</h5>
+                    <h5 class="mb-2">{{ '@' . $customer->name }}<i class="fa fa-check-circle"
+                            style="color:red; font-size: 80%;" title="Thuộc hệ thống"></i></h5>
                     <p class="text-muted small">Online {{ $lastActiveTime ?? 'hiện tại' }}</p>
 
                     <div class="d-flex justify-content-center mt-3">
 
-                      <a href="{{ url('/chat-bot') }}?chat_to={{ $customer->name }}" class="btn btn-outline-primary">Nhắn tin</a>
+                        <a href="{{ route('messages.create', ['customerId' => $customer->id]) }}"
+                            class="btn btn-outline-primary">Nhắn tin</a>
+
+
+
                     </div>
                 </div>
             </div>

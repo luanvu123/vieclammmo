@@ -74,14 +74,23 @@ class Customer extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
-    public function sentMessages()
-{
-    return $this->hasMany(Message::class, 'sender_id');
-}
+     // Tin nhắn gửi đi
+    public function sentMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
 
-public function receivedMessages()
-{
-    return $this->hasMany(Message::class, 'receiver_id');
-}
+    // Tin nhắn nhận được
+    public function receivedMessages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
+    // Lấy tất cả tin nhắn liên quan (cả gửi và nhận)
+    public function messages()
+    {
+        return Message::where('sender_id', $this->id)
+            ->orWhere('receiver_id', $this->id);
+    }
 
 }

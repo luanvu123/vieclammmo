@@ -19,12 +19,6 @@ class CustomerController extends Controller
     {
         $this->middleware(['customer', '2fa']);
     }
-    public function message()
-    {
-         $customer = Auth::guard('customer')->user();
-        return view('message.index');
-    }
-
     public function dashboard()
     {
         return view('admin_customer.index');
@@ -63,13 +57,16 @@ class CustomerController extends Controller
 
         $loginHistories = $customer->loginHistories()->orderBy('login_time', 'desc')->take(5)->get();
 
-        return view('pages.profile', compact('customer', 'loginHistories',
-        'productsSold',
-        'storesCount',
-        'productsBought',
-        'postsCount',
-        'isOnline',
-        'lastActiveTime'));
+        return view('pages.profile', compact(
+            'customer',
+            'loginHistories',
+            'productsSold',
+            'storesCount',
+            'productsBought',
+            'postsCount',
+            'isOnline',
+            'lastActiveTime'
+        ));
     }
     public function profileEdit()
     {

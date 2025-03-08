@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\Customer;
+use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,42 +23,51 @@ class CustomerAuthController extends Controller
             'password' => 'required|confirmed|min:6',
         ]);
 
-        Customer::create([
+        $customer = Customer::create([
             'idCustomer' => Customer::generateUniqueId(), // Gọi hàm tạo mã ngẫu nhiên
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
+        // Gửi tin nhắn chào mừng từ Admin (ID = 5)
+        Message::create([
+            'sender_id' => 5, // ID của admin
+            'receiver_id' => $customer->id, // ID của khách hàng mới
+            'message' => "Chào mừng bạn đến với taphoammo. Nếu có khó khăn gì trong quá trình sử dụng trang, nhắn tin cho mình ngay nhé. Bạn có thể tham khảo thêm về các câu hỏi thường gặp trên menu chính (FAQs). Xin cảm ơn.",
+            'status' => 'sent', // hoặc 1 nếu bạn dùng kiểu boolean
+        ]);
+
         return redirect()->route('login.customer')->with('success', 'Đăng ký thành công!');
     }
 
 
+
     // Đăng nhập
     public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
-
-    if (Auth::guard('customer')->attempt($request->only('email', 'password'))) {
-        $customer = Auth::guard('customer')->user();
-
-        // Cập nhật thời gian hoạt động gần nhất
-        $customer->update(['last_active_at' => now()]);
-
-        // Lưu lịch sử đăng nhập
-        \App\Models\LoginHistory::create([
-            'customer_id' => $customer->id,
-            'device' => $request->header('User-Agent'),
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
-        return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $customer->email);
-    }
+        if (Auth::guard('customer')->attempt($request->only('email', 'password'))) {
+            $customer = Auth::guard('customer')->user();
 
-    return redirect()->back()->with('error', 'Thông tin đăng nhập không chính xác.');
-}
+            // Cập nhật thời gian hoạt động gần nhất
+            $customer->update(['last_active_at' => now()]);
+
+            // Lưu lịch sử đăng nhập
+            \App\Models\LoginHistory::create([
+                'customer_id' => $customer->id,
+                'device' => $request->header('User-Agent'),
+            ]);
+
+            return redirect()->route('profile.site')->with('success', 'Xin chào, ' . $customer->email);
+        }
+
+        return redirect()->back()->with('error', 'Thông tin đăng nhập không chính xác.');
+    }
 
 
     public function authenticated(Request $request, $customer)

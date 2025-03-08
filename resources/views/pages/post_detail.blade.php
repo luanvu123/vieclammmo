@@ -25,10 +25,17 @@
                     @foreach ($post->comments as $comment)
                         <div class="comment mb-3">
                             <div class="d-flex align-items-center">
-                                <img src="{{ asset('img/user-icon.png') }}"
+                                <img src="{{ $customer->email == 'bgntmrqph24111516@vnetwork.io.vn'
+                                    ? asset('img/admin-icon.png')
+                                    : asset('img/user-icon.png') }}"
                                     class="rounded-circle me-2" width="40" height="40">
+
                                 <div>
-                                    <strong>{{ $comment->customer->name }}</strong>
+                                    <strong>{{ $comment->customer->name }} @if ($customer->email == 'bgntmrqph24111516@vnetwork.io.vn')
+                                            <i class="fa fa-check-circle" style="color:red; font-size: 80%;"
+                                                title="Thuộc hệ thống"></i>
+                                        @endif
+                                    </strong>
                                     <div class="text-muted small">
                                         {{ $comment->created_at->diffForHumans() }}
                                         @if ($comment->donate_amount > 0)

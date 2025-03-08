@@ -84,7 +84,7 @@
                     <div class="balance">
                         {{ number_format(Auth::guard('customer')->user()->Balance, 0, ',', '.') }} VND
                     </div>
-                    <a href="{{route('message.index')}}" class="notifications-icon"><i class="fas fa-message"></i><span
+                    <a href="{{ route('messages.create', ['customerId' => Auth::guard('customer')->id()]) }}" class="notifications-icon"><i class="fas fa-message"></i><span
                             class="badge">0</span></a>
                     <button class="mobile-menu-toggle" id="menuToggle">
                         <i class="fas fa-bars"></i>
@@ -102,10 +102,12 @@
                                 <img src="{{ asset('img/user-icon.png') }}" alt="User" />
                             </div>
                             <span>{{ Auth::guard('customer')->user()->name }}</span>
+
                         </div>
+
                         <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
                         <a href="#">Đơn hàng đã mua</a>
-                        <a href="#">Gian hàng yêu thích</a>
+                        <a href="{{ route('wishlist.index') }}">Gian hàng yêu thích</a>
                         <a href="#">Lịch sử thanh toán</a>
                         <a href="#">Reseller</a>
                         <a href="{{ route('posts.create') }}">Quản lý nội dung</a>
@@ -152,8 +154,7 @@
                 <ul>
                     <li><i class="fab fa-facebook"></i> <a href="#">Tạp hóa MMO</a></li>
                     <li><i class="fas fa-comment"></i> <a href="#">Chat với hỗ trợ viên</a></li>
-                    <li><i class="fas fa-envelope"></i> <a
-                            href="mailto:support@taphoammo.net">support@taphoammo.net</a>
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:support@taphoammo.net">support@taphoammo.net</a>
                     </li>
                     <li><i class="far fa-clock"></i> Mon-Sat 08:00am - 10:00pm</li>
                 </ul>

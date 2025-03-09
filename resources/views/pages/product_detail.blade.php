@@ -94,6 +94,15 @@
                     </div>
                     <div class="action-buttons">
                         <button class="buy-button" id="buy-now">Mua hàng</button>
+                        <div id="request-modal" class="modal">
+                            <div class="modal-content">
+                                <span class="close">&times;</span>
+                                <h2>Nhập yêu cầu của bạn</h2>
+                                <textarea id="order-request" placeholder="Nhập yêu cầu của bạn..."></textarea>
+                                <button id="submit-order" class="btn btn-success">Xác nhận</button>
+                            </div>
+                        </div>
+
                         <form action="{{ route('wishlist.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -234,10 +243,10 @@
                     const reviewElement = document.createElement("div");
                     reviewElement.classList.add("review");
                     reviewElement.innerHTML = `
-                        <div class="customer-name">${review.name}</div>
-                        <div class="rating">⭐ ${"⭐".repeat(review.rating)}</div>
-                        <p>${review.comment}</p>
-                    `;
+                                        <div class="customer-name">${review.name}</div>
+                                        <div class="rating">⭐ ${"⭐".repeat(review.rating)}</div>
+                                        <p>${review.comment}</p>
+                                    `;
                     reviewsContainer.appendChild(reviewElement);
                 });
             } else {
@@ -280,40 +289,119 @@
                     updateTotalPrice();
                 });
             });
-            document.getElementById('buy-now').addEventListener('click', function () {
+            document.getElementById('buy-now').addEventListener('click', async function () {
                 let selectedVariant = document.querySelector('input[name="product_variant"]:checked');
-                let quantity = document.getElementById('quantity').value;
-                let couponKey = document.getElementById('coupon_key').value;
+                let quantity = parseInt(document.getElementById('quantity').value);
+                let couponKey = document.getElementById('coupon_key').value.trim();
+                let productType = "{{ $productVariant->type }}";
 
                 if (!selectedVariant) {
                     alert('Vui lòng chọn biến thể sản phẩm!');
                     return;
                 }
 
-                fetch("{{ route('order.store') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    },
-                    body: JSON.stringify({
-                        product_variant_id: selectedVariant.value,
-                        quantity: quantity,
-                        coupon_key: couponKey,
-                    }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert("Đơn hàng đã được tạo thành công!");
-                        } else {
-                            alert(data.error || "Có lỗi xảy ra!");
-                        }
+                if (quantity < 1 || isNaN(quantity)) {
+                    alert('Số lượng sản phẩm phải lớn hơn 0!');
+                    return;
+                }
+
+                let requestData = {
+                    product_variant_id: selectedVariant.value,
+                    quantity: quantity,
+                    coupon_key: couponKey || null,
+                };
+
+                if (!productType) {
+                    let requiredInput = prompt("Vui lòng nhập yêu cầu của bạn:");
+                    if (!requiredInput) {
+                        alert("Bạn phải nhập yêu cầu để tiếp tục!");
+                        return;
+                    }
+                    requestData.required = requiredInput;
+                }
+
+                try {
+                    let response = await fetch("{{ route('order.store') }}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        },
+                        body: JSON.stringify(requestData),
                     });
+
+                    let data = await response.json();
+
+                    if (response.ok) {
+                        alert("Đơn hàng đã được tạo thành công!");
+                        location.reload();
+                    } else {
+                        alert(data.error || "Đã xảy ra lỗi khi đặt hàng!");
+                    }
+                } catch (error) {
+                    alert("Lỗi kết nối! Vui lòng thử lại.");
+                }
             });
 
+            document.getElementById('submit-order').addEventListener('click', function () {
+                let requiredInput = document.getElementById("order-request").value;
+                if (!requiredInput) {
+                    alert("Bạn phải nhập yêu cầu để tiếp tục!");
+                    return;
+                }
+
+                let formData = new FormData();
+                formData.append('product_variant_id', "{{ $productVariant->id }}");
+                formData.append('quantity', 1);
+                formData.append('required', requiredInput);
+
+                fetch("{{ route('order.store') }}", {
+                    method: "POST",
+                    body: formData,
+                    headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" }
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            alert("Đơn hàng đã được tạo thành công!");
+                            location.reload();
+                        }
+                    });
+
+                document.getElementById("request-modal").style.display = "none";
+            });
+
+            document.querySelector(".close").addEventListener('click', function () {
+                document.getElementById("request-modal").style.display = "none";
+            });
         });
     </script>
 
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
 
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            width: 50%;
+            text-align: center;
+        }
+
+        .close {
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+        }
+    </style>
 @endsection

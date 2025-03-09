@@ -16,7 +16,8 @@ class Order extends Model
         'quantity',
         'total',
         'status',
-        'coupon_id'
+        'coupon_id',
+        'required'
     ];
 
     protected static function boot()

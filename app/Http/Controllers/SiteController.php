@@ -35,23 +35,27 @@ class SiteController extends Controller
         return view('pages.home', compact('productCategories', 'serviceCategories', 'hotProducts'));
     }
 
-    public function showProductDetail($slug)
-    {
-        // Tìm sản phẩm theo slug
-        $product = Product::where('slug', $slug)
-            ->with(['category', 'subcategory', 'productVariants.stocks'])
-            ->firstOrFail();
+  public function showProductDetail($slug)
+{
+    // Tìm sản phẩm theo slug
+    $product = Product::where('slug', $slug)
+        ->with(['category', 'subcategory', 'productVariants.stocks'])
+        ->firstOrFail();
 
-        // Lấy sản phẩm tương tự cùng customer_id, trừ sản phẩm hiện tại
-        $relatedProducts = Product::where('customer_id', $product->customer_id)
-            ->where('id', '!=', $product->id)
-            ->with('productVariants')
-            ->inRandomOrder()
-            ->take(10) // Lấy nhiều hơn để hiển thị slider
-            ->get();
+    // Lấy biến thể đầu tiên (nếu có)
+    $productVariant = $product->productVariants->first();
 
-        return view('pages.product_detail', compact('product', 'relatedProducts'));
-    }
+    // Lấy sản phẩm tương tự
+    $relatedProducts = Product::where('customer_id', $product->customer_id)
+        ->where('id', '!=', $product->id)
+        ->with('productVariants')
+        ->inRandomOrder()
+        ->take(10)
+        ->get();
+
+    return view('pages.product_detail', compact('product', 'productVariant', 'relatedProducts'));
+}
+
 
 
     public function showProductsByCategory($slug, Request $request)

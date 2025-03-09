@@ -13,6 +13,18 @@ class ProductVariantManageController extends Controller
         $productVariants = $product->productVariants; // Lấy danh sách biến thể của sản phẩm
         return view('admin.product_variant.index', compact('product', 'productVariants'));
     }
+      public function updateType(Request $request)
+    {
+        $request->validate([
+            'variant_id' => 'required|exists:product_variants,id',
+            'type' => 'required|in:Email,Tài khoản',
+        ]);
+
+        $variant = ProductVariant::findOrFail($request->variant_id);
+        $variant->update(['type' => $request->type]);
+
+        return response()->json(['success' => true]);
+    }
     public function edit(ProductVariant $productVariant)
     {
         return view('admin.product_variant.edit', compact('productVariant'));

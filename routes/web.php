@@ -126,6 +126,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('product-variant-manage', ProductVariantManageController::class)
         ->parameters(['product-variant-manage' => 'productVariant'])
         ->except(['create', 'show']);
+Route::post('/product-variant/update-type', [ProductVariantManageController::class, 'updateType'])
+    ->name('product-variant-manage.updateType');
 
     Route::get('stock-manage/{variant}', [StockManageController::class, 'index'])
         ->name('stock-manage.index');

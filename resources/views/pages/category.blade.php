@@ -76,7 +76,7 @@
                                 <div class="product-features">
                                     <p>{{ $product->short_description }}</p>
                                 </div>
-                                <div class="action-button">
+                                <div class="action-buttons">
                                     <a href="{{ route('product.detail', $product->slug) }}" class="buy-now">Xem chi
                                         tiết</a>
                                 </div>

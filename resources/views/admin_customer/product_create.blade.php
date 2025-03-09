@@ -111,8 +111,5 @@
 
 
         </div><!-- container -->
-        <!--Start Rightbar-->
-        <!--Start Rightbar/offcanvas-->
-
     </div>
 @endsection

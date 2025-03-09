@@ -94,7 +94,7 @@
                             </div>
                             <div class="product-info">
                                 <h3 class="product-title">
-                                    {{ Str::limit($product->name, 30, '...') }}
+                                    {{ Str::limit($product->name, 20, '...') }}
                                 </h3>
 
 
@@ -136,7 +136,7 @@
                                     Sản phẩm: <a
                                         href="#">{{ $product->subcategory->name ?? $product->category->name }}</a>
                                 </div>
-                                <div class="action-button">
+                                <div class="action-buttons">
                                     <a href="{{ route('product.detail', $product->slug) }}" class="buy-now">Xem chi
                                         tiết</a>
                                 </div>

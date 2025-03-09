@@ -176,7 +176,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     </a>
                                 </li>
                                 <li
-                                    class="treeview {{ Request::is('product-manage*') || Request::is('product-variant-manage*') ? 'active' : '' }}">
+                                    class="treeview {{ Request::is('product-manage*') || Request::is('product-variant-manage*')|| Request::is('stock*') ? 'active' : '' }}">
                                     <a href="{{ route('product-manage.index') }}">
                                         <img src="{{ asset('backend_admin/images/job-search-svgrepo-com.svg') }}"
                                             alt="Google" width="20" height="20">

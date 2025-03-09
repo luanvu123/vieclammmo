@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerManageController;
@@ -77,9 +78,10 @@ Route::get('/get-subcategories/{category_id}', function ($category_id) {
 
 
 
-Route::middleware(['customer', '2fa'])->group(function () {
+Route::middleware('customer', '2fa')->group(function () {
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::resource('wishlist', WishlistController::class);
+    Route::resource('coupons', CouponController::class);
 
 
     Route::post('/messages/{receiverId}', [MessageController::class, 'store'])->name('messages.store');
@@ -131,4 +133,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('stock/{stock}/uid/create', [StockManageController::class, 'UidCreate'])->name('stock.uid_create');
     Route::post('stock/{stock}/uid', [StockManageController::class, 'UidStore'])->name('stock.uid_store');
      Route::post('stock/{stock}/uid-email', [StockManageController::class, 'uidEmailStore'])->name('stock.uid_email_store');
+     Route::get('/stock/{stock}/uid-email', [StockManageController::class, 'uidEmailIndex'])->name('stock.uid_email_index');
+
 });

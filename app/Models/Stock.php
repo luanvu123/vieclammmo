@@ -15,9 +15,14 @@ class Stock extends Model
     {
         return $this->belongsTo(ProductVariant::class);
     }
-     public function uidFacebooks()
+    public function uidFacebooks()
     {
         return $this->hasMany(UidFacebook::class);
     }
+    public function uidEmails()
+    {
+        return $this->hasMany(UidEmail::class);
+    }
+
 }
 

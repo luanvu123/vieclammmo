@@ -16,6 +16,7 @@ class Order extends Model
         'quantity',
         'total',
         'status',
+        'coupon_id'
     ];
 
     protected static function boot()
@@ -41,5 +42,14 @@ class Order extends Model
     {
         return $this->belongsTo(ProductVariant::class);
     }
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
+    }
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
+
 }
 

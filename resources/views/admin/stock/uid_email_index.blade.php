@@ -10,41 +10,42 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <a href="{{ route('stock.uid_create', $stock->id) }}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Thêm UID
+            <i class="fas fa-plus"></i> Thêm UID Email
         </a>
     </div>
     <div class="card-body">
-        <table class="table table-bordered" id="user-table">
+        <table class="table table-bordered" id="email-table">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>UID</th>
+                    <th>Email</th>
+                    <th>Giá trị</th>
                     <th>Trạng thái</th>
                     <th>Ngày tạo</th> <!-- Thêm cột Ngày tạo -->
                 </tr>
             </thead>
             <tbody>
-                @foreach($stock->uidFacebooks as $uid)
+                @foreach($stock->uidEmails as $email)
                     <tr>
-                        <td>{{ $uid->id }}</td>
-                        <td>{{ $uid->uid }}</td>
+                        <td>{{ $email->id }}</td>
+                        <td>{{ $email->email }}</td>
+                        <td>{{ $email->value }}</td>
                         <td>
-                            @if($uid->status == 'active')
+                            @if($email->status == 'active')
                                 <span class="badge badge-success">Hoạt động</span>
                             @else
                                 <span class="badge badge-danger">Không hoạt động</span>
                             @endif
                         </td>
-                        <td>{{ $uid->created_at->format('d/m/Y H:i') }}</td> <!-- Hiển thị ngày tạo -->
+                        <td>{{ $email->created_at->format('d/m/Y H:i') }}</td> <!-- Hiển thị ngày tạo -->
                     </tr>
                 @endforeach
             </tbody>
         </table>
-
     </div>
     <a href="{{ route('stock-manage.index', $stock->productVariant->id) }}" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Quay lại danh sách Stock
     </a>
-
 </div>
+
 @stop

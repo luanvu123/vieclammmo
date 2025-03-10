@@ -21,7 +21,7 @@ class OrderController extends Controller
             'product_variant_id' => 'required|exists:product_variants,id',
             'quantity' => 'required|integer|min:1',
             'coupon_key' => 'nullable|string|exists:coupons,coupon_key',
-            'required' => 'nullable|string' // Nếu cần nhập yêu cầu
+            'required' => 'nullable|string'
         ]);
 
         $customer = Auth::guard('customer')->user();
@@ -47,27 +47,30 @@ class OrderController extends Controller
                 return response()->json(['error' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn!'], 403);
             }
 
-            if ($coupon->type === 'percent') {
-                $discountAmount = min(($total * $coupon->percent) / 100, $coupon->max_amount);
+            // Kiểm tra xem mã giảm giá có thuộc về sản phẩm của biến thể hay không
+            if ($coupon->product_id !== $productVariant->product_id) {
+                $coupon = null; // Không lưu mã giảm giá
             } else {
-                $discountAmount = $coupon->max_amount;
-            }
+                if ($coupon->type === 'percent') {
+                    $discountAmount = min(($total * $coupon->percent) / 100, $coupon->max_amount);
+                } else {
+                    $discountAmount = $coupon->max_amount;
+                }
 
-            $total -= $discountAmount;
+                $total -= $discountAmount;
+            }
         }
 
         if ($customer->Balance < $total) {
             return response()->json(['error' => 'Số dư không đủ để thanh toán đơn hàng!'], 403);
         }
 
-        // Xử lý trường hợp `type = null`, yêu cầu nhập required
         if (is_null($productVariant->type)) {
             if (!$request->required) {
                 return response()->json(['error' => 'Vui lòng nhập yêu cầu trước khi đặt hàng!'], 400);
             }
         }
 
-        // Tạo đơn hàng
         $order = Order::create([
             'customer_id' => $customer->id,
             'product_variant_id' => $productVariant->id,
@@ -78,17 +81,15 @@ class OrderController extends Controller
             'required' => $request->required ?? null
         ]);
 
-        // Trừ số dư tài khoản khách hàng
         $customer->Balance -= $total;
         $customer->save();
 
-        // Lưu `OrderDetail` nếu là `Tài khoản` hoặc `Email`
         if ($productVariant->type === "Tài khoản") {
             $stocks = $productVariant->stocks->flatMap->uidFacebooks->take($request->quantity);
         } elseif ($productVariant->type === "Email") {
             $stocks = $productVariant->stocks->flatMap->uidEmails->take($request->quantity);
         } else {
-            $stocks = collect(); // Không tạo `OrderDetail`
+            $stocks = collect();
         }
 
         foreach ($stocks as $stock) {
@@ -102,6 +103,7 @@ class OrderController extends Controller
 
         return response()->json(['success' => 'Đơn hàng đã được tạo!', 'order' => $order]);
     }
+
 
 
 }

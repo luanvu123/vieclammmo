@@ -7,10 +7,43 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductVariant;
+use App\Models\UidEmail;
+use App\Models\UidFacebook;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
+    public function index()
+    {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (!Auth::guard('customer')->check()) {
+            return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để xem đơn hàng!');
+        }
+
+        $customer = Auth::guard('customer')->user();
+        $orders = Order::where('customer_id', $customer->id)
+            ->with(['productVariant.product', 'orderDetails', 'coupon'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin_customer.orders.index', compact('orders'));
+    }
+
+    public function show($order_key)
+    {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (!Auth::guard('customer')->check()) {
+            return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để xem chi tiết đơn hàng!');
+        }
+
+        $customer = Auth::guard('customer')->user();
+        $order = Order::where('order_key', $order_key)
+            ->where('customer_id', $customer->id)
+            ->with(['productVariant.product', 'orderDetails', 'coupon'])
+            ->firstOrFail();
+
+        return view('admin_customer.orders.show', compact('order'));
+    }
     public function store(Request $request)
     {
         if (!Auth::guard('customer')->check()) {
@@ -30,7 +63,11 @@ class OrderController extends Controller
         if ($productVariant->product->customer_id == $customer->id) {
             return response()->json(['error' => 'Bạn không thể mua gian hàng của mình!'], 403);
         }
+        $totalQuantitySuccess = $productVariant->stocks->sum('quantity_success');
 
+        if ($request->quantity > $totalQuantitySuccess) {
+            return response()->json(['error' => 'Số lượng không hợp lệ!'], 400);
+        }
         $total = $productVariant->price * $request->quantity;
         $coupon = null;
         $discountAmount = 0;
@@ -86,24 +123,49 @@ class OrderController extends Controller
 
         if ($productVariant->type === "Tài khoản") {
             $stocks = $productVariant->stocks->flatMap->uidFacebooks->take($request->quantity);
+            foreach ($stocks as $stock) {
+                OrderDetail::create([
+                    'order_id' => $order->id,
+                    'account' => $stock->uid,
+                    'value' => $stock->value,
+                    'status' => 'success'
+                ]);
+
+                // Xóa UidFacebook có uid tương ứng
+                UidFacebook::where('uid', $stock->uid)->delete();
+            }
         } elseif ($productVariant->type === "Email") {
             $stocks = $productVariant->stocks->flatMap->uidEmails->take($request->quantity);
+            foreach ($stocks as $stock) {
+                OrderDetail::create([
+                    'order_id' => $order->id,
+                    'account' => $stock->email,
+                    'value' => $stock->value,
+                    'status' => 'success'
+                ]);
+
+                // Xóa UidEmail có email tương ứng
+                UidEmail::where('email', $stock->email)->delete();
+            }
         } else {
             $stocks = collect();
         }
 
-        foreach ($stocks as $stock) {
-            OrderDetail::create([
-                'order_id' => $order->id,
-                'account' => $stock->uid,
-                'value' => $stock->value,
-                'status' => 'success'
-            ]);
-        }
 
         return response()->json(['success' => 'Đơn hàng đã được tạo!', 'order' => $order]);
     }
 
+    public function updateStatus(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|in:success,error',
+    ]);
 
+    $orderDetail = OrderDetail::findOrFail($id);
+    $orderDetail->status = $request->status;
+    $orderDetail->save();
+
+    return response()->json(['success' => true]);
+}
 
 }

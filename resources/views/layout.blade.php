@@ -106,10 +106,9 @@
                         </div>
 
                         <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
-                        <a href="#">Đơn hàng đã mua</a>
+                        <a href="{{route('orders.index')}}">Đơn hàng đã mua</a>
                         <a href="{{ route('wishlist.index') }}">Gian hàng yêu thích</a>
                         <a href="#">Lịch sử thanh toán</a>
-                        <a href="#">Reseller</a>
                         <a href="{{ route('posts.create') }}">Quản lý nội dung</a>
                         <a href="#">Đổi mật khẩu</a>
                         <div class="divider"></div>
@@ -301,8 +300,6 @@
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css" />
 
-    <!-- Thêm jQuery (bắt buộc) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Thêm JS của Slick -->
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>

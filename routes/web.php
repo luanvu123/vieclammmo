@@ -88,6 +88,10 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::get('/messages/create/{customerId}', [MessageController::class, 'create'])->name('messages.create');
     Route::resource('products', ProductController::class);
     Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order_key}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/order-details/update-status/{id}', [OrderController::class, 'updateStatus'])->name('order-details.updateStatus');
+
     Route::resource('product_variants', ProductVariantController::class);
     Route::resource('posts', PostController::class);
     Route::get('/thanh-toan', [CustomerController::class, 'checkout'])->name('checkout');
@@ -126,15 +130,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('product-variant-manage', ProductVariantManageController::class)
         ->parameters(['product-variant-manage' => 'productVariant'])
         ->except(['create', 'show']);
-Route::post('/product-variant/update-type', [ProductVariantManageController::class, 'updateType'])
-    ->name('product-variant-manage.updateType');
+    Route::post('/product-variant/update-type', [ProductVariantManageController::class, 'updateType'])
+        ->name('product-variant-manage.updateType');
 
     Route::get('stock-manage/{variant}', [StockManageController::class, 'index'])
         ->name('stock-manage.index');
     Route::get('stock/{stock}/uid', [StockManageController::class, 'UidIndex'])->name('stock.uid_index');
     Route::get('stock/{stock}/uid/create', [StockManageController::class, 'UidCreate'])->name('stock.uid_create');
     Route::post('stock/{stock}/uid', [StockManageController::class, 'UidStore'])->name('stock.uid_store');
-     Route::post('stock/{stock}/uid-email', [StockManageController::class, 'uidEmailStore'])->name('stock.uid_email_store');
-     Route::get('/stock/{stock}/uid-email', [StockManageController::class, 'uidEmailIndex'])->name('stock.uid_email_index');
-
+    Route::post('stock/{stock}/uid-email', [StockManageController::class, 'uidEmailStore'])->name('stock.uid_email_store');
+    Route::get('/stock/{stock}/uid-email', [StockManageController::class, 'uidEmailIndex'])->name('stock.uid_email_index');
 });

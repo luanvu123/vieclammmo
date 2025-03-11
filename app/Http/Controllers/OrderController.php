@@ -156,77 +156,16 @@ class OrderController extends Controller
     }
 
     public function updateStatus(Request $request, $id)
-{
-    $request->validate([
-        'status' => 'required|in:success,error',
-    ]);
-
-    $orderDetail = OrderDetail::findOrFail($id);
-    $orderDetail->status = $request->status;
-    $orderDetail->save();
-
-    return response()->json(['success' => true]);
-}
-   public function submitReview(Request $request)
     {
         $request->validate([
-            'order_id' => 'required|exists:orders,id',
-            'product_id' => 'required|exists:products,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'content' => 'nullable|string',
-            'quality_status' => 'nullable|string',
+            'status' => 'required|in:success,error',
         ]);
 
-        $customer = Auth::guard('customer')->user();
+        $orderDetail = OrderDetail::findOrFail($id);
+        $orderDetail->status = $request->status;
+        $orderDetail->save();
 
-        // Kiểm tra xem đơn hàng có thuộc về khách hàng hiện tại không
-        $order = Order::where('id', $request->order_id)
-            ->where('customer_id', $customer->id)
-            ->where('status', 'completed')  // Chỉ đánh giá đơn hàng đã hoàn thành
-            ->first();
-
-        if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Bạn không thể đánh giá đơn hàng này'
-            ], 403);
-        }
-
-        // Kiểm tra xem đã đánh giá sản phẩm này chưa
-        $existingReview = Review::where('customer_id', $customer->id)
-            ->where('order_id', $request->order_id)
-            ->where('product_id', $request->product_id)
-            ->first();
-
-        if ($existingReview) {
-            // Cập nhật đánh giá hiện có
-            $existingReview->update([
-                'rating' => $request->rating,
-                'content' => $request->content,
-                'quality_status' => $request->quality_status,
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Cập nhật đánh giá thành công',
-                'review' => $existingReview
-            ]);
-        }
-
-        // Tạo đánh giá mới
-        $review = Review::create([
-            'customer_id' => $customer->id,
-            'order_id' => $request->order_id,
-            'product_id' => $request->product_id,
-            'rating' => $request->rating,
-            'content' => $request->content,
-            'quality_status' => $request->quality_status,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Đánh giá sản phẩm thành công',
-            'review' => $review
-        ]);
+        return response()->json(['success' => true]);
     }
+
 }

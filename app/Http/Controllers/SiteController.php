@@ -34,6 +34,27 @@ class SiteController extends Controller
 
         return view('pages.home', compact('productCategories', 'serviceCategories', 'hotProducts'));
     }
+public function search(Request $request)
+{
+    $keyword = $request->input('keyword');
+    $searchType = $request->input('searchType'); // 'Sản phẩm' hoặc 'Người bán'
+
+    $products = collect();
+    $customers = collect();
+
+    if ($searchType === 'Sản phẩm') {
+        $products = Product::where('name', 'like', '%' . $keyword . '%')
+            ->where('status', 'active')
+            ->with(['category', 'productVariants', 'customer', 'subcategory'])
+            ->paginate(12);
+    } elseif ($searchType === 'Người bán') {
+        $customers = Customer::where('name', 'like', '%' . $keyword . '%')
+            ->paginate(12);
+    }
+
+    return view('pages.search', compact('products', 'customers', 'keyword', 'searchType'));
+}
+
 
   public function showProductDetail($slug)
 {

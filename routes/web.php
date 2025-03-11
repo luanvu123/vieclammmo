@@ -43,7 +43,7 @@ Route::get('/profile-site/{username}', [SiteController::class, 'profile'])->name
 Route::get('/category/{slug}', [SiteController::class, 'showProductsByCategory'])->name('category.products');
 Route::get('/product/{slug}', [SiteController::class, 'showProductDetail'])->name('product.detail');
 Route::post('/ho-tro', [SiteController::class, 'storeSupport'])->name('support.site');
-
+Route::get('/search', [SiteController::class, 'search'])->name('site.search');
 Route::get('/bai-viet', [SiteController::class, 'post'])->name('post.site');
 Route::get('/bai-viet/{slug}', [SiteController::class, 'postDetail'])->name('post.detail');
 Route::get('/FAQs', [SiteController::class, 'faqs'])->name('faqs');
@@ -100,6 +100,7 @@ Route::middleware('customer', '2fa')->group(function () {
     });
 
 
+Route::get('/profile/{name}/products', [CustomerController::class, 'productCustomer'])->name('product.customer.site');
 
     Route::get('/profile', [CustomerController::class, 'profile'])->name('profile.site');
     Route::get('/profile/edit', [CustomerController::class, 'profileEdit'])->name('profile.edit.site');

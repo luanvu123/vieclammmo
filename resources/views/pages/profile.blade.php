@@ -84,7 +84,10 @@
                 <button class="action-button edit-button" onclick="window.location='{{ route('profile.edit.site') }}'">
                     Chỉnh sửa
                 </button>
-                <button class="action-button view-store-button">Xem tất cả gian hàng</button>
+               <button class="action-button view-store-button" onclick="window.location='{{ route('product.customer.site', $customer->name) }}'">
+    Xem tất cả gian hàng
+</button>
+
             </div>
 
         </div>
@@ -96,6 +99,7 @@
                 <div class="profile-username">{{ $customer->email }}</div>
                 <div class="status-badge">{{ $isOnline ? 'Online' : 'Offline' }}</div>
                 <div class="status-badge" style="background: #4CAF50">Gian hàng</div>
+                
             </div>
 
             <div class="login-history">

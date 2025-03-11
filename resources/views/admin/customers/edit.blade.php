@@ -60,22 +60,25 @@
                         </div>
 
                         <h4 class="mt-3">Lịch sử đăng nhập</h4>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Thời gian</th>
-                                    <th>Thiết bị</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($customerManage->loginHistories as $history)
-                                    <tr>
-                                        <td>{{ $history->created_at->format('d/m/Y H:i:s') }}</td>
-                                        <td>{{ $history->device }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                       <div style="max-height: 400px; overflow-y: auto;">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Thời gian</th>
+                <th>Thiết bị</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($customerManage->loginHistories as $history)
+                <tr>
+                    <td>{{ $history->created_at->format('d/m/Y H:i:s') }}</td>
+                    <td>{{ $history->device }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
 
                     </div>
 

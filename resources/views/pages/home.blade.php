@@ -8,21 +8,25 @@
                     Tạp Hóa MMO - Sàn thương mại điện tử sản phẩm số phục vụ kiếm tiền online. Mọi giao dịch trên trang đều
                     hoàn toàn tự động và được giữ tiền 3 ngày
                 </div>
-                <div class="search-section">
-                    <div class="search-container">
-                        <div class="search-dropdown">
-                            <select>
-                                <option>Tùy chọn tìm kiếm</option>
-                                <option>Sản phẩm</option>
-                                <option>Người bán</option>
-                            </select>
-                        </div>
-                        <div class="search-input">
-                            <input type="text" placeholder="Tìm gian hàng hoặc người bán">
-                            <button class="search-btn">Tìm kiếm</button>
+                <form action="{{ route('site.search') }}" method="GET" id="searchForm">
+                    <div class="search-section">
+                        <div class="search-container">
+
+                            <div class="search-dropdown">
+                                <select name="searchType">
+                                    <option value="Sản phẩm">Sản phẩm</option>
+                                    <option value="Người bán">Người bán</option>
+                                </select>
+                            </div>
+                            <div class="search-input">
+                                <input type="text" name="keyword" placeholder="Tìm gian hàng hoặc người bán" required>
+                                <button type="submit" class="search-btn">Tìm kiếm</button>
+                            </div>
+
                         </div>
                     </div>
-                </div>
+                </form>
+
             </div>
         </div>
     </div>
@@ -85,63 +89,63 @@
                 <div class="carousel-nav prev"><i class="fas fa-chevron-left"></i></div>
                 <div class="product-slides">
                     @foreach ($hotProducts as $product)
-                        <div class="product-card">
-                            <div class="product-badge">
-                                <span class="service-badge">{{ $product->category->type ?? 'Sản phẩm' }}</span>
-                            </div>
-                            <div class="product-img">
-                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
-                            </div>
-                            <div class="product-info">
-                                <h3 class="product-title">
-                                    {{ Str::limit($product->name, 20, '...') }}
-                                </h3>
+                                    <div class="product-card">
+                                        <div class="product-badge">
+                                            <span class="service-badge">{{ $product->category->type ?? 'Sản phẩm' }}</span>
+                                        </div>
+                                        <div class="product-img">
+                                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                                        </div>
+                                        <div class="product-info">
+                                            <h3 class="product-title">
+                                                {{ Str::limit($product->name, 20, '...') }}
+                                            </h3>
 
 
-                                @php
-                                    $minPrice = $product->productVariants->min('price') ?? 0;
-                                    $maxPrice = $product->productVariants->max('price') ?? 0;
-                                @endphp
+                                            @php
+                                                $minPrice = $product->productVariants->min('price') ?? 0;
+                                                $maxPrice = $product->productVariants->max('price') ?? 0;
+                                            @endphp
 
-                                @if ($minPrice > 0 && $maxPrice > 0)
-                                    <div class="product-price">
-                                        {{ number_format($minPrice, 0, ',', '.') }}đ -
-                                        {{ number_format($maxPrice, 0, ',', '.') }}đ
-                                    </div>
-                                @else
-                                    <div class="product-price">Chưa có giá</div>
-                                @endif
-
-                                <div class="rating">
-                                    <span class="stars">
-                                        @for ($i = 0; $i < 5; $i++)
-                                            @if ($i < ($product->rating ?? 5))
-                                                ★
+                                            @if ($minPrice > 0 && $maxPrice > 0)
+                                                <div class="product-price">
+                                                    {{ number_format($minPrice, 0, ',', '.') }}đ -
+                                                    {{ number_format($maxPrice, 0, ',', '.') }}đ
+                                                </div>
                                             @else
-                                                ☆
+                                                <div class="product-price">Chưa có giá</div>
                                             @endif
-                                        @endfor
-                                    </span>
-                                    <span class="reviews">
-                                        {{ $product->reviews_count ?? 0 }} Reviews |
-                                        Đơn hoàn thành: {{ $product->completed_orders ?? 0 }} |
-                                        Khiếu nại: {{ $product->complaint_percentage ?? '0.0' }}%
-                                    </span>
-                                </div>
 
-                                <div class="seller">
-                                    Người bán: <a href="{{ route('profile.name.site', $product->customer->name ?? '') }}">{{ $product->customer->name ?? 'Unknown' }}</a>
-                                </div>
-                                <div class="product-category">
-                                    Sản phẩm: <a
-                                        href="#">{{ $product->subcategory->name ?? $product->category->name }}</a>
-                                </div>
-                                <div class="action-buttons">
-                                    <a href="{{ route('product.detail', $product->slug) }}" class="buy-now">Xem chi
-                                        tiết</a>
-                                </div>
-                            </div>
-                        </div>
+                                            <div class="rating">
+                                                <span class="stars">
+                                                    @for ($i = 0; $i < 5; $i++)
+                                                        @if ($i < ($product->rating ?? 5))
+                                                            ★
+                                                        @else
+                                                            ☆
+                                                        @endif
+                                                    @endfor
+                                                </span>
+                                                <span class="reviews">
+                                                    {{ $product->reviews_count ?? 0 }} Reviews |
+                                                    Đơn hoàn thành: {{ $product->completed_orders ?? 0 }} |
+                                                    Khiếu nại: {{ $product->complaint_percentage ?? '0.0' }}%
+                                                </span>
+                                            </div>
+
+                                            <div class="seller">
+                                                Người bán: <a
+                                                    href="{{ route('profile.name.site', $product->customer->name ?? '') }}">{{ $product->customer->name ?? 'Unknown' }}</a>
+                                            </div>
+                                            <div class="product-category">
+                                                Sản phẩm: <a href="#">{{ $product->subcategory->name ?? $product->category->name }}</a>
+                                            </div>
+                                            <div class="action-buttons">
+                                                <a href="{{ route('product.detail', $product->slug) }}" class="buy-now">Xem chi
+                                                    tiết</a>
+                                            </div>
+                                        </div>
+                                    </div>
                     @endforeach
                 </div>
                 <div class="carousel-nav next"><i class="fas fa-chevron-right"></i></div>

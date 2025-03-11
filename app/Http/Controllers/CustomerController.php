@@ -68,6 +68,14 @@ class CustomerController extends Controller
             'lastActiveTime'
         ));
     }
+    public function productCustomer($name)
+{
+    $customer = Customer::where('name', $name)->firstOrFail();
+    $products = Product::where('customer_id', $customer->id)->paginate(10);
+
+    return view('pages.product_customer', compact('customer', 'products'));
+}
+
     public function profileEdit()
     {
         $customer = Auth::guard('customer')->user();

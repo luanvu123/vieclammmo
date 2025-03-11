@@ -22,8 +22,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="name">Tên khách hàng</label>
-                            <input type="text" class="form-control" id="name" value="{{ $customerManage->name }}"
-                                disabled>
+                            <input type="text" class="form-control" id="name" value="{{ $customerManage->name }}" disabled>
                         </div>
                         <div class="form-group">
                             <label for="email">Email</label>
@@ -60,24 +59,24 @@
                         </div>
 
                         <h4 class="mt-3">Lịch sử đăng nhập</h4>
-                       <div style="max-height: 400px; overflow-y: auto;">
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Thời gian</th>
-                <th>Thiết bị</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($customerManage->loginHistories as $history)
-                <tr>
-                    <td>{{ $history->created_at->format('d/m/Y H:i:s') }}</td>
-                    <td>{{ $history->device }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Thời gian</th>
+                                        <th>Thiết bị</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($customerManage->loginHistories as $history)
+                                        <tr>
+                                            <td>{{ $history->created_at->format('d/m/Y H:i:s') }}</td>
+                                            <td>{{ $history->device }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
 
 
                     </div>
@@ -88,7 +87,7 @@
                             <div class="input-group">
                                 <input type="number" class="form-control @error('Balance') is-invalid @enderror"
                                     id="Balance" name="Balance" value="{{ old('Balance', $customerManage->Balance) }}"
-                                    required>
+                                    readonly>
                                 <div class="input-group-append">
                                     <span class="input-group-text">VNĐ</span>
                                 </div>
@@ -167,8 +166,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="Front_ID_card_image">Ảnh mặt trước CMND</label>
-                            <input type="file" class="form-control" id="Front_ID_card_image"
-                                name="Front_ID_card_image">
+                            <input type="file" class="form-control" id="Front_ID_card_image" name="Front_ID_card_image">
                             @if ($customerManage->Front_ID_card_image)
                                 <img src="{{ asset($customerManage->Front_ID_card_image) }}" alt="Front ID"
                                     class="img-thumbnail mt-2" width="100">
@@ -177,8 +175,7 @@
 
                         <div class="form-group">
                             <label for="Back_ID_card_image">Ảnh mặt sau CMND</label>
-                            <input type="file" class="form-control" id="Back_ID_card_image"
-                                name="Back_ID_card_image">
+                            <input type="file" class="form-control" id="Back_ID_card_image" name="Back_ID_card_image">
                             @if ($customerManage->Back_ID_card_image)
                                 <img src="{{ asset($customerManage->Back_ID_card_image) }}" alt="Back ID"
                                     class="img-thumbnail mt-2" width="100">

@@ -9,6 +9,7 @@ use App\Models\GenrePost;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Review;
 use App\Models\Subcategory;
 use App\Models\Support;
 use Illuminate\Http\Request;
@@ -56,7 +57,7 @@ public function search(Request $request)
 }
 
 
-  public function showProductDetail($slug)
+public function showProductDetail($slug)
 {
     // Tìm sản phẩm theo slug
     $product = Product::where('slug', $slug)
@@ -74,9 +75,25 @@ public function search(Request $request)
         ->take(10)
         ->get();
 
-    return view('pages.product_detail', compact('product', 'productVariant', 'relatedProducts'));
-}
+    // Lấy đánh giá của sản phẩm
+    $reviews = Review::where('product_id', $product->id)
+        ->with('customer') // Eager load customer information
+        ->orderBy('created_at', 'desc')
+        ->get();
 
+    // Tính điểm đánh giá trung bình
+    $averageRating = $reviews->count() > 0 ? $reviews->avg('rating') : 0;
+    $reviewCount = $reviews->count();
+
+    return view('pages.product_detail', compact(
+        'product',
+        'productVariant',
+        'relatedProducts',
+        'reviews',
+        'averageRating',
+        'reviewCount'
+    ));
+}
 
 
     public function showProductsByCategory($slug, Request $request)

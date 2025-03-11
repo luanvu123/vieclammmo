@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CreateDepositJob;
 use App\Models\Coupon;
+use App\Models\Deposit;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductVariant;
+use App\Models\Review;
 use App\Models\UidEmail;
 use App\Models\UidFacebook;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +45,11 @@ class OrderController extends Controller
             ->with(['productVariant.product', 'orderDetails', 'coupon'])
             ->firstOrFail();
 
-        return view('admin_customer.orders.show', compact('order'));
+        $reviews = Review::where('order_id', $order->id)
+            ->where('customer_id', $customer->id)
+            ->get();
+
+        return view('admin_customer.orders.show', compact('order', 'reviews'));
     }
     public function store(Request $request)
     {
@@ -114,12 +121,23 @@ class OrderController extends Controller
             'quantity' => $request->quantity,
             'total' => $total,
             'status' => 'pending',
+            'discount_amount' => $discountAmount,
             'coupon_id' => $coupon ? $coupon->id : null,
             'required' => $request->required ?? null
         ]);
 
         $customer->Balance -= $total;
         $customer->save();
+        // Tạo Deposit cho người mua ngay lập tức
+        Deposit::create([
+            'customer_id' => $customer->id,
+            'money' => $total,
+            'type' => 'mua hàng',
+            'content' => 'Thanh toán đơn hàng: ' . $order->order_key,
+            'status' => 'thành công'
+        ]);
+        $seller = $productVariant->product->customer;
+        CreateDepositJob::dispatch($order, $seller, $total)->delay(now()->addDays(3));
 
         if ($productVariant->type === "Tài khoản") {
             $stocks = $productVariant->stocks->flatMap->uidFacebooks->take($request->quantity);
@@ -167,5 +185,4 @@ class OrderController extends Controller
 
         return response()->json(['success' => true]);
     }
-
 }

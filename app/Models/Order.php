@@ -17,7 +17,8 @@ class Order extends Model
         'total',
         'status',
         'coupon_id',
-        'required'
+        'required',
+        'discount_amount',
     ];
 
     protected static function boot()

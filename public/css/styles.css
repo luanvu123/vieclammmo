@@ -3049,3 +3049,17 @@ h1 {
     padding-right: 10px;
     /* Giúp tránh che khuất nội dung */
 }
+
+/* Tạo màu tùy chỉnh cho từng loại giao dịch */
+.text-green-custom {
+    color: green;
+}
+
+.text-red-custom {
+    color: red;
+}
+
+.text-yellow-custom {
+    color: orange;
+}
+

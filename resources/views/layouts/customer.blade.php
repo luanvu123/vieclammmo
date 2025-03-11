@@ -153,6 +153,18 @@
                                 <span>Quản lý mã giảm</span>
                             </a>
                         </li><!--end nav-item-->
+                         <li class="nav-item">
+                            <a class="nav-link" href="{{ route('order-manage.index') }}">
+                                <i class="iconoir-hand-cash menu-icon"></i>
+                                <span>Gian hàng sản phẩm</span>
+                            </a>
+                        </li><!--end nav-item-->
+                          <li class="nav-item">
+                            <a class="nav-link" href="{{ route('order-service-manage.index') }}">
+                                <i class="iconoir-hand-cash menu-icon"></i>
+                                <span>Gian hàng dịch vụ</span>
+                            </a>
+                        </li><!--end nav-item-->
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarTransactions" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarTransactions">

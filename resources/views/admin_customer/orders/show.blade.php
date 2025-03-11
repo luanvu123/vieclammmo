@@ -119,7 +119,7 @@
 
                                 </table>
                             </div>
-                        @elseif($order->productVariant->type === null)
+                        @elseif($order->productVariant->type == "Dịch vụ")
                             <div class="alert alert-info">
                                 <p>Đây là đơn hàng yêu cầu dịch vụ. Người bán sẽ liên hệ với bạn để thực hiện.</p>
                             </div>

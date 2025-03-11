@@ -12,7 +12,14 @@
                 <h1 class="product-title">{{ $product->name }}</h1>
 
                 <div class="rating">
-                    ★★★★★ <span style="color: #666; font-size: 14px;">(4.8/5)</span>
+                    @for($i = 1; $i <= 5; $i++)
+                        @if($i <= round($averageRating))
+                            <span class="star filled">★</span>
+                        @else
+                            <span class="star">★</span>
+                        @endif
+                    @endfor
+                    <span style="color: #666; font-size: 14px;">({{ number_format($averageRating, 1) }}/5)</span>
                 </div>
 
                 <div class="description">
@@ -135,6 +142,70 @@
 
         <div class="tab-content" id="reviews">
             <h3>Đánh giá từ khách hàng</h3>
+
+            <div class="rating-summary mb-4">
+                <div class="average-rating">
+                    <h4>{{ number_format($averageRating, 1) }}/5</h4>
+                    <div class="stars">
+                        @for($i = 1; $i <= 5; $i++)
+                            @if($i <= round($averageRating))
+                                <span class="star filled">★</span>
+                            @else
+                                <span class="star">★</span>
+                            @endif
+                        @endfor
+                    </div>
+                    <p>Dựa trên {{ $reviewCount }} đánh giá</p>
+                </div>
+            </div>
+
+            @if($reviews->count() > 0)
+                <div class="reviews-list">
+                    @foreach($reviews as $review)
+                        <div class="review-item mb-4">
+                            <div class="review-header d-flex justify-content-between align-items-center">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-name">
+                                        <strong>{{ $review->customer->name }}</strong>
+                                    </div>
+                                    <div class="review-date text-muted">
+                                        {{ $review->created_at->format('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                                <div class="reviewer-rating">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <= $review->rating)
+                                            <span class="star filled">★</span>
+                                        @else
+                                            <span class="star">★</span>
+                                        @endif
+                                    @endfor
+                                </div>
+                            </div>
+
+                            <div class="review-content mt-3">
+                                <p>{{ $review->content }}</p>
+                            </div>
+
+                            @if($review->quality_status)
+                                <div class="quality-tags mt-2">
+                                    @foreach(explode(',', $review->quality_status) as $tag)
+                                        <span class="quality-tag">{{ $tag }}</span>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+
+                        @if(!$loop->last)
+                            <hr>
+                        @endif
+                    @endforeach
+                </div>
+            @else
+                <div class="no-reviews">
+                    <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                </div>
+            @endif
         </div>
 
         <div class="tab-content" id="api">
@@ -243,10 +314,10 @@
                     const reviewElement = document.createElement("div");
                     reviewElement.classList.add("review");
                     reviewElement.innerHTML = `
-                                        <div class="customer-name">${review.name}</div>
-                                        <div class="rating">⭐ ${"⭐".repeat(review.rating)}</div>
-                                        <p>${review.comment}</p>
-                                    `;
+                                            <div class="customer-name">${review.name}</div>
+                                            <div class="rating">⭐ ${"⭐".repeat(review.rating)}</div>
+                                            <p>${review.comment}</p>
+                                        `;
                     reviewsContainer.appendChild(reviewElement);
                 });
             } else {
@@ -388,6 +459,68 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .rating {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 8px;
+        }
+
+        /* Rating stars */
+        .stars {
+            display: inline-flex;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            color: #ccc;
+            font-size: 24px;
+            margin-right: 2px;
+        }
+
+        .star.filled {
+            color: #FFD700;
+            /* Gold color for filled stars */
+        }
+
+        /* Review items */
+        .review-item {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .reviewer-info {
+            margin-bottom: 5px;
+        }
+
+        .review-date {
+            font-size: 12px;
+        }
+
+        .reviewer-rating {
+            display: flex;
+        }
+
+        .reviewer-rating .star {
+            font-size: 16px;
+        }
+
+        /* Quality tags */
+        .quality-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .quality-tag {
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
         }
 
         .modal-content {

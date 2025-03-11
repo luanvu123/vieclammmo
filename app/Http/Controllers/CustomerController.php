@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Deposit;
 use App\Models\Order;
 use App\Models\Post;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use PragmaRX\Google2FA\Google2FA;
 
@@ -28,7 +30,37 @@ class CustomerController extends Controller
         return view('pages.checkout');
     }
 
+    public function changePassword()
+    {
+        return view('pages.change-password');
+    }
 
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $customer = Auth::guard('customer')->user();
+
+        if (!Hash::check($request->current_password, $customer->password)) {
+            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng.']);
+        }
+
+        $customer->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return redirect()->route('customer.profile')->with('success', 'Mật khẩu đã được cập nhật thành công.');
+    }
+ public function indexDeposit()
+    {
+        $customer = Auth::guard('customer')->user();
+        $deposits = Deposit::where('customer_id', $customer->id)->orderBy('created_at', 'desc')->get();
+
+        return view('pages.deposit', compact('deposits'));
+    }
 
     public function profile()
     {
@@ -69,12 +101,12 @@ class CustomerController extends Controller
         ));
     }
     public function productCustomer($name)
-{
-    $customer = Customer::where('name', $name)->firstOrFail();
-    $products = Product::where('customer_id', $customer->id)->paginate(10);
+    {
+        $customer = Customer::where('name', $name)->firstOrFail();
+        $products = Product::where('customer_id', $customer->id)->paginate(10);
 
-    return view('pages.product_customer', compact('customer', 'products'));
-}
+        return view('pages.product_customer', compact('customer', 'products'));
+    }
 
     public function profileEdit()
     {

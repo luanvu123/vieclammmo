@@ -40,7 +40,11 @@ class Product extends Model
     {
         return $this->belongsTo(Subcategory::class);
     }
-
+// Add this to your Product model
+public function reviews()
+{
+    return $this->hasMany(Review::class);
+}
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);

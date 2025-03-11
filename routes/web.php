@@ -9,11 +9,14 @@ use App\Http\Controllers\CustomerManageController;
 use App\Http\Controllers\GenrePostController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderManageController;
+use App\Http\Controllers\OrderManageServiceController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductManageController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\ProductVariantManageController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockManageController;
@@ -21,6 +24,7 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\WithdrawalController;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -83,6 +87,14 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::resource('wishlist', WishlistController::class);
     Route::resource('coupons', CouponController::class);
 
+    Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
+    Route::get('reviews/create/{orderId}/{productId}', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
+    Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
+
+
 
     Route::post('/messages/{receiverId}', [MessageController::class, 'store'])->name('messages.store');
     Route::get('/messages/create/{customerId}', [MessageController::class, 'create'])->name('messages.create');
@@ -91,16 +103,24 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order_key}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/order-details/update-status/{id}', [OrderController::class, 'updateStatus'])->name('order-details.updateStatus');
-
+    Route::get('/change-password', [CustomerController::class, 'changePassword'])->name('customer.changePassword');
+    Route::put('/update-password', [CustomerController::class, 'updatePassword'])->name('customer.updatePassword');
     Route::resource('product_variants', ProductVariantController::class);
     Route::resource('posts', PostController::class);
+    Route::resource('order-manage', OrderManageController::class);
+    Route::get('orders/{id}/detail', [OrderManageController::class, 'orderDetail'])->name('order-detail.show');
+
+    Route::resource('order-service-manage', OrderManageServiceController::class);
+
     Route::get('/thanh-toan', [CustomerController::class, 'checkout'])->name('checkout');
     Route::prefix('product_variants/{variant}')->group(function () {
         Route::resource('stocks', StockController::class)->except(['show']);
     });
 
-
-Route::get('/profile/{name}/products', [CustomerController::class, 'productCustomer'])->name('product.customer.site');
+    Route::get('/withdrawals', [WithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::get('/withdrawals/create', [WithdrawalController::class, 'create'])->name('withdrawals.create');
+    Route::post('/withdrawals', [WithdrawalController::class, 'store'])->name('withdrawals.store');
+    Route::get('/profile/{name}/products', [CustomerController::class, 'productCustomer'])->name('product.customer.site');
 
     Route::get('/profile', [CustomerController::class, 'profile'])->name('profile.site');
     Route::get('/profile/edit', [CustomerController::class, 'profileEdit'])->name('profile.edit.site');
@@ -108,6 +128,7 @@ Route::get('/profile/{name}/products', [CustomerController::class, 'productCusto
     Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard.site');
 
+Route::get('/deposit', [CustomerController::class, 'indexDeposit'])->name('deposit.index');
 
 
     // Thêm các route mới cho 2FA
@@ -133,6 +154,8 @@ Route::group(['middleware' => ['auth']], function () {
         ->except(['create', 'show']);
     Route::post('/product-variant/update-type', [ProductVariantManageController::class, 'updateType'])
         ->name('product-variant-manage.updateType');
+    Route::post('/customer-manage/deposit', [CustomerManageController::class, 'storeDeposit'])->name('customer-manage.storeDeposit');
+    Route::get('/customer-manage/deposits/{customerId}', [CustomerManageController::class, 'indexDeposit'])->name('customer-manage.deposits');
 
     Route::get('stock-manage/{variant}', [StockManageController::class, 'index'])
         ->name('stock-manage.index');

@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TapHoa MMO - Sàn thương mại điện tử</title>
+    <title>MuaNguyenLieuMMO - Sàn thương mại điện tử</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Slick Slider CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -24,9 +25,9 @@
             <div class="container">
                 <div class="support-info">
                     <span><i class="fas fa-headset"></i> Hỗ trợ trực tuyến</span>
-                    <span><i class="fas fa-leaf"></i> Tạp hóa MMO</span>
-                    <span><i class="fas fa-envelope"></i> support@taphoammo.net</span>
-                    <span><i class="far fa-clock"></i> 08:00am - 10:00pm</span>
+                    <span><i class="fas fa-leaf"></i> MuaNguyenLieu MMO</span>
+                    <span><i class="fas fa-envelope"></i> {{ $layout_info->email ?? 'Chưa có email' }}</span>
+                    <span><i class="far fa-clock"></i> {{ $layout_info->clock ?? 'Chưa có giờ làm việc' }}</span>
                 </div>
                 <div class="language-selector">
                     <span>Ngôn ngữ: VI <i class="fas fa-chevron-down"></i></span>
@@ -46,8 +47,7 @@
                         <ul class="submenu">
                             @if (isset($layout_categories['Sản phẩm']))
                                 @foreach ($layout_categories['Sản phẩm'] as $category)
-                                    <li><a
-                                            href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a>
+                                    <li><a href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a>
                                     </li>
                                 @endforeach
                             @else
@@ -61,8 +61,7 @@
                         <ul class="submenu">
                             @if (isset($layout_categories['Dịch vụ']))
                                 @foreach ($layout_categories['Dịch vụ'] as $category)
-                                    <li><a
-                                            href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a>
+                                    <li><a href="{{ route('category.products', $category->slug) }}">{{ $category->name }}</a>
                                     </li>
                                 @endforeach
                             @else
@@ -81,55 +80,62 @@
 
 
             @if (Auth::guard('customer')->check())
-                <!-- Nếu đã đăng nhập -->
-                <div class="user-actions">
-                    <div class="balance">
-                        {{ number_format(Auth::guard('customer')->user()->Balance, 0, ',', '.') }} VND
-                    </div>
-                    <a href="{{ route('messages.create', ['customerId' => Auth::guard('customer')->id()]) }}" class="notifications-icon"><i class="fas fa-message"></i><span
-                            class="badge">0</span></a>
-                    <button class="mobile-menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-                <div class="user-menu">
-                    <div class="user-icon" onclick="toggleDropdown()">
-                        <div class="user-avatar">
-                            <img src="{{ asset('img/user-icon.png') }}" alt="User" />
-                        </div>
-                    </div>
-                    <div class="dropdown-content" id="userDropdown">
-                        <div class="user-icon">
-                            <div class="user-avatar">
-                                <img src="{{ asset('img/user-icon.png') }}" alt="User" />
+                        <!-- Nếu đã đăng nhập -->
+                        <div class="user-actions">
+                            <div class="balance">
+                                {{ number_format(Auth::guard('customer')->user()->Balance, 0, ',', '.') }} VND
                             </div>
-                            <span>{{ Auth::guard('customer')->user()->name }}</span>
+                            <a href="{{ route('messages.create', ['customerId' => Auth::guard('customer')->id()]) }}"
+                                class="notifications-icon">
+                                <i class="fas fa-message"></i>
+                                @php
+                                    $unreadCount = Auth::guard('customer')->user()->unreadMessagesCount();
+                                @endphp
+                                @if($unreadCount > 0)
+                                    <span class="badge">{{ $unreadCount }}</span>
+                                @endif
+                            </a>
 
+                            <button class="mobile-menu-toggle" id="menuToggle">
+                                <i class="fas fa-bars"></i>
+                            </button>
                         </div>
+                        <div class="user-menu">
+                            <div class="user-icon" onclick="toggleDropdown()">
+                                <div class="user-avatar">
+                                    <img src="{{ asset('img/user-icon.png') }}" alt="User" />
+                                </div>
+                            </div>
+                            <div class="dropdown-content" id="userDropdown">
+                                <div class="user-icon">
+                                    <div class="user-avatar">
+                                        <img src="{{ asset('img/user-icon.png') }}" alt="User" />
+                                    </div>
+                                    <span>{{ Auth::guard('customer')->user()->name }}</span>
 
-                        <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
-                        <a href="{{route('orders.index')}}">Đơn hàng đã mua</a>
-                        <a href="{{ route('wishlist.index') }}">Gian hàng yêu thích</a>
-                        <a href="{{ route('deposit.index') }}">Lịch sử thanh toán</a>
-                        <a href="{{ route('posts.create') }}">Quản lý nội dung</a>
-                          <a href="{{ route('reviews.index') }}">Đánh giá</a>
-                        <a href="{{route('customer.changePassword')}}">Đổi mật khẩu</a>
-                        <div class="divider"></div>
-                        <a href="{{ route('dashboard.site') }}">Quản lý cửa hàng</a>
-                        <div class="divider"></div>
-                        <a href="#"
-                            onclick="event.preventDefault();
-                        if (confirm('Bạn có muốn đăng xuất?')) {
-                            document.getElementById('logout-form').submit();
-                        }">
-                            Thoát
-                        </a>
-                        <form id="logout-form" action="{{ route('logout.customer') }}" method="POST"
-                            style="display: none;">
-                            @csrf
-                        </form>
-                    </div>
-                </div>
+                                </div>
+
+                                <a href="{{ route('profile.site') }}">Thông tin tài khoản</a>
+                                <a href="{{route('orders.index')}}">Đơn hàng đã mua</a>
+                                <a href="{{ route('wishlist.index') }}">Gian hàng yêu thích</a>
+                                <a href="{{ route('deposit.index') }}">Lịch sử thanh toán</a>
+                                <a href="{{ route('posts.create') }}">Quản lý nội dung</a>
+                                <a href="{{ route('reviews.index') }}">Đánh giá</a>
+                                <a href="{{route('customer.changePassword')}}">Đổi mật khẩu</a>
+                                <div class="divider"></div>
+                                <a href="{{ route('dashboard.site') }}">Quản lý cửa hàng</a>
+                                <div class="divider"></div>
+                                <a href="#" onclick="event.preventDefault();
+                                                if (confirm('Bạn có muốn đăng xuất?')) {
+                                                    document.getElementById('logout-form').submit();
+                                                }">
+                                    Thoát
+                                </a>
+                                <form id="logout-form" action="{{ route('logout.customer') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                            </div>
+                        </div>
             @else
                 <!-- Nếu chưa đăng nhập -->
                 <a href="{{ route('login.customer') }}" class="btn btn-success" style="color: white;">
@@ -154,51 +160,58 @@
             <div class="footer-section">
                 <h3>Liên hệ</h3>
                 <ul>
-                    <li><i class="fab fa-facebook"></i> <a href="#">Tạp hóa MMO</a></li>
-                    <li><i class="fas fa-comment"></i> <a href="#">Chat với hỗ trợ viên</a></li>
-                    <li><i class="fas fa-envelope"></i> <a href="mailto:support@taphoammo.net">support@taphoammo.net</a>
+                    <li><i class="fab fa-facebook"></i> <a href="{{route('/')}}">MuaNguyenLieuMMO</a></li>
+                    <li><i class="fas fa-comment"></i> <a href="{{route('support.site')}}">Chat với hỗ trợ viên</a></li>
+                    <li><i class="fas fa-envelope"></i> <a href="#">{{ $layout_info->email ?? 'Chưa có email' }}</a>
                     </li>
-                    <li><i class="far fa-clock"></i> Mon-Sat 08:00am - 10:00pm</li>
+                    <li><i class="far fa-clock"></i> {{ $layout_info->clock ?? 'Chưa có giờ làm việc' }}</li>
                 </ul>
             </div>
 
             <div class="footer-section">
                 <h3>Thông tin</h3>
                 <ul>
-                    <li><a href="#">Mọi ứng dụng nhắm kết nối, trao đổi, mua trong cộng đồng kiếm tiền
+                    <li><a href="{{route('/')}}">Mọi ứng dụng nhắm kết nối, trao đổi, mua trong cộng đồng kiếm tiền
                             online.</a>
                     </li>
-                    <li><a href="#">Thanh toán tự động, nhận hàng ngay tức thì.</a></li>
-                    <li><a href="#">Câu hỏi thường gặp</a></li>
-                    <li><a href="#">Điều khoản sử dụng</a></li>
+                    <li><a href="{{route('checkout')}}">Thanh toán tự động, nhận hàng ngay tức thì.</a></li>
+                    <li><a href="{{route('faqs')}}">Câu hỏi thường gặp</a></li>
+                    <li><a href="{{route('notice')}}">Điều khoản sử dụng</a></li>
                 </ul>
                 <div class="social-links">
-                    <a href="#"><i class="fas fa-rss"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    @if($layout_info->rss)
+                        <a href="{{ $layout_info->rss }}" target="_blank"><i class="fas fa-rss"></i></a>
+                    @endif
+                    @if($layout_info->youtube)
+                        <a href="{{ $layout_info->youtube }}" target="_blank"><i class="fab fa-youtube"></i></a>
+                    @endif
+                    @if($layout_info->facebook)
+                        <a href="{{ $layout_info->facebook }}" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    @endif
                 </div>
+
             </div>
 
             <div class="footer-section">
                 <h3>Đăng ký bán hàng</h3>
                 <p>Tạo một gian hàng của bạn trên trang chúng tôi. Đội ngũ hỗ trợ sẽ liên lạc để giúp bạn tối ưu khả
                     năng bán hàng.</p>
-                <a href="#" class="register-btn">Đăng ký ngay</a>
+                <a href="{{route('login.customer')}}" class="register-btn">Đăng ký ngay</a>
             </div>
         </div>
         <div class="footer-bottom">
             <div class="container">
-                <p>&copy; 2024 TapHoa MMO. All Rights Reserved.</p>
+                <p>{{$layout_info->footer}}</p>
             </div>
         </div>
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const dropdowns = document.querySelectorAll(".menu .dropdown > a");
 
             dropdowns.forEach(dropdown => {
-                dropdown.addEventListener("click", function(event) {
+                dropdown.addEventListener("click", function (event) {
                     event.preventDefault();
 
                     // Đóng tất cả các menu trước khi mở menu mới
@@ -214,7 +227,7 @@
             });
 
             // Đóng menu khi click ra ngoài
-            document.addEventListener("click", function(event) {
+            document.addEventListener("click", function (event) {
                 if (!event.target.closest(".menu")) {
                     document.querySelectorAll(".menu .dropdown").forEach(item => {
                         item.classList.remove("active");
@@ -229,7 +242,7 @@
         }
 
         // Close dropdown when clicking outside
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (!event.target.closest('.user-menu')) {
                 var dropdowns = document.getElementsByClassName("dropdown-content");
                 for (var i = 0; i < dropdowns.length; i++) {
@@ -246,6 +259,7 @@
 
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         @if (session('success'))
@@ -263,7 +277,7 @@
         @endif
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const alertText = document.getElementById('alertMessage').textContent;
             const alertElement = document.getElementById('alertMessage');
 
@@ -289,7 +303,7 @@
     <!-- Include DataTables JavaScript -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#user-table').DataTable();
         });
     </script>
@@ -301,15 +315,14 @@
 
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css" />
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css" />
 
 
     <!-- Thêm JS của Slick -->
     <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.product-slides').slick({
                 slidesToShow: 3, // Hiển thị 3 sản phẩm cùng lúc
                 slidesToScroll: 3, // Mỗi lần lướt sẽ cuộn 3 sản phẩm
@@ -319,25 +332,25 @@
                 prevArrow: $('.carousel-nav.prev'),
                 nextArrow: $('.carousel-nav.next'),
                 responsive: [{
-                        breakpoint: 1024,
-                        settings: {
-                            slidesToShow: 2,
-                            slidesToScroll: 2
-                        }
-                    },
-                    {
-                        breakpoint: 768,
-                        settings: {
-                            slidesToShow: 1,
-                            slidesToScroll: 1
-                        }
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2
                     }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                }
                 ]
             });
         });
     </script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.slider').slick({
                 slidesToShow: 4, // Số sản phẩm hiển thị cùng lúc
                 slidesToScroll: 1,
@@ -347,23 +360,23 @@
                 prevArrow: '<button class="nav-button prev">◀</button>',
                 nextArrow: '<button class="nav-button next">▶</button>',
                 responsive: [{
-                        breakpoint: 1024,
-                        settings: {
-                            slidesToShow: 3
-                        }
-                    },
-                    {
-                        breakpoint: 768,
-                        settings: {
-                            slidesToShow: 2
-                        }
-                    },
-                    {
-                        breakpoint: 480,
-                        settings: {
-                            slidesToShow: 1
-                        }
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 3
                     }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToShow: 2
+                    }
+                },
+                {
+                    breakpoint: 480,
+                    settings: {
+                        slidesToShow: 1
+                    }
+                }
                 ]
             });
         });

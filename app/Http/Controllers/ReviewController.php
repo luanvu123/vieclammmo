@@ -22,13 +22,7 @@ class ReviewController extends Controller
     }
 
 
-    public function create($orderId, $productId)
-    {
-        $order = Order::where('id', $orderId)->where('customer_id', Auth::guard('customer')->id())->firstOrFail();
-        $product = $order->productVariant->product;
-
-        return view('admin_customer.reviews.create', compact('order', 'product'));
-    }
+   
 public function edit($id)
 {
     $review = Review::where('id', $id)

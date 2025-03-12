@@ -92,5 +92,9 @@ class Customer extends Authenticatable
         return Message::where('sender_id', $this->id)
             ->orWhere('receiver_id', $this->id);
     }
+public function unreadMessagesCount()
+{
+    return $this->receivedMessages()->where('is_read', false)->count();
+}
 
 }

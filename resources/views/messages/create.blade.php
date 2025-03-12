@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('content')
+@section('content')   
     <div class="post-container">
         <div class="message-header">
             <h2>Tin nhắn</h2>

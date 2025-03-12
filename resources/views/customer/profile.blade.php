@@ -7,16 +7,7 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                        <div class="position-relative me-3">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                style="width: 50px; height: 50px; font-weight: bold;">
-                                LV 22
-                            </div>
-                            <div class="progress mt-1" style="height: 10px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 45%;"
-                                    aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
+                        
                         @if (isset($customer))
                             <h5 class="mb-0">{{ '@' . $customer->name }}
                                 @if ($customer->email == 'bgntmrqph24111516@vnetwork.io.vn')

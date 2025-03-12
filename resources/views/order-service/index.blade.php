@@ -47,7 +47,9 @@
                                                                         <td>{{ $order->id }}</td>
                                                                         <td>{{ $order->order_key }}</td>
                                                                         <td>{{ $order->required }}</td>
-                                                                        <td>{{ $order->customer->name ?? 'Không tìm thấy người đặt hàng' }}</td>
+                                                                        <td><a href="{{ route('messages.create', ['customerId' => $order->productVariant->product->customer_id]) }}">
+                                 {{ $order->customer->name}}
+                            </a></td>
                                                                         <td>{{ $order->created_at->format('d/m/Y') }}</td>
                                                                         <td>{{ $order->productVariant->product->name ?? 'Không tìm thấy sản phẩm' }}</td>
                                                                         <td>{{ $order->productVariant->name ?? 'Không tìm thấy biến thể' }}</td>
@@ -61,16 +63,50 @@
                                                                             @endphp
                                                                             {{ number_format($discount, 0, ',', '.') }}đ
                                                                         </td>
-                                                                        <td>
-                                                                            <span
-                                                                                class="badge bg-{{ $order->status == 'completed' ? 'success' : 'danger' }}">
-                                                                                {{ ucfirst($order->status) }}
-                                                                            </span>
-                                                                        </td>
-                                                                        <td class="text-end">
-                                                                            <a href="{{ route('order-service.show', $order->id) }}"
-                                                                                class="btn btn-primary btn-sm">Chi tiết</a>
-                                                                        </td>
+                                                                       <td>
+    <span class="badge bg-{{ $order->status == 'completed' ? 'success' : ($order->status == 'pending' ? 'warning' : 'danger') }}">
+        {{ ucfirst($order->status) }}
+    </span>
+</td>
+<td class="text-end">
+    @if($order->status == 'pending')
+        <div class="col-auto">
+            <button class="btn bg-primary text-white" data-bs-toggle="modal" data-bs-target="#editStatusModal{{ $order->id }}">
+                <i class="fas fa-edit me-1"></i>
+            </button>
+        </div>
+    @endif
+</td>
+
+
+<!-- Edit Status Modal -->
+<div class="modal fade" id="editStatusModal{{ $order->id }}" tabindex="-1" aria-labelledby="editStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('order-service-manage.update-status', $order->id) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStatusModalLabel">Edit Order Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="status">Order Status</label>
+                        <select name="status" class="form-control" required>
+                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed</option>
+                            <option value="canceled" {{ $order->status == 'canceled' ? 'selected' : '' }}>Canceled</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary w-100">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
                                                                     </tr>
                                     @endforeach
                                 </tbody>

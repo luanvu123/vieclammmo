@@ -9,8 +9,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="keywords"
-        content="Glance Design Dashboard Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
+    <meta name="keywords" content="Glance Design Dashboard Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template,
 SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
     <script type="application/x-javascript">
         addEventListener("load", function() {
@@ -58,7 +57,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
     <link rel="stylesheet" href="{{ asset('backend_admin/css/dropzone.min.css') }}">
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#owl-demo').owlCarousel({
                 items: 3,
                 lazyLoad: true,
@@ -106,16 +105,15 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                 <span class="icon-bar"></span>
                             </button>
                             <h1>
-                                <a class="navbar-brand" href="{{ url('/') }}"><span
-                                        class="fa fa-area-chart"></span> HOME<span
-                                        class="dashboard_text">TapHoaMMO</span></a>
+                                <a class="navbar-brand" href="{{ url('/') }}"><span class="fa fa-area-chart"></span>
+                                    HOME<span class="dashboard_text">TapHoaMMO</span></a>
                             </h1>
                         </div>
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="sidebar-menu">
                                 <li class="header">MAIN ADMIN</li>
                                 <li class="treeview">
-                                    <a href="">
+                                    <a href="{{route('home')}}">
                                         <img src="{{ asset('backend_admin/images/3643769_building_home_house_main_menu_icon.svg') }}"
                                             alt="Google" width="20" height="20">
                                         <span> Trang chủ</span>
@@ -125,7 +123,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     $segment = Request::segment(1);
                                 @endphp
                                 <li
-                                    class="treeview {{ Request::is('users*') || Request::is('genre_posts*') || Request::is('subcategories*') || Request::is('categories*') ? 'active' : '' }}">
+                                    class="treeview {{ Request::is('users*') || Request::is('genre_posts*') || Request::is('subcategories*') || Request::is('admin/info/edit*') || Request::is('categories*') ? 'active' : '' }}">
                                     <a href="#">
                                         <img src="{{ asset('backend_admin/images/9165478_unbox_package_icon.svg') }}"
                                             alt="Google" width="20" height="20">
@@ -157,6 +155,12 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                                     alt="Google" width="20" height="20"> Thể loại bài viết
                                             </a>
                                         </li>
+                                        <li class="{{ Request::is('admin/info/edit*') ? 'active' : '' }}">
+                                            <a href="{{ route('infos.edit') }}">
+                                                <img src="{{ asset('backend_admin/images/5355692_code_coding_development_programming_web_icon.svg') }}"
+                                                    alt="Google" width="20" height="20"> Quản lý giao diện
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
 
@@ -170,13 +174,13 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                 </li>
                                 <li class="treeview {{ Request::is('supports*') ? 'active' : '' }}">
                                     <a href="{{ route('supports.index') }}">
-                                        <img src="{{ asset('backend_admin/images/support-svgrepo-com.svg') }}"
-                                            alt="Google" width="20" height="20"> Hỗ trợ
+                                        <img src="{{ asset('backend_admin/images/support-svgrepo-com.svg') }}" alt="Google"
+                                            width="20" height="20"> Hỗ trợ
 
                                     </a>
                                 </li>
                                 <li
-                                    class="treeview {{ Request::is('product-manage*') || Request::is('product-variant-manage*')|| Request::is('stock*') ? 'active' : '' }}">
+                                    class="treeview {{ Request::is('product-manage*') || Request::is('product-variant-manage*') || Request::is('stock*') ? 'active' : '' }}">
                                     <a href="{{ route('product-manage.index') }}">
                                         <img src="{{ asset('backend_admin/images/job-search-svgrepo-com.svg') }}"
                                             alt="Google" width="20" height="20">
@@ -184,9 +188,27 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
 
                                     </a>
                                 </li>
+                                <li class="treeview {{ Request::is('/admin/complaints*') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.complaints.index') }}">
+                                        <img src="{{ asset('backend_admin/images/report-comment-svgrepo-com.svg') }}"
+                                            alt="Google" width="20" height="20"> Khiếu nại đơn hàng
+                                    </a>
+                                </li>
+                                <li class="{{ Request::is('/admin/order-details*') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.order_details.index') }}">
+                                        <img src="{{ asset('backend_admin/images/image-svgrepo-com.svg') }}" width="20"
+                                            height="20">
+                                        <span> Tài khoản đã bán</span>
+                                    </a>
+                                </li>
 
-
-
+                                 <li class="{{ Request::is('/admin/orders*') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.orders.index') }}">
+                                        <img src="{{ asset('backend_admin/images/shopping-cart-reversed-svgrepo-com.svg') }}" width="20"
+                                            height="20">
+                                        <span> Quản lý đơn hàng</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->
@@ -224,8 +246,8 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                         <div class="profile_img">
                                             <span class="prfil-img">
                                                 @if (Auth::user()->image)
-                                                    <img style="width: 40px;height: 40px;border-radius: 50%;object-fit: cover;"src="{{ asset('storage/' . Auth::user()->image) }}"
-                                                        alt="">
+                                                    <img style="width: 40px;height: 40px;border-radius: 50%;object-fit: cover;"
+                                                        src="{{ asset('storage/' . Auth::user()->image) }}" alt="">
                                                 @else
                                                     <img style="width: 40px;height: 40px;border-radius: 50%;object-fit: cover;"
                                                         src="http://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm&amp;s=300"
@@ -242,14 +264,12 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     </a>
                                     <ul class="dropdown-menu drp-mnu">
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('logout') }}"
-                                                onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                            <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                                                             document.getElementById('logout-form').submit();">
                                                 <i class="fa fa-sign-out"></i> Đăng xuất
                                             </a>
 
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                                class="d-none">
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                                 @csrf
                                             </form>
                                         </li>
@@ -273,54 +293,72 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
             <div id="page-wrapper">
                 <div class="main-page">
                     <div class="col_3">
+                        <!-- layout_customer -->
                         <div class="col-md-3 widget widget1">
                             <div class="r3_counter_box">
                                 <i class="pull-left fa fa-dollar icon-rounded"></i>
                                 <div class="stats">
-                                    <h5><strong>9</strong></h5>
-                                    <span>Chiến dịch đang mở</span>
+                                    <h5><strong>{{ $layout_customer }}</strong></h5>
+                                    <span>Khách hàng</span>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- layout_order -->
+                          <a href="{{ route('admin.orders.index') }}" style="text-decoration: none; color: inherit;">
                         <div class="col-md-3 widget widget1">
                             <div class="r3_counter_box">
                                 <i class="pull-left fa fa-laptop user1 icon-rounded"></i>
                                 <div class="stats">
-                                    <h5><strong>6</strong></h5>
-                                    <span>Tông số việc làm</span>
+                                    <h5><strong>{{ $layout_order }}</strong></h5>
+                                    <span>Đơn hàng</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 widget widget1">
-                            <div class="r3_counter_box">
-                                <i class="pull-left fa fa-money user2 icon-rounded"></i>
-                                <div class="stats">
-                                    <h5><strong>5</strong></h5>
-                                    <span> Ứng viên </span>
+                    </a>
+
+                        <a href="{{ route('admin.order_details.index') }}" style="text-decoration: none; color: inherit;">
+                            <div class="col-md-3 widget widget1">
+                                <div class="r3_counter_box">
+                                    <i class="pull-left fa fa-money user2 icon-rounded"></i>
+                                    <div class="stats">
+                                        <h5><strong>{{ $layout_order_detail }}</strong></h5>
+                                        <span>TK đã bán</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-3 widget widget1">
-                            <div class="r3_counter_box">
-                                <i class="pull-left fa fa-pie-chart dollar1 icon-rounded"></i>
-                                <div class="stats">
-                                    <h5><strong>3</strong></h5>
-                                    <span>Nhà tuyển
-                                        dụng</span>
+                        </a>
+
+
+                        <!-- layout_support -->
+                        <a href="{{ route('supports.index') }}" style="text-decoration: none; color: inherit;">
+                            <div class="col-md-3 widget widget1">
+                                <div class="r3_counter_box">
+                                    <i class="pull-left fa fa-pie-chart dollar1 icon-rounded"></i>
+                                    <div class="stats">
+                                        <h5><strong>{{ $layout_support }}</strong></h5>
+                                        <span>Hỗ trợ</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-3 widget">
-                            <div class="r3_counter_box">
-                                <i class="pull-left fa fa-users dollar2 icon-rounded"></i>
-                                <div class="stats">
-                                    <h5><strong>1</strong></h5>
-                                    <span>Dịch vụ đang chạy</span>
+                        </a>
+
+                        <!-- layout_complaint -->
+                        <a href="{{ route('admin.complaints.index') }}" style="text-decoration: none; color: inherit;">
+                            <div class="col-md-3 widget">
+                                <div class="r3_counter_box">
+                                    <i class="pull-left fa fa-users dollar2 icon-rounded"></i>
+                                    <div class="stats">
+                                        <h5><strong>{{ $layout_complaint }}</strong></h5>
+                                        <span>Khiếu nại</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
+
                         <div class="clearfix"></div>
                     </div>
+
                     <br>
 
 
@@ -330,8 +368,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                     <script src="{{ asset('backend_admin/js/amcharts.js') }}"></script>
                     <script src="{{ asset('backend_admin/js/serial.js') }}"></script>
                     <script src="{{ asset('backend_admin/js/export.min.js') }}"></script>
-                    <link rel="stylesheet" href="{{ asset('backend_admin/css/export.css') }}" type="text/css"
-                        media="all" />
+                    <link rel="stylesheet" href="{{ asset('backend_admin/css/export.css') }}" type="text/css" media="all" />
                     <script src="{{ asset('backend_admin/js/light.js') }}"></script>
                     <!-- for amcharts js -->
                     <script src="{{ asset('backend_admin/js/index1.js') }}"></script>
@@ -376,7 +413,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
             showLeftPush = document.getElementById('showLeftPush'),
             body = document.body;
 
-        showLeftPush.onclick = function() {
+        showLeftPush.onclick = function () {
             classie.toggle(this, 'active');
             classie.toggle(body, 'cbp-spmenu-push-toright');
             classie.toggle(menuLeft, 'cbp-spmenu-open');
@@ -406,14 +443,15 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
 
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
 
     <!-- Include DataTables JavaScript -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#user-table').DataTable();
         });
     </script>

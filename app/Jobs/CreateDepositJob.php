@@ -31,19 +31,23 @@ class CreateDepositJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle()
-    {
-        // Cộng tiền vào số dư của người bán
-        $this->seller->Balance += $this->total;
-        $this->seller->save();
+  public function handle()
+{
+    // Tính tổng tiền sau khi trừ chiết khấu 4%
+    $totalAfterDiscount = $this->total - ($this->total * 0.04);
 
-        // Lưu giao dịch vào bảng `deposits`
-        Deposit::create([
-            'customer_id' => $this->seller->id,
-            'money' => $this->total,
-            'type' => 'bán hàng',
-            'content' => 'Thanh toán đơn hàng sau thời gian tạm giữ: ' . $this->order->order_key,
-            'status' => 'thành công'
-        ]);
-    }
+    // Cộng tiền vào số dư của người bán
+    $this->seller->Balance += $totalAfterDiscount;
+    $this->seller->save();
+
+    // Lưu giao dịch vào bảng `deposits`
+    Deposit::create([
+        'customer_id' => $this->seller->id,
+        'money' => $totalAfterDiscount,
+        'type' => 'bán hàng',
+        'content' => 'Thanh toán đơn hàng sau thời gian tạm giữ: ' . $this->order->order_key,
+        'status' => 'thành công'
+    ]);
+}
+
 }

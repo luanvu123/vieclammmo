@@ -2,11 +2,15 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\ComplaintManageController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerManageController;
 use App\Http\Controllers\GenrePostController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InfoController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderManageController;
@@ -17,6 +21,7 @@ use App\Http\Controllers\ProductManageController;
 use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\ProductVariantManageController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReviewManageController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\StockManageController;
@@ -88,12 +93,11 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::resource('coupons', CouponController::class);
 
     Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
-    Route::get('reviews/create/{orderId}/{productId}', [ReviewController::class, 'create'])->name('reviews.create');
     Route::post('reviews', [ReviewController::class, 'store'])->name('reviews.store');
     Route::delete('reviews/{id}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
     Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
     Route::put('/reviews/{id}', [ReviewController::class, 'update'])->name('reviews.update');
-
+    Route::post('/complaints/store', [ComplaintController::class, 'store'])->name('complaints.store');
 
 
     Route::post('/messages/{receiverId}', [MessageController::class, 'store'])->name('messages.store');
@@ -109,8 +113,9 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::resource('posts', PostController::class);
     Route::resource('order-manage', OrderManageController::class);
     Route::get('orders/{id}/detail', [OrderManageController::class, 'orderDetail'])->name('order-detail.show');
-
+Route::post('order-manage/{id}/update-status', [OrderManageController::class, 'updateStatus'])->name('order-manage.update-status');
     Route::resource('order-service-manage', OrderManageServiceController::class);
+    Route::post('order-service-manage/{id}/update-status', [OrderManageServiceController::class, 'updateStatus'])->name('order-service-manage.update-status');
 
     Route::get('/thanh-toan', [CustomerController::class, 'checkout'])->name('checkout');
     Route::prefix('product_variants/{variant}')->group(function () {
@@ -128,8 +133,10 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('logout.customer');
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard.site');
 
-Route::get('/deposit', [CustomerController::class, 'indexDeposit'])->name('deposit.index');
+    Route::get('/deposit', [CustomerController::class, 'indexDeposit'])->name('deposit.index');
+    Route::resource('complaints', ComplaintManageController::class);
 
+    Route::resource('review-manage', ReviewManageController::class);
 
     // Thêm các route mới cho 2FA
     Route::post('/profile/2fa/generate', [CustomerController::class, 'generate2faSecret'])->name('2fa.generate');
@@ -138,6 +145,8 @@ Route::get('/deposit', [CustomerController::class, 'indexDeposit'])->name('depos
     Route::post('/profile/ekyc', [CustomerController::class, 'editKYC'])->name('profile.ekyc');
 });
 Route::group(['middleware' => ['auth']], function () {
+    Route::put('/admin/infos/update', [InfoController::class, 'update'])->name('infos.update');
+    Route::get('/admin/info/edit', [InfoController::class, 'edit'])->name('infos.edit');
     Route::resource('supports', SupportController::class);
     Route::resource('users', UserController::class);
     Route::resource('categories', CategoryController::class);
@@ -164,4 +173,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('stock/{stock}/uid', [StockManageController::class, 'UidStore'])->name('stock.uid_store');
     Route::post('stock/{stock}/uid-email', [StockManageController::class, 'uidEmailStore'])->name('stock.uid_email_store');
     Route::get('/stock/{stock}/uid-email', [StockManageController::class, 'uidEmailIndex'])->name('stock.uid_email_index');
+    Route::get('/admin/complaints', [HomeController::class, 'indexComplaint'])->name('admin.complaints.index');
+Route::get('/admin/order-details', [HomeController::class, 'indexOrderDetail'])->name('admin.order_details.index');
+    Route::get('/admin/orders', [HomeController::class, 'IndexOrder'])->name('admin.orders.index');
+    Route::get('/admin/order/{orderId}', [HomeController::class, 'OrderDetail'])->name('admin.order_detail.index');
 });

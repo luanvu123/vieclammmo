@@ -28,4 +28,21 @@ class OrderManageController extends Controller
 
         return view('orders.order-detail', compact('order'));
     }
+    // OrderManageController.php
+
+
+
+public function updateStatus(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|in:completed,canceled,pending'
+    ]);
+
+    $order = Order::findOrFail($id);
+    $order->status = $request->status;
+    $order->save();
+
+    return redirect()->route('order-manage.index')->with('success', 'Order status updated successfully.');
+}
+
 }

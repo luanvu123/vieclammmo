@@ -14,7 +14,8 @@ class Message extends Model
         'receiver_id',
         'message',
         'attachment',
-        'status'
+        'status',
+        'is_read'
     ];
 
     // Quan hệ với người gửi

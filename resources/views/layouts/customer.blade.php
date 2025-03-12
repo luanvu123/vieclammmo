@@ -5,7 +5,7 @@
 
 
     <meta charset="utf-8" />
-    <title>Dashboard | Approx - Admin & Dashboard Template</title>
+    <title>Trang bán hàng</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
     <meta content="" name="author" />
@@ -118,7 +118,7 @@
                 </span>
                 <span class="">
                    <a href="{{ route('/') }}" class="logo">
-                <h1>TapHoa<span class="highlight">MMO</span></h1>
+                <h1>MNL<span class="highlight">MMO</span></h1>
             </a>
                 </span>
             </a>
@@ -163,6 +163,20 @@
                             <a class="nav-link" href="{{ route('order-service-manage.index') }}">
                                 <i class="iconoir-hand-cash menu-icon"></i>
                                 <span>Gian hàng dịch vụ</span>
+                            </a>
+                        </li><!--end nav-item-->
+                          <li class="nav-item">
+                            <a class="nav-link" href="{{ route('complaints.index') }}">
+                                <i class="iconoir-report-columns menu-icon"></i>
+                                <span>Quản lý khiếu nại</span>
+                                <span class="badge text-bg-info ms-auto">New</span>
+                            </a>
+                        </li><!--end nav-item-->
+                          <li class="nav-item">
+                            <a class="nav-link" href="{{ route('review-manage.index') }}">
+                                <i class="iconoir-report-columns menu-icon"></i>
+                                <span>Quản lý đánh giá</span>
+                                <span class="badge text-bg-info ms-auto">New</span>
                             </a>
                         </li><!--end nav-item-->
                         <li class="nav-item">

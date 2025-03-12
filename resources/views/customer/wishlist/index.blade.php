@@ -35,11 +35,13 @@
                                         @endif
                                     @endfor
                                 </span>
+                               
                                 <span class="reviews">
-                                    {{ $wishlist->product->reviews_count ?? 0 }} Reviews |
-                                    Đơn hoàn thành: {{ $wishlist->product->completed_orders ?? 0 }} |
-                                    Khiếu nại: {{ $wishlist->product->complaint_percentage ?? '0.0' }}%
-                                </span>
+    {{ $wishlist->product->reviews()->count() }} Reviews |
+    Đơn hoàn thành: {{ $wishlist->product->completedOrders()->count() }} |
+    Khiếu nại: {{ $wishlist->product->complaintRate() }}%
+</span>
+
                             </div>
                             <div class="seller">Người bán: <a
                                     href="{{ route('profile.name.site', $wishlist->product->customer->name ?? '') }}">{{ $wishlist->product->customer->name ?? 'Unknown' }}</a></div>

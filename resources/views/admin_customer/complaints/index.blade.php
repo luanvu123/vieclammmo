@@ -53,23 +53,55 @@
                                                         href="{{ route('order-detail.show', $complaint->order->id) }}">{{ $complaint->order->order_key }}</a>
                                                 </td>
                                                 <td>{{ Str::limit($complaint->content, 50) }}</td>
-                                                <td>
-                                                    <span
-                                                        class="badge bg-{{ $complaint->status == 'resolved' ? 'success' : 'warning' }}">
-                                                        {{ ucfirst($complaint->status) }}
-                                                    </span>
-                                                </td>
-                                                <td class="text-end">
-                                                    <a href="{{ route('complaints.edit', $complaint->id) }}"
-                                                        class="btn btn-warning btn-sm">Sửa</a>
-                                                    <form action="{{ route('complaints.destroy', $complaint->id) }}"
-                                                        method="POST" class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm"
-                                                            onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
-                                                    </form>
-                                                </td>
+                                              <td>
+    <span class="badge bg-{{ $complaint->status == 'resolved' ? 'success' : 'warning' }}">
+        {{ ucfirst($complaint->status) }}
+    </span>
+</td>
+<td class="text-end">
+    @if($complaint->status == 'pending')
+        <div class="col-auto">
+            <button class="btn bg-primary text-white btn-sm" data-bs-toggle="modal" data-bs-target="#editStatusModal{{ $complaint->id }}">
+                <i class="fas fa-edit me-1"></i>
+            </button>
+        </div>
+    @endif
+
+    <form action="{{ route('complaints.destroy', $complaint->id) }}" method="POST" class="d-inline">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
+    </form>
+</td>
+
+
+<!-- Edit Status Modal -->
+<div class="modal fade" id="editStatusModal{{ $complaint->id }}" tabindex="-1" aria-labelledby="editStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('complaints.update-status', $complaint->id) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStatusModalLabel">Cập nhật trạng thái khiếu nại</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="status">Trạng thái khiếu nại</label>
+                        <select name="status" class="form-control" required>
+                            <option value="pending" {{ $complaint->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="resolved" {{ $complaint->status == 'resolved' ? 'selected' : '' }}>Resolved</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary w-100">Cập nhật trạng thái</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
                                             </tr>
                                         @endforeach
                                     </tbody>

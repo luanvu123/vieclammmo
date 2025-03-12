@@ -27,6 +27,7 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th>#</th>
+                                            <th>Bảo hành</th>
                                             <th>Mã đơn hàng</th>
                                             <th>Người đặt hàng</th>
                                             <th>Ngày đặt</th>
@@ -50,6 +51,11 @@
         <span class="badge text-bg-info ms-auto">New</span>
     @endif
 </th>
+<td class="text-end">
+    <button class="btn bg-warning text-white" data-bs-toggle="modal" data-bs-target="#warrantyModal{{ $order->id }}">
+        <i class="fas fa-tools"></i>
+    </button>
+</td>
 
                                                                                 <td> <a
                                                                                         href="{{ route('order-detail.show', $order->id) }}">{{ $order->order_key }}</a>
@@ -112,6 +118,38 @@
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary w-100">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal Bảo Hành -->
+<div class="modal fade" id="warrantyModal{{ $order->id }}" tabindex="-1" aria-labelledby="warrantyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('order-manage.warranty', $order->id) }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="warrantyModalLabel">Bảo Hành</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>Order Key:</label>
+                        <div class="form-control">{{ $order->order_key }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Số Lượng Đơn Hàng:</label>
+                        <div class="form-control">{{ $order->quantity }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label>Nhập Số Lượng Cần Bảo Hành:</label>
+                        <input type="number" class="form-control" name="quantity" min="1" max="{{ $order->quantity }}" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Gửi Yêu Cầu Bảo Hành</button>
                 </div>
             </form>
         </div>

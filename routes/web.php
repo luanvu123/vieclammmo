@@ -113,7 +113,7 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::resource('posts', PostController::class);
     Route::resource('order-manage', OrderManageController::class);
     Route::get('orders/{id}/detail', [OrderManageController::class, 'orderDetail'])->name('order-detail.show');
-Route::post('order-manage/{id}/update-status', [OrderManageController::class, 'updateStatus'])->name('order-manage.update-status');
+    Route::post('order-manage/{id}/update-status', [OrderManageController::class, 'updateStatus'])->name('order-manage.update-status');
     Route::resource('order-service-manage', OrderManageServiceController::class);
     Route::post('order-service-manage/{id}/update-status', [OrderManageServiceController::class, 'updateStatus'])->name('order-service-manage.update-status');
 
@@ -135,7 +135,9 @@ Route::post('order-manage/{id}/update-status', [OrderManageController::class, 'u
 
     Route::get('/deposit', [CustomerController::class, 'indexDeposit'])->name('deposit.index');
     Route::resource('complaints', ComplaintManageController::class);
- Route::post('/complaint-site', [ComplaintController::class, 'store'])->name('complaint.site');
+    Route::post('/complaints/update-status/{id}', [ComplaintManageController::class, 'updateStatus'])->name('complaints.update-status');
+
+    Route::post('/complaint-site', [ComplaintController::class, 'store'])->name('complaint.site');
     Route::resource('review-manage', ReviewManageController::class);
 
     // Thêm các route mới cho 2FA
@@ -143,6 +145,8 @@ Route::post('order-manage/{id}/update-status', [OrderManageController::class, 'u
     Route::post('/profile/2fa/enable', [CustomerController::class, 'enable2fa'])->name('2fa.enable');
     Route::post('/profile/2fa/disable', [CustomerController::class, 'disable2fa'])->name('2fa.disable');
     Route::post('/profile/ekyc', [CustomerController::class, 'editKYC'])->name('profile.ekyc');
+    Route::post('/order-manage/warranty/{order}', [OrderManageController::class, 'warranty'])->name('order-manage.warranty');
+
 });
 Route::group(['middleware' => ['auth']], function () {
     Route::put('/admin/infos/update', [InfoController::class, 'update'])->name('infos.update');
@@ -174,10 +178,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('stock/{stock}/uid-email', [StockManageController::class, 'uidEmailStore'])->name('stock.uid_email_store');
     Route::get('/stock/{stock}/uid-email', [StockManageController::class, 'uidEmailIndex'])->name('stock.uid_email_index');
     Route::get('/admin/complaints', [HomeController::class, 'indexComplaint'])->name('admin.complaints.index');
-Route::get('/admin/order-details', [HomeController::class, 'indexOrderDetail'])->name('admin.order_details.index');
+    Route::get('/admin/order-details', [HomeController::class, 'indexOrderDetail'])->name('admin.order_details.index');
     Route::get('/admin/orders', [HomeController::class, 'IndexOrder'])->name('admin.orders.index');
     Route::get('/admin/order/{orderId}', [HomeController::class, 'OrderDetail'])->name('admin.order_detail.index');
-     Route::get('/admin/withdrawals', [HomeController::class, 'IndexWithdrawal'])->name('admin.withdrawals.index');
-     Route::post('/admin/withdrawals/{id}/update-status', [HomeController::class, 'updateWithdrawalStatus'])->name('admin.withdrawals.updateStatus');
+    Route::get('/admin/withdrawals', [HomeController::class, 'IndexWithdrawal'])->name('admin.withdrawals.index');
+    Route::post('/admin/withdrawals/{id}/update-status', [HomeController::class, 'updateWithdrawalStatus'])->name('admin.withdrawals.updateStatus');
 
 });

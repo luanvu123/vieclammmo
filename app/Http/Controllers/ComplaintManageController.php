@@ -64,5 +64,20 @@ class ComplaintManageController extends Controller
 
         return redirect()->route('complaints.index')->with('success', 'Complaint deleted successfully.');
     }
+
+    public function updateStatus(Request $request, $id)
+{
+    $customerId = Auth::guard('customer')->id();
+
+    $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customerId) {
+            $query->where('customer_id', $customerId);
+        })
+        ->findOrFail($id);
+
+    $complaint->update(['status' => $request->status]);
+
+    return redirect()->route('complaints.index')->with('success', 'Complaint status updated successfully.');
+}
+
 }
 

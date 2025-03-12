@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\UidEmail;
+use App\Models\UidFacebook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,7 +31,49 @@ class OrderManageController extends Controller
 
         return view('orders.order-detail', compact('order'));
     }
-    // OrderManageController.php
+
+public function warranty(Request $request, Order $order)
+{
+    $request->validate([
+        'quantity' => 'required|integer|min:1|max:' . $order->quantity,
+    ]);
+
+    $quantity = $request->quantity;
+
+    if ($order->productVariant->type === "Tài khoản") {
+        $stocks = $order->productVariant->stocks->flatMap->uidFacebooks->take($quantity);
+
+        foreach ($stocks as $stock) {
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'account' => $stock->uid,
+                'value' => $stock->value,
+                'status' => 'success'
+            ]);
+
+            // Xóa UidFacebook có uid tương ứng
+            UidFacebook::where('uid', $stock->uid)->delete();
+        }
+    } elseif ($order->productVariant->type === "Email") {
+        $stocks = $order->productVariant->stocks->flatMap->uidEmails->take($quantity);
+
+        foreach ($stocks as $stock) {
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'account' => $stock->email,
+                'value' => $stock->value,
+                'status' => 'success'
+            ]);
+
+            // Xóa UidEmail có email tương ứng
+            UidEmail::where('email', $stock->email)->delete();
+        }
+    } else {
+        return redirect()->back()->with('error', 'Sản phẩm không hỗ trợ bảo hành.');
+    }
+
+    return redirect()->back()->with('success', 'Yêu cầu bảo hành đã được xử lý thành công.');
+}
 
 
 

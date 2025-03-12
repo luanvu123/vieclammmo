@@ -127,10 +127,11 @@
                                                     @endfor
                                                 </span>
                                                 <span class="reviews">
-                                                    {{ $product->reviews_count ?? 0 }} Reviews |
-                                                    Đơn hoàn thành: {{ $product->completed_orders ?? 0 }} |
-                                                    Khiếu nại: {{ $product->complaint_percentage ?? '0.0' }}%
+                                                    {{ $product->reviews()->count() }} Reviews |
+                                                    Đơn hoàn thành: {{ $product->completedOrders()->count() }} |
+                                                    Khiếu nại: {{ $product->complaintRate() }}%
                                                 </span>
+
                                             </div>
 
                                             <div class="seller">

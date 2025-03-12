@@ -35,6 +35,33 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+// Tính tổng số đơn hoàn thành
+public function completedOrders()
+{
+    return $this->productVariants()
+        ->whereHas('orders', function ($query) {
+            $query->where('status', 'complete');
+        });
+}
+
+// Tính tổng số khiếu nại liên quan đến sản phẩm này
+public function complaints()
+{
+    return $this->hasManyThrough(Complaint::class, ProductVariant::class, 'product_id', 'order_id', 'id', 'id');
+}
+
+// Tính tỷ lệ khiếu nại (Số khiếu nại / Tổng số đơn hoàn thành * 100)
+public function complaintRate()
+{
+    $totalCompletedOrders = $this->completedOrders()->count();
+    $totalComplaints = $this->complaints()->count();
+
+    if ($totalCompletedOrders === 0) {
+        return 0; // Tránh chia cho 0
+    }
+
+    return round(($totalComplaints / $totalCompletedOrders) * 100, 2);
+}
 
     public function subcategory(): BelongsTo
     {

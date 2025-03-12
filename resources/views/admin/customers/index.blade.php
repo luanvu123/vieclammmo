@@ -23,8 +23,13 @@
                     <tbody>
                         @foreach ($customers as $customer)
                             <tr>
-                                <td>{{ $customer->id }}</td>
-                                <td>{{ $customer->idCustomer }}</td>
+                               <td>{{ $customer->id }}
+    @if (\Carbon\Carbon::parse($customer->created_at)->greaterThanOrEqualTo(\Carbon\Carbon::now()->subDay()))
+        <span class="label label-primary pull-right">New</span>
+    @endif
+</td>
+<td>{{ $customer->idCustomer }}</td>
+
                                 <td>{{ $customer->name }}
                                     @if ($customer->email == 'bgntmrqph24111516@vnetwork.io.vn')
                                         <i class="fa fa-check-circle" style="color:red; font-size: 80%;" title="Thuộc hệ thống"></i>

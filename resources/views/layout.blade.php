@@ -126,9 +126,9 @@
                                 <a href="{{ route('dashboard.site') }}">Quản lý cửa hàng</a>
                                 <div class="divider"></div>
                                 <a href="#" onclick="event.preventDefault();
-                                                if (confirm('Bạn có muốn đăng xuất?')) {
-                                                    document.getElementById('logout-form').submit();
-                                                }">
+                                                            if (confirm('Bạn có muốn đăng xuất?')) {
+                                                                document.getElementById('logout-form').submit();
+                                                            }">
                                     Thoát
                                 </a>
                                 <form id="logout-form" action="{{ route('logout.customer') }}" method="POST" style="display: none;">

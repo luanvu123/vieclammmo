@@ -24,8 +24,14 @@
                 <tbody>
                     @foreach ($orders as $key=> $order)
                         <tr>
-                            <td>{{$key}}</td>
-                            <td>{{ $order->order_key }}</td>
+                           <td>{{$key}}</td>
+<td>
+    {{ $order->order_key }}
+    @if (\Carbon\Carbon::parse($order->created_at)->greaterThanOrEqualTo(\Carbon\Carbon::now()->subDay()))
+        <span class="label label-primary pull-right">New</span>
+    @endif
+</td>
+
                             <td>{{ $order->customer->name }}</td>
                             <td>
                                 <a href="{{ route('messages.create', ['customerId' => $order->productVariant->product->customer_id]) }}">

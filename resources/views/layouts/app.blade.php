@@ -170,15 +170,39 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                             alt="Google" width="20" height="20">
                                         <span> Khách hàng</span>
 
+                                        @if (Auth::check())
+                                                                        @php
+                                                                            $recentCustomerCount = \App\Models\Customer::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+                                                                        @endphp
+
+                                                                        @if ($recentCustomerCount > 0)
+                                                                            <span
+                                                                                class="label label-primary pull-right">{{ str_pad($recentCustomerCount, 2, '0', STR_PAD_LEFT) }}</span>
+
+                                                                        @endif
+                                        @endif
                                     </a>
                                 </li>
+
                                 <li class="treeview {{ Request::is('supports*') ? 'active' : '' }}">
                                     <a href="{{ route('supports.index') }}">
                                         <img src="{{ asset('backend_admin/images/support-svgrepo-com.svg') }}" alt="Google"
                                             width="20" height="20"> Hỗ trợ
 
+                                        @if (Auth::check())
+                                                                        @php
+                                                                            $recentSupportCount = \App\Models\Support::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+                                                                        @endphp
+
+                                                                        @if ($recentSupportCount > 0)
+                                                                            <span
+                                                                                class="label label-primary pull-right">{{ str_pad($recentSupportCount, 2, '0', STR_PAD_LEFT) }}</span>
+
+                                                                        @endif
+                                        @endif
                                     </a>
                                 </li>
+
                                 <li
                                     class="treeview {{ Request::is('product-manage*') || Request::is('product-variant-manage*') || Request::is('stock*') ? 'active' : '' }}">
                                     <a href="{{ route('product-manage.index') }}">
@@ -192,30 +216,79 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     <a href="{{ route('admin.complaints.index') }}">
                                         <img src="{{ asset('backend_admin/images/report-comment-svgrepo-com.svg') }}"
                                             alt="Google" width="20" height="20"> Khiếu nại đơn hàng
-                                    </a>
-                                </li>
-                                <li class="{{ Request::is('/admin/order-details*') ? 'active' : '' }}">
-                                    <a href="{{ route('admin.order_details.index') }}">
-                                        <img src="{{ asset('backend_admin/images/image-svgrepo-com.svg') }}" width="20"
-                                            height="20">
-                                        <span> Tài khoản đã bán</span>
+
+                                        @if (Auth::check())
+                                                                        @php
+                                                                            $recentComplaintCount = \App\Models\Complaint::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+                                                                        @endphp
+
+                                                                        @if ($recentComplaintCount > 0)
+                                                                            <span
+                                                                                class="label label-primary pull-right">{{ str_pad($recentComplaintCount, 2, '0', STR_PAD_LEFT) }}</span>
+
+                                                                        @endif
+                                        @endif
                                     </a>
                                 </li>
 
-                                 <li class="{{ Request::is('/admin/orders*') ? 'active' : '' }}">
+                              <li class="{{ Request::is('/admin/order-details*') ? 'active' : '' }}">
+    <a href="{{ route('admin.order_details.index') }}">
+        <img src="{{ asset('backend_admin/images/image-svgrepo-com.svg') }}" width="20" height="20">
+        <span> Tài khoản đã bán</span>
+
+        @if (Auth::check())
+            @php
+                $recentOrderDetailCount = \App\Models\OrderDetail::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+            @endphp
+
+            @if ($recentOrderDetailCount > 0)
+                <span class="label label-primary pull-right">{{ str_pad($recentOrderDetailCount, 2, '0', STR_PAD_LEFT) }}</span>
+              
+            @endif
+        @endif
+    </a>
+</li>
+
+                                <li class="{{ Request::is('/admin/orders*') ? 'active' : '' }}">
                                     <a href="{{ route('admin.orders.index') }}">
-                                        <img src="{{ asset('backend_admin/images/shopping-cart-reversed-svgrepo-com.svg') }}" width="20"
-                                            height="20">
+                                        <img src="{{ asset('backend_admin/images/shopping-cart-reversed-svgrepo-com.svg') }}"
+                                            width="20" height="20">
                                         <span> Quản lý đơn hàng</span>
+
+                                        @if (Auth::check())
+                                                                        @php
+                                                                            $recentOrderCount = \App\Models\Order::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+                                                                        @endphp
+
+                                                                        @if ($recentOrderCount > 0)
+                                                                            <span
+                                                                                class="label label-primary pull-right">{{ str_pad($recentOrderCount, 2, '0', STR_PAD_LEFT) }}</span>
+
+                                                                        @endif
+                                        @endif
                                     </a>
                                 </li>
-                                 <li class="{{ Request::is('/admin/withdrawals*') ? 'active' : '' }}">
+
+                                <li class="{{ Request::is('/admin/withdrawals*') ? 'active' : '' }}">
                                     <a href="{{ route('admin.withdrawals.index') }}">
-                                        <img src="{{ asset('backend_admin/images/3018587_admin_administrator_ajax_options_permission_icon.svg') }}" width="20"
-                                            height="20">
+                                        <img src="{{ asset('backend_admin/images/3018587_admin_administrator_ajax_options_permission_icon.svg') }}"
+                                            width="20" height="20">
                                         <span> Yc Rút tiền</span>
+
+                                        @if (Auth::check())
+                                                                        @php
+                                                                            $recentWithdrawalCount = \App\Models\Withdrawal::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+                                                                        @endphp
+
+                                                                        @if ($recentWithdrawalCount > 0)
+                                                                            <span
+                                                                                class="label label-primary pull-right">{{ str_pad($recentWithdrawalCount, 2, '0', STR_PAD_LEFT) }}</span>
+
+                                                                        @endif
+                                        @endif
                                     </a>
                                 </li>
+
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->
@@ -271,8 +344,9 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     </a>
                                     <ul class="dropdown-menu drp-mnu">
                                         <li>
-                                            <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                                             document.getElementById('logout-form').submit();">
+                                            <a class="dropdown-item" href="{{ route('logout') }}"
+                                                onclick="event.preventDefault();
+                                                                                     document.getElementById('logout-form').submit();">
                                                 <i class="fa fa-sign-out"></i> Đăng xuất
                                             </a>
 
@@ -312,17 +386,17 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                         </div>
 
                         <!-- layout_order -->
-                          <a href="{{ route('admin.orders.index') }}" style="text-decoration: none; color: inherit;">
-                        <div class="col-md-3 widget widget1">
-                            <div class="r3_counter_box">
-                                <i class="pull-left fa fa-laptop user1 icon-rounded"></i>
-                                <div class="stats">
-                                    <h5><strong>{{ $layout_order }}</strong></h5>
-                                    <span>Đơn hàng</span>
+                        <a href="{{ route('admin.orders.index') }}" style="text-decoration: none; color: inherit;">
+                            <div class="col-md-3 widget widget1">
+                                <div class="r3_counter_box">
+                                    <i class="pull-left fa fa-laptop user1 icon-rounded"></i>
+                                    <div class="stats">
+                                        <h5><strong>{{ $layout_order }}</strong></h5>
+                                        <span>Đơn hàng</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
 
                         <a href="{{ route('admin.order_details.index') }}" style="text-decoration: none; color: inherit;">
                             <div class="col-md-3 widget widget1">

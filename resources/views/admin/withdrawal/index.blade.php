@@ -24,10 +24,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($withdrawals as $withdrawal)
+                    @foreach ($withdrawals as $key=> $withdrawal)
                         <tr>
-                            <td>{{ $withdrawal->id }}</td>
-                            <td>{{ $withdrawal->bank }}</td>
+                          <td>{{ $key }}
+    @if (\Carbon\Carbon::parse($withdrawal->created_at)->greaterThanOrEqualTo(\Carbon\Carbon::now()->subDay()))
+        <span class="label label-primary pull-right">New</span>
+    @endif
+</td>
+<td>{{ $withdrawal->bank }}</td>
+
                             <td>{{ $withdrawal->bankAccName }}</td>
                             <td>{{ $withdrawal->bankAccNum }}</td>
                             <td>{{ number_format($withdrawal->amount, 0, ',', '.') }} VND</td>

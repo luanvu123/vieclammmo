@@ -225,7 +225,7 @@
                     <span class="close" onclick="closeModal('complaintModal{{ $order->id }}')">&times;</span>
                 </div>
                 <div class="custom-modal-body">
-                    <form action="{{ route('complaints.store') }}" method="POST">
+                    <form action="{{ route('complaint.site') }}" method="POST">
                         @csrf
                         <input type="hidden" name="order_id" value="{{ $order->id }}">
 

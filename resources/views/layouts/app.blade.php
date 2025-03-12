@@ -209,6 +209,13 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                         <span> Quản lý đơn hàng</span>
                                     </a>
                                 </li>
+                                 <li class="{{ Request::is('/admin/withdrawals*') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.withdrawals.index') }}">
+                                        <img src="{{ asset('backend_admin/images/3018587_admin_administrator_ajax_options_permission_icon.svg') }}" width="20"
+                                            height="20">
+                                        <span> Yc Rút tiền</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <!-- /.navbar-collapse -->

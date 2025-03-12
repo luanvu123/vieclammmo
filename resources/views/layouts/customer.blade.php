@@ -15,7 +15,7 @@
     <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
 
 
-        <link href="{{ asset('assets/libs/uppy/uppy.min.css')}}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/libs/uppy/uppy.min.css')}}" rel="stylesheet" type="text/css" />
 
     <link href="{{ asset('assets/libs/simple-datatables/style.css')}}" rel="stylesheet" type="text/css" />
     <!-- App css -->
@@ -68,21 +68,19 @@
 
 
                     <li class="dropdown topbar-item">
-                        <a class="nav-link dropdown-toggle arrow-none nav-icon" data-bs-toggle="dropdown"
-                            href="#" role="button" aria-haspopup="false" aria-expanded="false"
-                            data-bs-offset="0,19">
-                            <img src="{{ asset('img/user-icon.png') }}" alt=""
-                                class="thumb-md rounded-circle">
+                        <a class="nav-link dropdown-toggle arrow-none nav-icon" data-bs-toggle="dropdown" href="#"
+                            role="button" aria-haspopup="false" aria-expanded="false" data-bs-offset="0,19">
+                            <img src="{{ asset('img/user-icon.png') }}" alt="" class="thumb-md rounded-circle">
                         </a>
                         <div class="dropdown-menu dropdown-menu-end py-0">
                             <div class="d-flex align-items-center dropdown-item py-2 bg-secondary-subtle">
                                 <div class="flex-shrink-0">
-                                    <img src="{{ asset('img/user-icon.png') }}" alt=""
-                                        class="thumb-md rounded-circle">
+                                    <img src="{{ asset('img/user-icon.png') }}" alt="" class="thumb-md rounded-circle">
                                 </div>
                                 <div class="flex-grow-1 ms-2 text-truncate align-self-center">
                                     <h6 class="my-0 fw-medium text-dark fs-13">
-                                        {{ Auth::guard('customer')->user()->name }}</h6>
+                                        {{ Auth::guard('customer')->user()->name }}
+                                    </h6>
                                     <small class="text-muted mb-0">
                                         {{ Auth::guard('customer')->user()->email }}</small>
                                 </div><!--end media-body-->
@@ -117,9 +115,9 @@
                     <img src="{{ asset('assets/images/logo-sm.png') }}" alt="logo-small" class="logo-sm">
                 </span>
                 <span class="">
-                   <a href="{{ route('/') }}" class="logo">
-                <h1>MNL<span class="highlight">MMO</span></h1>
-            </a>
+                    <a href="{{ route('/') }}" class="logo">
+                        <h1>MNL<span class="highlight">MMO</span></h1>
+                    </a>
                 </span>
             </a>
         </div>
@@ -138,47 +136,117 @@
                             <a class="nav-link" href="{{ route('dashboard.site') }}">
                                 <i class="iconoir-report-columns menu-icon"></i>
                                 <span>Sales</span>
-                                <span class="badge text-bg-info ms-auto">New</span>
                             </a>
                         </li><!--end nav-item-->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('products.index') }}">
-                                <i class="iconoir-hand-cash menu-icon"></i>
+                                <i class="fas fa-align-justify menu-icon"></i>
                                 <span>Quản lý gian hàng</span>
                             </a>
                         </li><!--end nav-item-->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('coupons.index') }}">
-                                <i class="iconoir-hand-cash menu-icon"></i>
+                                <i class="fas fa-percent menu-icon"></i>
                                 <span>Quản lý mã giảm</span>
                             </a>
                         </li><!--end nav-item-->
-                         <li class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('order-manage.index') }}">
-                                <i class="iconoir-hand-cash menu-icon"></i>
+                                <i class="fab fa-facebook-messenger menu-icon"></i>
                                 <span>Gian hàng sản phẩm</span>
+
+                                @if (Auth::guard('customer')->check())
+                                                                @php
+                                                                    $recentOrderCount = \App\Models\Order::with(['productVariant.product.category', 'orderDetails', 'customer', 'coupon'])
+                                                                        ->whereHas('productVariant.product', function ($query) {
+                                                                            $query->where('customer_id', Auth::guard('customer')->id())
+                                                                                ->whereHas('category', function ($q) {
+                                                                                    $q->where('type', 'Sản phẩm');
+                                                                                });
+                                                                        })
+                                                                        ->where('created_at', '>=', \Carbon\Carbon::now()->subDay())
+                                                                        ->count();
+                                                                @endphp
+
+                                                                @if ($recentOrderCount > 0)
+                                                                    <span
+                                                                        class="badge text-bg-pink ms-auto">{{ str_pad($recentOrderCount, 2, '0', STR_PAD_LEFT) }}</span>
+                                                                @endif
+                                @endif
                             </a>
-                        </li><!--end nav-item-->
-                          <li class="nav-item">
+                        </li>
+
+
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('order-service-manage.index') }}">
-                                <i class="iconoir-hand-cash menu-icon"></i>
+                                <i class="fab fa-servicestack menu-icon"></i>
                                 <span>Gian hàng dịch vụ</span>
+
+                                @if (Auth::guard('customer')->check())
+                                                                @php
+                                                                    $recentOrderCount = \App\Models\Order::with(['productVariant.product.category', 'orderDetails', 'customer', 'coupon'])
+                                                                        ->whereHas('productVariant.product', function ($query) {
+                                                                            $query->where('customer_id', Auth::guard('customer')->id())
+                                                                                ->whereHas('category', function ($q) {
+                                                                                    $q->where('type', 'Dịch vụ');
+                                                                                });
+                                                                        })
+                                                                        ->where('created_at', '>=', \Carbon\Carbon::now()->subDay())
+                                                                        ->count();
+                                                                @endphp
+
+                                                                @if ($recentOrderCount > 0)
+                                                                    <span
+                                                                        class="badge text-bg-pink ms-auto">{{ str_pad($recentOrderCount, 2, '0', STR_PAD_LEFT) }}</span>
+                                                                @endif
+                                @endif
                             </a>
-                        </li><!--end nav-item-->
-                          <li class="nav-item">
-                            <a class="nav-link" href="{{ route('complaints.index') }}">
-                                <i class="iconoir-report-columns menu-icon"></i>
-                                <span>Quản lý khiếu nại</span>
-                                <span class="badge text-bg-info ms-auto">New</span>
-                            </a>
-                        </li><!--end nav-item-->
-                          <li class="nav-item">
-                            <a class="nav-link" href="{{ route('review-manage.index') }}">
-                                <i class="iconoir-report-columns menu-icon"></i>
-                                <span>Quản lý đánh giá</span>
-                                <span class="badge text-bg-info ms-auto">New</span>
-                            </a>
-                        </li><!--end nav-item-->
+                        </li>
+
+                      <!-- Quản lý khiếu nại -->
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('complaints.index') }}">
+        <i class="fab fa-hacker-news-square menu-icon"></i>
+        <span>Quản lý khiếu nại</span>
+
+        @if (Auth::guard('customer')->check())
+            @php
+                $recentComplaintCount = \App\Models\Complaint::whereHas('order.productVariant.product', function ($query) {
+                        $query->where('customer_id', Auth::guard('customer')->id());
+                    })
+                    ->where('created_at', '>=', \Carbon\Carbon::now()->subDay())
+                    ->count();
+            @endphp
+
+            @if ($recentComplaintCount > 0)
+                <span class="badge text-bg-pink ms-auto">{{ str_pad($recentComplaintCount, 2, '0', STR_PAD_LEFT) }}</span>
+            @endif
+        @endif
+    </a>
+</li>
+
+<!-- Quản lý đánh giá -->
+<li class="nav-item">
+    <a class="nav-link" href="{{ route('review-manage.index') }}">
+        <i class="fas fa-check-square menu-icon"></i>
+        <span>Quản lý đánh giá</span>
+
+        @if (Auth::guard('customer')->check())
+            @php
+                $recentReviewCount = \App\Models\Review::whereHas('order.productVariant.product', function ($query) {
+                        $query->where('customer_id', Auth::guard('customer')->id());
+                    })
+                    ->where('created_at', '>=', \Carbon\Carbon::now()->subDay())
+                    ->count();
+            @endphp
+
+            @if ($recentReviewCount > 0)
+                <span class="badge text-bg-pink ms-auto">{{ str_pad($recentReviewCount, 2, '0', STR_PAD_LEFT) }}</span>
+            @endif
+        @endif
+    </a>
+</li>
+
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarTransactions" data-bs-toggle="collapse" role="button"
                                 aria-expanded="false" aria-controls="sidebarTransactions">
@@ -227,46 +295,46 @@
     <script src="{{ asset('assets/js/pages/index.init.js') }}"></script>
     <script src="{{ asset('assets/js/DynamicSelect.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
-     <script src="{{ asset('assets/libs/uppy/uppy.legacy.min.js')}}"></script>
-        <script src="{{ asset('assets/js/pages/file-upload.init.js')}}"></script>
+    <script src="{{ asset('assets/libs/uppy/uppy.legacy.min.js')}}"></script>
+    <script src="{{ asset('assets/js/pages/file-upload.init.js')}}"></script>
 
 
     <script src="{{ asset('assets/libs/quill/quill.js') }}"></script>
     <script src="{{ asset('assets/libs/simple-datatables/umd/simple-datatables.js') }}"></script>
     <script src="{{ asset('assets/js/pages/datatable.init.js') }}"></script>
-<script>
-    $(document).ready(function() {
-        $('#datatable_1').DataTable();
-    });
-</script>
- <script src="{{ asset('backend_admin/ckeditor/ckeditor.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#datatable_1').DataTable();
+        });
+    </script>
+    <script src="{{ asset('backend_admin/ckeditor/ckeditor.js') }}"></script>
     <script>
         CKEDITOR.replace('description');
 
     </script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        function toggleFields() {
-            let type = document.getElementById("couponType").value;
-            let percentField = document.getElementById("percentField");
-            let maxAmountField = document.getElementById("maxAmountField");
+        document.addEventListener("DOMContentLoaded", function () {
+            function toggleFields() {
+                let type = document.getElementById("couponType").value;
+                let percentField = document.getElementById("percentField");
+                let maxAmountField = document.getElementById("maxAmountField");
 
-            if (type === "percent") {
-                percentField.style.display = "block";
-                maxAmountField.style.display = "none";
-            } else {
-                percentField.style.display = "none";
-                maxAmountField.style.display = "block";
+                if (type === "percent") {
+                    percentField.style.display = "block";
+                    maxAmountField.style.display = "none";
+                } else {
+                    percentField.style.display = "none";
+                    maxAmountField.style.display = "block";
+                }
             }
-        }
 
-        document.getElementById("couponType").addEventListener("change", toggleFields);
+            document.getElementById("couponType").addEventListener("change", toggleFields);
 
-        // Chạy lần đầu để thiết lập trạng thái ban đầu
-        toggleFields();
-    });
-</script>
+            // Chạy lần đầu để thiết lập trạng thái ban đầu
+            toggleFields();
+        });
+    </script>
 </body>
 
 </html>

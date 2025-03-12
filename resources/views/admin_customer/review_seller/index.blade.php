@@ -38,11 +38,14 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($reviews as $review)
+                                        @foreach ($reviews as $key=> $review)
                                             <tr>
-                                                <td>{{ $review->id }}</td>
-                                                <td>{{ $review->customer->name ?? 'N/A' }}</td>
-                                                <td>{{ $review->order->order_key ?? 'N/A' }}</td>
+                                                <td>{{ $key }}</td>
+                                                <td><a href="{{ route('messages.create', ['customerId' => $review->customer_id]) }}">
+                                 {{ $review->customer->name}}
+                            </a></td>
+                                                <td><a
+                                                                                        href="{{ route('order-detail.show', $review->order->id) }}">{{ $review->order->order_key }}</a></td>
                                                 <td>{{ $review->product->name ?? 'N/A' }}</td>
                                                 <td>{{ $review->rating }} / 5</td>
                                                 <td>{{ Str::limit($review->content, 50) }}</td>

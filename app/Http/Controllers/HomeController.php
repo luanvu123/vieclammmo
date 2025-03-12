@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Complaint;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Withdrawal;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -22,11 +25,26 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+  public function index()
     {
-        return view('home');
-    }
+        // Lấy dữ liệu trong vòng 30 ngày qua
+        $startDate = Carbon::now()->subDays(30);
+        $orders = Order::where('created_at', '>=', $startDate)->get();
 
+        // Thống kê số lượng đơn hàng thành công và thất bại theo ngày
+        $completedOrders = $orders->where('status', 'completed')->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('Y-m-d');
+        })->map->count();
+
+        $canceledOrders = $orders->where('status', 'canceled')->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('Y-m-d');
+        })->map->count();
+
+        // Tổng doanh thu từ các đơn hàng thành công
+        $totalRevenue = $orders->where('status', 'completed')->sum('total');
+
+        return view('home', compact('completedOrders', 'canceledOrders', 'totalRevenue'));
+    }
     /**
      * Display a listing of complaints.
      *
@@ -62,5 +80,20 @@ class HomeController extends Controller
 
         return view('admin.order.detail_index', compact('order'));
     }
+ public function IndexWithdrawal()
+    {
+
+        $withdrawals = Withdrawal::get();
+
+        return view('admin.withdrawal.index', compact('withdrawals'));
+    }
+    public function updateWithdrawalStatus(Request $request, $id)
+{
+    $withdrawal = Withdrawal::findOrFail($id);
+    $withdrawal->status = $request->status;
+    $withdrawal->save();
+
+    return redirect()->back()->with('success', 'Cập nhật trạng thái thành công.');
+}
 
 }

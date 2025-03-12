@@ -135,7 +135,7 @@ Route::post('order-manage/{id}/update-status', [OrderManageController::class, 'u
 
     Route::get('/deposit', [CustomerController::class, 'indexDeposit'])->name('deposit.index');
     Route::resource('complaints', ComplaintManageController::class);
-
+ Route::post('/complaint-site', [ComplaintController::class, 'store'])->name('complaint.site');
     Route::resource('review-manage', ReviewManageController::class);
 
     // Thêm các route mới cho 2FA
@@ -177,4 +177,7 @@ Route::group(['middleware' => ['auth']], function () {
 Route::get('/admin/order-details', [HomeController::class, 'indexOrderDetail'])->name('admin.order_details.index');
     Route::get('/admin/orders', [HomeController::class, 'IndexOrder'])->name('admin.orders.index');
     Route::get('/admin/order/{orderId}', [HomeController::class, 'OrderDetail'])->name('admin.order_detail.index');
+     Route::get('/admin/withdrawals', [HomeController::class, 'IndexWithdrawal'])->name('admin.withdrawals.index');
+     Route::post('/admin/withdrawals/{id}/update-status', [HomeController::class, 'updateWithdrawalStatus'])->name('admin.withdrawals.updateStatus');
+
 });

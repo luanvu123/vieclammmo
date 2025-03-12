@@ -8,7 +8,8 @@
                         <h4 class="page-title">Quản lý khiếu nại</h4>
                         <div class="">
                             <ol class="breadcrumb mb-0">
-                                <li class="breadcrumb-item"><a href="{{ route('complaints.index') }}">Danh sách khiếu nại</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('complaints.index') }}">Danh sách khiếu
+                                        nại</a></li>
                                 <li class="breadcrumb-item active">Quản lý khiếu nại</li>
                             </ol>
                         </div>
@@ -36,25 +37,32 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($complaints as $complaint)
+                                        @foreach ($complaints as $key => $complaint)
                                             <tr>
-                                                <td>{{ $complaint->id }}</td>
-                                                <td><a href="{{ route('messages.create', ['customerId' => $complaint->customer_id]) }}">
-                                 {{ $complaint->customer->name}}
-                            </a></td>
-                                                <td>{{ $complaint->order->id ?? 'N/A' }}</td>
+                                                <td>{{ $key }}</td>
+                                                <td><a
+                                                        href="{{ route('messages.create', ['customerId' => $complaint->customer_id]) }}">
+                                                        {{ $complaint->customer->name}}
+                                                    </a></td>
+                                                <td><a
+                                                        href="{{ route('order-detail.show', $complaint->order->id) }}">{{ $complaint->order->order_key }}</a>
+                                                </td>
                                                 <td>{{ Str::limit($complaint->content, 50) }}</td>
                                                 <td>
-                                                    <span class="badge bg-{{ $complaint->status == 'resolved' ? 'success' : 'warning' }}">
+                                                    <span
+                                                        class="badge bg-{{ $complaint->status == 'resolved' ? 'success' : 'warning' }}">
                                                         {{ ucfirst($complaint->status) }}
                                                     </span>
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="{{ route('complaints.edit', $complaint->id) }}" class="btn btn-warning btn-sm">Sửa</a>
-                                                    <form action="{{ route('complaints.destroy', $complaint->id) }}" method="POST" class="d-inline">
+                                                    <a href="{{ route('complaints.edit', $complaint->id) }}"
+                                                        class="btn btn-warning btn-sm">Sửa</a>
+                                                    <form action="{{ route('complaints.destroy', $complaint->id) }}"
+                                                        method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
+                                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                            onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</button>
                                                     </form>
                                                 </td>
                                             </tr>

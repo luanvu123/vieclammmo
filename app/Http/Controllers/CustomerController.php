@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use PragmaRX\Google2FA\Google2FA;
-
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 
 class CustomerController extends Controller
@@ -21,10 +22,42 @@ class CustomerController extends Controller
     {
         $this->middleware(['customer', '2fa']);
     }
-    public function dashboard()
-    {
-        return view('admin_customer.index');
-    }
+  public function dashboard()
+{
+    $customer = Auth::guard('customer')->user();
+    $customerId = $customer->id;
+
+    $startDate = Carbon::now()->subDays(30);
+
+    // Lấy tất cả các đơn hàng có liên quan đến customer hiện tại
+    $orders = Order::with(['productVariant.product.category', 'orderDetails', 'customer', 'coupon'])
+        ->whereHas('productVariant.product', function ($query) use ($customerId) {
+            $query->where('customer_id', $customerId);
+        })
+        ->where('created_at', '>=', $startDate)
+        ->get();
+
+    // Đơn hàng thành công
+    $completedOrders = $orders->where('status', 'completed')
+        ->groupBy(fn($order) => $order->created_at->format('Y-m-d'))
+        ->map->count()
+        ->toArray();
+
+    // Đơn hàng bị hủy
+    $canceledOrders = $orders->where('status', 'canceled')
+        ->groupBy(fn($order) => $order->created_at->format('Y-m-d'))
+        ->map->count()
+        ->toArray();
+
+    // Tổng đơn hàng mới đang chờ xử lý (trong 30 ngày qua)
+    $newOrders = $orders->where('status', 'pending')->count();
+
+    // Tổng doanh thu từ đơn hàng thành công
+    $totalRevenue = $orders->where('status', 'completed')->sum('total');
+
+    return view('admin_customer.index', compact('completedOrders', 'canceledOrders', 'newOrders', 'totalRevenue'));
+}
+
     public function checkout()
     {
         return view('pages.checkout');

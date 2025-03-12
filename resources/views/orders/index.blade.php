@@ -44,7 +44,12 @@
                                     <tbody>
                                         @foreach ($orders as $key => $order)
                                                                             <tr>
-                                                                                <th>{{$key}} <span class="badge text-bg-info ms-auto">New</span> </th>
+                                                                               <th>
+    {{$key}}
+    @if (\Carbon\Carbon::parse($order->created_at)->greaterThanOrEqualTo(\Carbon\Carbon::now()->subDay()))
+        <span class="badge text-bg-info ms-auto">New</span>
+    @endif
+</th>
 
                                                                                 <td> <a
                                                                                         href="{{ route('order-detail.show', $order->id) }}">{{ $order->order_key }}</a>

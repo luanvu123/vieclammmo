@@ -39,7 +39,12 @@
                                     <tbody>
                                         @foreach ($complaints as $key => $complaint)
                                             <tr>
-                                                <td>{{ $key }}</td>
+                                                <th>
+    {{$key}}
+    @if (\Carbon\Carbon::parse($complaint->created_at)->greaterThanOrEqualTo(\Carbon\Carbon::now()->subDay()))
+        <span class="badge text-bg-info ms-auto">New</span>
+    @endif
+</th>
                                                 <td><a
                                                         href="{{ route('messages.create', ['customerId' => $complaint->customer_id]) }}">
                                                         {{ $complaint->customer->name}}

@@ -12,6 +12,9 @@ class ReviewController extends Controller
     public function index()
     {
         $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
 
         // Lấy danh sách các đánh giá của khách hàng hiện tại
         $reviews = Review::where('customer_id', $customer->id)
@@ -22,9 +25,13 @@ class ReviewController extends Controller
     }
 
 
-   
+
 public function edit($id)
 {
+     $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
     $review = Review::where('id', $id)
         ->where('customer_id', Auth::guard('customer')->id())
         ->firstOrFail();
@@ -68,7 +75,10 @@ public function update(Request $request, $id)
             'quality_status' => 'required|array',
         ]);
 
-        $customer = Auth::guard('customer')->user();
+         $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
         $qualityStatus = implode(',', $request->quality_status);
 
         Review::updateOrCreate(

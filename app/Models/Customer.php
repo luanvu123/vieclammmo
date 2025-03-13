@@ -31,7 +31,10 @@ class Customer extends Authenticatable
         'password',
         'google_id',
         'isEkyc',
-        'last_active_at'
+        'last_active_at',
+        'account_number',
+        'isSeller'
+
     ];
 
     protected $hidden = [

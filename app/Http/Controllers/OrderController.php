@@ -25,6 +25,9 @@ class OrderController extends Controller
         }
 
         $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
         $orders = Order::where('customer_id', $customer->id)
             ->with(['productVariant.product', 'orderDetails', 'coupon'])
             ->orderBy('created_at', 'desc')
@@ -40,7 +43,10 @@ class OrderController extends Controller
             return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để xem chi tiết đơn hàng!');
         }
 
-        $customer = Auth::guard('customer')->user();
+         $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
         $order = Order::where('order_key', $order_key)
             ->where('customer_id', $customer->id)
             ->with(['productVariant.product', 'orderDetails', 'coupon'])
@@ -67,6 +73,9 @@ class OrderController extends Controller
             ]);
 
             $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
             $productVariant = ProductVariant::findOrFail($request->product_variant_id);
             $product = $productVariant->product;
 
@@ -204,7 +213,10 @@ class OrderController extends Controller
         $request->validate([
             'status' => 'required|in:success,error',
         ]);
-
+ $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
         $orderDetail = OrderDetail::findOrFail($id);
         $orderDetail->status = $request->status;
         $orderDetail->save();

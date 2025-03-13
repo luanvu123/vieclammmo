@@ -33,7 +33,16 @@
                             @endif
                         </p>
                         <p><strong>Sản phẩm:</strong> {{ $order->productVariant->product->name }}</p>
-                        <p><strong>Biến thể:</strong> {{ $order->productVariant->name }}</p>
+                      <p><strong>Biến thể:</strong> {{ $order->productVariant->name }}</p>
+
+@if ($order->productVariant->url)
+    <p><strong>URL:</strong> {{ $order->productVariant->url }}</p>
+@endif
+
+@if ($order->productVariant->expiry)
+    <p><strong>Hạn sử dụng:</strong> {{ $order->productVariant->expiry }}</p>
+@endif
+
                         <p><strong>Số lượng:</strong> {{ $order->quantity }}</p>
                         <p><strong>Giá đơn vị:</strong> {{ number_format($order->productVariant->price) }} VNĐ</p>
 

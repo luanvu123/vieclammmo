@@ -10,6 +10,10 @@ class ReviewManageController extends Controller
 {
     public function index()
     {
+         $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
         $customerId = Auth::guard('customer')->id();
 
         $reviews = Review::whereHas('order.productVariant.product', function ($query) use ($customerId) {

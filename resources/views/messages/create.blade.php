@@ -1,6 +1,6 @@
 @extends('layout')
 
-@section('content')   
+@section('content')
     <div class="post-container">
         <div class="message-header">
             <h2>Tin nhắn</h2>
@@ -32,7 +32,7 @@
                                     <div class="avatar">
                                         <img src="{{ $user->email == 'bgntmrqph24111516@vnetwork.io.vn'
                                             ? asset('img/admin-icon.png')
-                                            : asset($user->avatar ?? 'img/user-icon.png') }}"
+                                            : asset('img/user-icon.png') }}"
                                             alt="{{ $user->name }}">
                                     </div>
 

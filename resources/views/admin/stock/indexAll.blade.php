@@ -21,8 +21,8 @@
                         <th>thành công</th>
                         <th>lỗi</th>
                         <th>Ngày up</th>
-                        <th>Status</th>
                         <th>Hành động</th>
+                        <th>UID</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,8 +34,23 @@
                                     <span class="label label-primary pull-right">New</span>
                                 @endif
                             </th>
-                            <td>{{ $stock->productVariant->product->customer->name ?? 'N/A' }}</td>
-                            <td>{{ $stock->productVariant->name ?? 'N/A' }}</td>
+                            <td><a
+                                    href="{{ route('messages.create', ['customerId' => $stock->productVariant->product->customer_id]) }}">
+                                    {{ $stock->productVariant->product->customer->name ?? 'N/A' }}
+                                </a>
+
+                            </td>
+                            <td>
+                                @if ($stock->productVariant && $stock->productVariant->product)
+                                    <a
+                                        href="{{ route('product-variants.list', ['product' => $stock->productVariant->product_id]) }}">
+                                        {{ $stock->productVariant->name }}
+                                    </a>
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+
                             <td>{{ basename($stock->file) }}</td> {{-- Hiển thị tên file --}}
                             <td>
                                 @if($stock->file)
@@ -55,12 +70,17 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('stock.uid_index', $stock->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Xem UID Facebook
-                                </a>
-                                <a href="{{ route('stock.uid_email_index', $stock->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-envelope"></i> Xem UID Email
-                                </a>
+                                @if($stock->productVariant->type == "Tài khoản")
+                                    {{ $stock->uidFacebooks->count() }}
+                                    <a href="{{ route('stock.uid_index', $stock->id) }}">
+                                        <i class="fas fa-eye"></i>UID
+                                    </a>
+                                @elseif($stock->productVariant->type == "Email")
+                                    {{ $stock->uidEmails->count() }}
+                                    <a href="{{ route('stock.uid_email_index', $stock->id) }}">
+                                        <i class="fas fa-envelope"></i>UID
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

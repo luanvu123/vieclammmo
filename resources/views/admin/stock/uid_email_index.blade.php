@@ -44,7 +44,7 @@
         </table>
     </div>
     <a href="{{ route('stock-manage.index', $stock->productVariant->id) }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Quay lại danh sách Stock
+        <i class="fas fa-arrow-left"></i> Quay lại file upload
     </a>
 </div>
 

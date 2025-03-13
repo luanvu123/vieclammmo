@@ -22,6 +22,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">{{$order->productVariant->name}}</h4>
+                            {{$order->productVariant->expiry}}, {{$order->productVariant->url}}
                         </div>
                         <div class="card-body pt-0">
                             <div class="table-responsive">

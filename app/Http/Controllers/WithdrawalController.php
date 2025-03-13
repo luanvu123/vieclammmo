@@ -57,14 +57,14 @@ class WithdrawalController extends Controller
         return redirect()->route('withdrawals.index')->with('success', 'Yêu cầu rút tiền đã được gửi.');
     }
     public function index()
-{
-    $customer = Auth::guard('customer')->user();
-    $withdrawals = Withdrawal::where('customer_id', $customer->id)
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+    {
+        $customer = Auth::guard('customer')->user();
+        $withdrawals = Withdrawal::where('customer_id', $customer->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    return view('pages.withdrawls_index', compact('withdrawals'));
-}
+        return view('pages.withdrawls_index', compact('withdrawals'));
+    }
 
 }
 

@@ -12,6 +12,9 @@ class StockController extends Controller
     public function create(ProductVariant $variant)
     {
         $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
 
         if (!$customer || $variant->product->customer_id != $customer->id) {
             abort(403, 'Unauthorized');
@@ -32,8 +35,10 @@ class StockController extends Controller
 
     public function store(Request $request, ProductVariant $variant)
     {
-        $customer = Auth::guard('customer')->user();
-
+         $customer = Auth::guard('customer')->user();
+    if ($customer->isSeller != 1) {
+        abort(403, 'Bạn không phải là người bán.');
+    }
         if (!$customer || $variant->product->customer_id !== $customer->id) {
             abort(403, 'Unauthorized');
         }
@@ -48,7 +53,7 @@ class StockController extends Controller
             Stock::create([
                 'product_variant_id' => $variant->id,
                 'file' => $filePath,
-                'status' => 1
+                'status' => 0
             ]);
 
             return redirect()->back()

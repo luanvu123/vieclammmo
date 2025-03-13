@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Complaint;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Withdrawal;
@@ -25,7 +26,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-  public function index()
+    public function index()
     {
         // Lấy dữ liệu trong vòng 30 ngày qua
         $startDate = Carbon::now()->subDays(30);
@@ -56,11 +57,11 @@ class HomeController extends Controller
         return view('admin.complaint.index', compact('complaints'));
     }
     public function indexOrderDetail()
-{
-    $orderDetails = OrderDetail::with('order.customer')->get();
-    return view('admin.order_detail.index', compact('orderDetails'));
-}
- public function IndexOrder()
+    {
+        $orderDetails = OrderDetail::with('order.customer')->get();
+        return view('admin.order_detail.index', compact('orderDetails'));
+    }
+    public function IndexOrder()
     {
         $orders = Order::with(['orderDetails', 'productVariant.product.customer'])
             ->get();
@@ -68,32 +69,52 @@ class HomeController extends Controller
         return view('admin.order.index', compact('orders'));
     }
 
-    public function OrderDetail($orderId)
-    {
-        $order = Order::with(['orderDetails', 'productVariant.product.customer'])
-            ->where('id', $orderId)
-            ->first();
-
-        if (!$order) {
-            abort(404);
-        }
-
-        return view('admin.order.detail_index', compact('order'));
-    }
- public function IndexWithdrawal()
-    {
-
-        $withdrawals = Withdrawal::get();
-
-        return view('admin.withdrawal.index', compact('withdrawals'));
-    }
-    public function updateWithdrawalStatus(Request $request, $id)
+   public function OrderDetail($orderId)
 {
-    $withdrawal = Withdrawal::findOrFail($id);
-    $withdrawal->status = $request->status;
-    $withdrawal->save();
+    $order = Order::with([
+        'orderDetails',
+        'productVariant.product.customer',
+        'productVariant.product.category'  // Thêm cái này
+    ])->where('id', $orderId)->first();
 
-    return redirect()->back()->with('success', 'Cập nhật trạng thái thành công.');
+    if (!$order) {
+        abort(404);
+    }
+
+    return view('admin.order.detail_index', compact('order'));
 }
+
+   public function IndexWithdrawal()
+{
+    $withdrawals = Withdrawal::with('customer')->get();
+    return view('admin.withdrawal.index', compact('withdrawals'));
+}
+
+    public function updateWithdrawalStatus(Request $request, $id)
+    {
+        $withdrawal = Withdrawal::findOrFail($id);
+        $withdrawal->status = $request->status;
+        $withdrawal->save();
+
+        return redirect()->back()->with('success', 'Cập nhật trạng thái thành công.');
+    }
+
+ public function indexCustomer()
+{
+    $customers = Customer::whereNotNull('account_number')->get();
+
+
+    return view('admin.customers.seller', compact('customers'));
+}
+
+
+    public function updateIsseller(Request $request, $id)
+    {
+        $customer = Customer::findOrFail($id);
+        $customer->isSeller = !$customer->isSeller; // Đổi trạng thái isSeller
+        $customer->save();
+
+        return redirect()->route('admin.customers.index')->with('success', 'Trạng thái người bán đã được cập nhật!');
+    }
 
 }

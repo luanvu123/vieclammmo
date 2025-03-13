@@ -20,7 +20,6 @@
                             <th>Tài khoản</th>
                             <th>Giá trị</th>
                             <th>Trạng thái</th>
-                            <th>Hành động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,13 +27,22 @@
                             <tr>
                                 <td>{{ $key }}</td>
                                 <td>
-                                    {{ $orderDetail->order->order_key }}
+
+                                     <a href="{{ route('admin.order_detail.index', $orderDetail->order->id) }}">
+                                         {{ $orderDetail->order->order_key }}
+                                    </a>
                                     @if (\Carbon\Carbon::parse($orderDetail->created_at)->greaterThanOrEqualTo(\Carbon\Carbon::now()->subDay()))
                                         <span class="label label-primary pull-right">New</span>
                                     @endif
                                 </td>
 
-                                <td>{{ $orderDetail->order->customer->name }}</td>
+                                <td>
+
+                                    <a
+                                        href="{{ route('messages.create', ['customerId' => $orderDetail->order->customer_id]) }}">
+                                      {{ $orderDetail->order->customer->name }}
+                                    </a>
+                                </td>
                                 <td>
                                     <a
                                         href="{{ route('messages.create', ['customerId' => $orderDetail->order->productVariant->product->customer_id]) }}">
@@ -52,10 +60,7 @@
                                          <span class="badge badge-warning">BH</span>
                                     @endif
                                 </td>
-                                <td>
-                                    <a href="#" class="btn btn-info btn-sm">Chi tiết</a>
-                                    <a href="#" class="btn btn-danger btn-sm">Xóa</a>
-                                </td>
+
                             </tr>
                         @endforeach
                     </tbody>

@@ -23,14 +23,20 @@
                     <tbody>
                         @foreach ($customers as $customer)
                             <tr>
-                               <td>{{ $customer->id }}
-    @if (\Carbon\Carbon::parse($customer->created_at)->greaterThanOrEqualTo(\Carbon\Carbon::now()->subDay()))
-        <span class="label label-primary pull-right">New</span>
-    @endif
-</td>
-<td>{{ $customer->idCustomer }}</td>
+                                <td>{{ $customer->id }}
+                                    @if (\Carbon\Carbon::parse($customer->created_at)->greaterThanOrEqualTo(\Carbon\Carbon::now()->subDay()))
+                                        <span class="label label-primary pull-right">New</span>
+                                    @endif
+                                </td>
+                                <td>{{ $customer->idCustomer }}</td>
 
-                                <td>{{ $customer->name }}
+                                <td>
+
+                                    <a href="{{ route('messages.create', ['customerId' => $customer->id]) }}"
+                                        class="text-primary">
+                                        {{ $customer->name }}
+                                    </a>
+
                                     @if ($customer->email == 'bgntmrqph24111516@vnetwork.io.vn')
                                         <i class="fa fa-check-circle" style="color:red; font-size: 80%;" title="Thuộc hệ thống"></i>
                                     @endif

@@ -320,6 +320,22 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
         </a>
     </li>
 @endif
+@if (Auth::check())
+    @php
+        $recentSellerCount = \App\Models\Customer::whereNotNull('account_number')
+            ->where('updated_at', '>=', \Carbon\Carbon::now()->subDay())
+            ->count();
+    @endphp
+    <li class="{{ Request::is('admin/customers*') ? 'active' : '' }}">
+        <a href="{{ route('admin.customers.index') }}">
+            <img src="{{ asset('backend_admin/images/register-svgrepo-com.svg') }}" alt="Quản lý người bán" width="20" height="20">
+            Quản lý người bán
+            @if ($recentSellerCount > 0)
+                <span class="label label-primary pull-right">{{ $recentSellerCount }}</span>
+            @endif
+        </a>
+    </li>
+@endif
 
 
 

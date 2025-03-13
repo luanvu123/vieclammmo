@@ -28,9 +28,13 @@
                                         <span class="label label-primary pull-right">New</span>
                                     @endif
                                 </td>
-                                <td>{{ $complaint->customer->name ?? 'Không xác định' }}</td>
+                                   <td>   <a href="{{ route('messages.create', ['customerId' => $complaint->customer_id]) }}"
+                                        class="text-primary">
+                                        {{ $complaint->customer->name }}
+                                    </a></td>
 
-                                <td>{{ $complaint->order->order_key ?? 'Không xác định' }}</td>
+                            <td><a
+                                                                                        href="{{ route('admin.order_detail.index', $complaint->order->id) }}">{{ $complaint->order->order_key }}</td>
                                 <td>{{ $complaint->content }}</td>
                                 <td>
                                     @if($complaint->status === 'pending')

@@ -19,5 +19,11 @@ class Withdrawal extends Model
         'amount',
         'status'
     ];
+
+    public function customer()
+{
+    return $this->belongsTo(Customer::class);
+}
+
 }
 

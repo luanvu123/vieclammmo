@@ -110,6 +110,9 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::post('/order-details/update-status/{id}', [OrderController::class, 'updateStatus'])->name('order-details.updateStatus');
     Route::get('/change-password', [CustomerController::class, 'changePassword'])->name('customer.changePassword');
     Route::put('/update-password', [CustomerController::class, 'updatePassword'])->name('customer.updatePassword');
+    // Thêm routes mới
+    Route::get('/register-seller', [CustomerController::class, 'registerSellerForm'])->name('customer.registerSellerForm');
+    Route::post('/register-seller', [CustomerController::class, 'registerSeller'])->name('customer.registerSeller');
     Route::resource('product_variants', ProductVariantController::class);
     Route::resource('posts', PostController::class);
 
@@ -188,5 +191,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/withdrawals', [HomeController::class, 'IndexWithdrawal'])->name('admin.withdrawals.index');
     Route::post('/admin/withdrawals/{id}/update-status', [HomeController::class, 'updateWithdrawalStatus'])->name('admin.withdrawals.updateStatus');
     Route::get('/admin/stocks/all', [StockManageController::class, 'indexAll'])->name('admin.stocks.indexAll');
+    Route::get('/admin/customers', [HomeController::class, 'indexCustomer'])->name('admin.customers.index');
+    Route::post('/admin/customers/update-isseller/{id}', [HomeController::class, 'updateIsseller'])->name('admin.customers.updateIsseller');
+
 
 });

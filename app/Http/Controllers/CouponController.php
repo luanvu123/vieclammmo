@@ -12,6 +12,10 @@ class CouponController extends Controller
 {
     public function index()
     {
+        if (Auth::guard('customer')->user()->isSeller != 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $coupons = Coupon::with('product')->whereHas('product', function ($query) {
             $query->where('customer_id', Auth::guard('customer')->id());
         })->get();
@@ -21,12 +25,20 @@ class CouponController extends Controller
 
     public function create()
     {
+        if (Auth::guard('customer')->user()->isSeller != 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $products = Product::where('customer_id', Auth::guard('customer')->id())->get();
         return view('admin_customer.coupon.create', compact('products'));
     }
 
     public function store(Request $request)
     {
+        if (Auth::guard('customer')->user()->isSeller != 1) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'coupon_key' => 'required|unique:coupons,coupon_key',
             'product_id' => [
@@ -49,7 +61,7 @@ class CouponController extends Controller
 
     public function edit(Coupon $coupon)
     {
-        if ($coupon->product->customer_id !== Auth::guard('customer')->id()) {
+        if (Auth::guard('customer')->user()->isSeller != 1 || $coupon->product->customer_id !== Auth::guard('customer')->id()) {
             return redirect()->route('coupons.index')->with('error', 'Bạn không có quyền chỉnh sửa mã giảm giá này.');
         }
 
@@ -59,7 +71,7 @@ class CouponController extends Controller
 
     public function update(Request $request, Coupon $coupon)
     {
-        if ($coupon->product->customer_id !== Auth::guard('customer')->id()) {
+        if (Auth::guard('customer')->user()->isSeller != 1 || $coupon->product->customer_id !== Auth::guard('customer')->id()) {
             return redirect()->route('coupons.index')->with('error', 'Bạn không có quyền chỉnh sửa mã giảm giá này.');
         }
 

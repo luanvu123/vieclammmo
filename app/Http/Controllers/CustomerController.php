@@ -22,41 +22,45 @@ class CustomerController extends Controller
     {
         $this->middleware(['customer', '2fa']);
     }
-  public function dashboard()
-{
-    $customer = Auth::guard('customer')->user();
-    $customerId = $customer->id;
+    public function dashboard()
+    {
+        $customer = Auth::guard('customer')->user();
 
-    $startDate = Carbon::now()->subDays(30);
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
+        $customerId = $customer->id;
 
-    // Lấy tất cả các đơn hàng có liên quan đến customer hiện tại
-    $orders = Order::with(['productVariant.product.category', 'orderDetails', 'customer', 'coupon'])
-        ->whereHas('productVariant.product', function ($query) use ($customerId) {
-            $query->where('customer_id', $customerId);
-        })
-        ->where('created_at', '>=', $startDate)
-        ->get();
+        $startDate = Carbon::now()->subDays(30);
 
-    // Đơn hàng thành công
-    $completedOrders = $orders->where('status', 'completed')
-        ->groupBy(fn($order) => $order->created_at->format('Y-m-d'))
-        ->map->count()
-        ->toArray();
+        // Lấy tất cả các đơn hàng có liên quan đến customer hiện tại
+        $orders = Order::with(['productVariant.product.category', 'orderDetails', 'customer', 'coupon'])
+            ->whereHas('productVariant.product', function ($query) use ($customerId) {
+                $query->where('customer_id', $customerId);
+            })
+            ->where('created_at', '>=', $startDate)
+            ->get();
 
-    // Đơn hàng bị hủy
-    $canceledOrders = $orders->where('status', 'canceled')
-        ->groupBy(fn($order) => $order->created_at->format('Y-m-d'))
-        ->map->count()
-        ->toArray();
+        // Đơn hàng thành công
+        $completedOrders = $orders->where('status', 'completed')
+            ->groupBy(fn($order) => $order->created_at->format('Y-m-d'))
+            ->map->count()
+            ->toArray();
 
-    // Tổng đơn hàng mới đang chờ xử lý (trong 30 ngày qua)
-    $newOrders = $orders->where('status', 'pending')->count();
+        // Đơn hàng bị hủy
+        $canceledOrders = $orders->where('status', 'canceled')
+            ->groupBy(fn($order) => $order->created_at->format('Y-m-d'))
+            ->map->count()
+            ->toArray();
 
-    // Tổng doanh thu từ đơn hàng thành công
-    $totalRevenue = $orders->where('status', 'completed')->sum('total');
+        // Tổng đơn hàng mới đang chờ xử lý (trong 30 ngày qua)
+        $newOrders = $orders->where('status', 'pending')->count();
 
-    return view('admin_customer.index', compact('completedOrders', 'canceledOrders', 'newOrders', 'totalRevenue'));
-}
+        // Tổng doanh thu từ đơn hàng thành công
+        $totalRevenue = $orders->where('status', 'completed')->sum('total');
+
+        return view('admin_customer.index', compact('completedOrders', 'canceledOrders', 'newOrders', 'totalRevenue'));
+    }
 
     public function checkout()
     {
@@ -87,7 +91,7 @@ class CustomerController extends Controller
 
         return redirect()->route('customer.profile')->with('success', 'Mật khẩu đã được cập nhật thành công.');
     }
- public function indexDeposit()
+    public function indexDeposit()
     {
         $customer = Auth::guard('customer')->user();
         $deposits = Deposit::where('customer_id', $customer->id)->orderBy('created_at', 'desc')->get();
@@ -336,5 +340,29 @@ class CustomerController extends Controller
         }
 
         return back()->withErrors(['verification_code' => 'Mã xác thực không đúng']);
+    }
+    public function registerSellerForm()
+    {
+        return view('pages.register_seller');
+    }
+
+    public function registerSeller(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+            'account_number' => 'required|string',
+            'url_facebook' => 'nullable|string',
+        ]);
+
+        $customer = Auth::guard('customer')->user();
+
+        $customer->update([
+            'phone' => $request->phone,
+            'account_number' => $request->account_number,
+            'url_facebook' => $request->url_facebook,
+            'isSeller' => false,
+        ]);
+
+        return redirect()->route('profile.site')->with('success', 'Gửi yêu cầu đăng ký bán hàng thành công!');
     }
 }

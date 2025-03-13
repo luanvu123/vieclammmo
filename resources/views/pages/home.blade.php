@@ -80,15 +80,15 @@
     </section>
 
 
-
-    <!-- Recommended Products -->
-    <section class="recommended-products">
-        <div class="container">
-            <h2 class="section-heading">Gian hàng nổi bật</h2>
-            <div class="product-carousel">
-                <div class="carousel-nav prev"><i class="fas fa-chevron-left"></i></div>
-                <div class="product-slides">
-                    @foreach ($hotProducts as $product)
+    @if (Auth::guard('customer')->check())
+        <!-- Recommended Products -->
+        <section class="recommended-products">
+            <div class="container">
+                <h2 class="section-heading">Gian hàng nổi bật</h2>
+                <div class="product-carousel">
+                    <div class="carousel-nav prev"><i class="fas fa-chevron-left"></i></div>
+                    <div class="product-slides">
+                        @foreach ($hotProducts as $product)
                                     <div class="product-card">
                                         <div class="product-badge">
                                             <span class="service-badge">{{ $product->category->type ?? 'Sản phẩm' }}</span>
@@ -147,11 +147,12 @@
                                             </div>
                                         </div>
                                     </div>
-                    @endforeach
+                        @endforeach
+                    </div>
+                    <div class="carousel-nav next"><i class="fas fa-chevron-right"></i></div>
                 </div>
-                <div class="carousel-nav next"><i class="fas fa-chevron-right"></i></div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
     <!-- Thêm CSS -->
 @endsection

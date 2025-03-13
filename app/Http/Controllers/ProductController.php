@@ -17,8 +17,13 @@ class ProductController extends Controller
 
     public function index()
     {
-        $customerId = Auth::guard('customer')->id();
-        $products = Product::where('customer_id', $customerId)->latest()->get();
+        $customer = Auth::guard('customer')->user();
+
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
+
+        $products = Product::where('customer_id', $customer->id)->latest()->get();
 
         return view('admin_customer.product_index', compact('products'));
     }
@@ -26,6 +31,12 @@ class ProductController extends Controller
 
     public function create()
     {
+        $customer = Auth::guard('customer')->user();
+
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
+
         $categories = Category::with('subcategories')->get();
         return view('admin_customer.product_create', compact('categories'));
     }
@@ -33,6 +44,11 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        $customer = Auth::guard('customer')->user();
+
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
         $request->validate([
             'name' => 'required|string|max:255|unique:products,name',
             'category_id' => 'required|exists:categories,id',
@@ -48,7 +64,7 @@ class ProductController extends Controller
         $imagePath = $request->file('image')->store('products', 'public');
 
         Product::create([
-            'customer_id' => Auth::guard('customer')->id(),
+            'customer_id' => $customer->id,
             'category_id' => $request->category_id,
             'subcategory_id' => $request->subcategory_id,
             'name' => $request->name,
@@ -65,18 +81,30 @@ class ProductController extends Controller
     public function edit($id)
     {
 
+        $customer = Auth::guard('customer')->user();
+
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
+
         $product = Product::findOrFail($id);
-        if ($product->customer_id != Auth::guard('customer')->id()) {
-            abort(403, 'Unauthorized');
+        if ($product->customer_id != $customer->id) {
+            abort(403, 'Không có quyền truy cập.');
         }
         $categories = Category::with('subcategories')->get();
         return view('admin_customer.product_edit', compact('product', 'categories'));
     }
     public function update(Request $request, $id)
     {
+        $customer = Auth::guard('customer')->user();
+
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
+
         $product = Product::findOrFail($id);
-        if ($product->customer_id != Auth::guard('customer')->id()) {
-            abort(403, 'Unauthorized');
+        if ($product->customer_id != $customer->id) {
+            abort(403, 'Không có quyền truy cập.');
         }
         $request->validate([
             'name' => 'required|string|max:255|unique:products,name,' . $id,
@@ -112,7 +140,17 @@ class ProductController extends Controller
 
     public function destroy($id)
     {
+        $customer = Auth::guard('customer')->user();
+
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
+
         $product = Product::findOrFail($id);
+
+        if ($product->customer_id != $customer->id) {
+            abort(403, 'Không có quyền truy cập.');
+        }
 
         // Xóa ảnh nếu có
         if ($product->image) {

@@ -122,13 +122,15 @@
                                 <a href="{{ route('posts.create') }}">Quản lý nội dung</a>
                                 <a href="{{ route('reviews.index') }}">Đánh giá</a>
                                 <a href="{{route('customer.changePassword')}}">Đổi mật khẩu</a>
+                                  @if (Auth::guard('customer')->check() && Auth::guard('customer')->user()->isSeller == 1)
                                 <div class="divider"></div>
                                 <a href="{{ route('dashboard.site') }}">Quản lý cửa hàng</a>
                                 <div class="divider"></div>
+                                @endif
                                 <a href="#" onclick="event.preventDefault();
-                                                            if (confirm('Bạn có muốn đăng xuất?')) {
-                                                                document.getElementById('logout-form').submit();
-                                                            }">
+                                                                                    if (confirm('Bạn có muốn đăng xuất?')) {
+                                                                                        document.getElementById('logout-form').submit();
+                                                                                    }">
                                     Thoát
                                 </a>
                                 <form id="logout-form" action="{{ route('logout.customer') }}" method="POST" style="display: none;">
@@ -196,7 +198,13 @@
                 <h3>Đăng ký bán hàng</h3>
                 <p>Tạo một gian hàng của bạn trên trang chúng tôi. Đội ngũ hỗ trợ sẽ liên lạc để giúp bạn tối ưu khả
                     năng bán hàng.</p>
-                <a href="{{route('login.customer')}}" class="register-btn">Đăng ký ngay</a>
+                @if (Auth::guard('customer')->check() && Auth::guard('customer')->user()->isSeller == 0)
+
+                    <a href="{{ route('customer.registerSellerForm') }}" class="register-btn">Đăng ký bán hàng</a>
+
+                @else
+                    <a href="{{ route('login.customer') }}" class="register-btn">Đăng ký bán hàng</a>
+                @endif
             </div>
         </div>
         <div class="footer-bottom">

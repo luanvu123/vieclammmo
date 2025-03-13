@@ -3,34 +3,35 @@
 @section('title', 'Danh sách Stock')
 
 @section('content_header')
-    <h1>Danh sách Stock của {{ $variant->name }}</h1>
+<h1>Danh sách file upload của {{ $variant->name }}</h1>
 @stop
 
 @section('content')
-    <div class="card">
+<div class="card">
     <div class="card-header">
-        <h3 class="card-title">Danh sách Stock</h3>
+        <h3 class="card-title">
+            <h1>Danh sách file upload của {{ $variant->name }}</h1>
+        </h3>
     </div>
     <div class="card-body">
         <table class="table table-bordered" id="user-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>#</th>
                     <th>Tên File</th>
                     <th>File</th>
-                    <th>Số lượng thành công</th>
-                    <th>Số lượng lỗi</th>
+                    <th>Success</th>
+                    <th>Error</th>
                     <th>Trạng thái</th>
-                    <th>UID Facebook</th>
-                    <th>UID Email</th>
-                    <th>Hành động</th>
+                    <th>UID</th>
+
                 </tr>
             </thead>
             <tbody>
-                @foreach($stocks as $stock)
+                @foreach($stocks as $key => $stock)
                     <tr>
-                        <td>{{ $stock->id }}</td>
-                        <td>{{ basename($stock->file) }}</td> {{-- Hiển thị tên file --}}
+                        <td>{{ $key }}</td>
+                        <td>{{ basename($stock->file) }}</td>
                         <td>
                             @if($stock->file)
                                 <a href="{{ asset('storage/' . $stock->file) }}" target="_blank">Xem file</a>
@@ -47,16 +48,24 @@
                                 <span class="badge badge-danger">Chưa check</span>
                             @endif
                         </td>
-                        <td>{{ $stock->uidFacebooks->count() }} UID</td>
-                        <td>{{ $stock->uidEmails->count() }} UID Email</td>
                         <td>
-                            <a href="{{ route('stock.uid_index', $stock->id) }}" class="btn btn-info btn-sm">
-                                <i class="fas fa-eye"></i> Xem UID Facebook
-                            </a>
-                            <a href="{{ route('stock.uid_email_index', $stock->id) }}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-envelope"></i> Xem UID Email
-                            </a>
+                            @if($variant->type == "Tài khoản")
+                                {{ $stock->uidFacebooks->count() }}
+                                <a href="{{ route('stock.uid_index', $stock->id) }}">
+                                    <i class="fas fa-eye"></i>UID
+                                </a>
+                            @elseif($variant->type == "Email")
+                                {{ $stock->uidEmails->count() }}
+                                <a href="{{ route('stock.uid_email_index', $stock->id) }}">
+                                    <i class="fas fa-envelope"></i>UID
+                                </a>
+                            @endif
                         </td>
+
+
+
+
+
                     </tr>
                 @endforeach
             </tbody>

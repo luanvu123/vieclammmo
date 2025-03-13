@@ -10,41 +10,50 @@ class ComplaintManageController extends Controller
 {
     public function index()
     {
-        $customerId = Auth::guard('customer')->id();
+        $customer = Auth::guard('customer')->user();
+
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
 
         $complaints = Complaint::with(['customer', 'order.productVariant.product'])
-            ->whereHas('order.productVariant.product', function ($query) use ($customerId) {
-                $query->where('customer_id', $customerId);
+            ->whereHas('order.productVariant.product', function ($query) use ($customer) {
+                $query->where('customer_id', $customer->id);
             })->get();
 
         return view('admin_customer.complaints.index', compact('complaints'));
     }
 
-  public function edit($id)
-{
-    $customerId = Auth::guard('customer')->id();
+    public function edit($id)
+    {
+        $customer = Auth::guard('customer')->user();
 
-    $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customerId) {
-            $query->where('customer_id', $customerId);
-        })
-        ->find($id);
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
 
-    if (!$complaint) {
-        abort(403, 'Unauthorized action.');
+        $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customer) {
+            $query->where('customer_id', $customer->id);
+        })->find($id);
+
+        if (!$complaint) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('admin_customer.complaints.edit', compact('complaint'));
     }
-
-    return view('admin_customer.complaints.edit', compact('complaint'));
-}
-
 
     public function update(Request $request, $id)
     {
-        $customerId = Auth::guard('customer')->id();
+        $customer = Auth::guard('customer')->user();
 
-        $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customerId) {
-                $query->where('customer_id', $customerId);
-            })
-            ->findOrFail($id);
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
+
+        $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customer) {
+            $query->where('customer_id', $customer->id);
+        })->findOrFail($id);
 
         $complaint->update($request->only('status'));
 
@@ -53,12 +62,15 @@ class ComplaintManageController extends Controller
 
     public function destroy($id)
     {
-        $customerId = Auth::guard('customer')->id();
+        $customer = Auth::guard('customer')->user();
 
-        $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customerId) {
-                $query->where('customer_id', $customerId);
-            })
-            ->findOrFail($id);
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
+
+        $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customer) {
+            $query->where('customer_id', $customer->id);
+        })->findOrFail($id);
 
         $complaint->delete();
 
@@ -66,18 +78,19 @@ class ComplaintManageController extends Controller
     }
 
     public function updateStatus(Request $request, $id)
-{
-    $customerId = Auth::guard('customer')->id();
+    {
+        $customer = Auth::guard('customer')->user();
 
-    $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customerId) {
-            $query->where('customer_id', $customerId);
-        })
-        ->findOrFail($id);
+        if ($customer->isSeller != 1) {
+            abort(403, 'Bạn không phải là người bán.');
+        }
 
-    $complaint->update(['status' => $request->status]);
+        $complaint = Complaint::whereHas('order.productVariant.product', function ($query) use ($customer) {
+            $query->where('customer_id', $customer->id);
+        })->findOrFail($id);
 
-    return redirect()->route('complaints.index')->with('success', 'Complaint status updated successfully.');
+        $complaint->update(['status' => $request->status]);
+
+        return redirect()->route('complaints.index')->with('success', 'Complaint status updated successfully.');
+    }
 }
-
-}
-

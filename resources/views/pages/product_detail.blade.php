@@ -175,7 +175,9 @@
                                         {{ $review->created_at->format('d/m/Y H:i') }}
                                     </div>
                                 </div>
-                                <div class="reviewer-rating">
+
+                            </div>
+  <div class="reviewer-rating">
                                     @for($i = 1; $i <= 5; $i++)
                                         @if($i <= $review->rating)
                                             <span class="star filled">★</span>
@@ -184,8 +186,6 @@
                                         @endif
                                     @endfor
                                 </div>
-                            </div>
-
                             <div class="review-content mt-3">
                                 <p>{{ $review->content }}</p>
                             </div>

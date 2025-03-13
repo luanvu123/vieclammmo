@@ -327,116 +327,115 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let quantityInput = document.getElementById('quantity');
-            let productPrice = document.getElementById('product-price');
-            let totalPriceElement = document.getElementById('total-price');
-            let buyButton = document.getElementById('buy-now');
+      document.addEventListener('DOMContentLoaded', function () {
+    let quantityInput = document.getElementById('quantity');
+    let productPrice = document.getElementById('product-price');
+    let totalPriceElement = document.getElementById('total-price');
+    let buyButton = document.getElementById('buy-now');
 
-            function updateTotalPrice() {
-                let selectedVariant = document.querySelector('input[name="product_variant"]:checked');
-                let quantity = parseInt(quantityInput.value) || 1;
-                let price = selectedVariant ? parseInt(selectedVariant.dataset.price) : 0;
-                let total = price * quantity;
-                totalPriceElement.innerText = total.toLocaleString('vi-VN') + " VNĐ";
-            }
+    function updateTotalPrice() {
+        let selectedVariant = document.querySelector('input[name="product_variant"]:checked');
+        let quantity = parseInt(quantityInput.value) || 1;
+        let price = selectedVariant ? parseInt(selectedVariant.dataset.price) : 0;
+        let total = price * quantity;
+        totalPriceElement.innerText = total.toLocaleString('vi-VN') + " VNĐ";
+    }
 
-            quantityInput.addEventListener('input', updateTotalPrice);
+    quantityInput.addEventListener('input', updateTotalPrice);
 
-            document.querySelectorAll('input[name="product_variant"]').forEach(input => {
-                input.addEventListener('change', function () {
-                    productPrice.innerText = parseInt(this.dataset.price).toLocaleString('vi-VN') +
-                        " VNĐ";
-                    updateTotalPrice();
-                });
-            });
-            document.getElementById('buy-now').addEventListener('click', async function () {
-                let selectedVariant = document.querySelector('input[name="product_variant"]:checked');
-                let quantity = parseInt(document.getElementById('quantity').value);
-                let couponKey = document.getElementById('coupon_key').value.trim();
-                let productType = "{{ $productVariant->type }}";
-
-                if (!selectedVariant) {
-                    alert('Vui lòng chọn biến thể sản phẩm!');
-                    return;
-                }
-
-                if (quantity < 1 || isNaN(quantity)) {
-                    alert('Số lượng sản phẩm phải lớn hơn 0!');
-                    return;
-                }
-
-                let requestData = {
-                    product_variant_id: selectedVariant.value,
-                    quantity: quantity,
-                    coupon_key: couponKey || null,
-                };
-
-                if (!productType) {
-                    let requiredInput = prompt("Vui lòng nhập yêu cầu của bạn:");
-                    if (!requiredInput) {
-                        alert("Bạn phải nhập yêu cầu để tiếp tục!");
-                        return;
-                    }
-                    requestData.required = requiredInput;
-                }
-
-                try {
-                    let response = await fetch("{{ route('order.store') }}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                        },
-                        body: JSON.stringify(requestData),
-                    });
-
-                    let data = await response.json();
-
-                    if (response.ok) {
-                        alert("Đơn hàng đã được tạo thành công!");
-                        location.reload();
-                    } else {
-                        alert(data.error || "Đã xảy ra lỗi khi đặt hàng!");
-                    }
-                } catch (error) {
-                    alert("Lỗi kết nối! Vui lòng thử lại.");
-                }
-            });
-
-            document.getElementById('submit-order').addEventListener('click', function () {
-                let requiredInput = document.getElementById("order-request").value;
-                if (!requiredInput) {
-                    alert("Bạn phải nhập yêu cầu để tiếp tục!");
-                    return;
-                }
-
-                let formData = new FormData();
-                formData.append('product_variant_id', "{{ $productVariant->id }}");
-                formData.append('quantity', 1);
-                formData.append('required', requiredInput);
-
-                fetch("{{ route('order.store') }}", {
-                    method: "POST",
-                    body: formData,
-                    headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" }
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            alert(data.error);
-                        } else {
-                            alert("Đơn hàng đã được tạo thành công!");
-                            location.reload();
-                        }
-                    });
-
-                document.getElementById("request-modal").style.display = "none";
-            });
-
-            document.querySelector(".close").addEventListener('click', function () {
-                document.getElementById("request-modal").style.display = "none";
-            });
+    document.querySelectorAll('input[name="product_variant"]').forEach(input => {
+        input.addEventListener('change', function () {
+            productPrice.innerText = parseInt(this.dataset.price).toLocaleString('vi-VN') + " VNĐ";
+            updateTotalPrice();
         });
+    });
+
+    // Unified approach to handle the buy button click
+    document.getElementById('buy-now').addEventListener('click', function () {
+        let selectedVariant = document.querySelector('input[name="product_variant"]:checked');
+        let quantity = parseInt(document.getElementById('quantity').value);
+        let couponKey = document.getElementById('coupon_key').value.trim();
+
+        // Get the product category type
+        let categoryType = "{{ $product->category->type }}";
+
+        if (!selectedVariant) {
+            alert('Vui lòng chọn biến thể sản phẩm!');
+            return;
+        }
+
+        if (quantity < 1 || isNaN(quantity)) {
+            alert('Số lượng sản phẩm phải lớn hơn 0!');
+            return;
+        }
+
+        // If category type is "Dịch vụ", show the modal for requirements
+        if (categoryType === "Dịch vụ") {
+            document.getElementById("request-modal").style.display = "block";
+        } else {
+            // For other product types, submit directly
+            submitOrder(selectedVariant.value, quantity, couponKey, null);
+        }
+    });
+
+    // Handle the submission from modal
+    document.getElementById('submit-order').addEventListener('click', function () {
+        let selectedVariant = document.querySelector('input[name="product_variant"]:checked');
+        let quantity = parseInt(document.getElementById('quantity').value);
+        let couponKey = document.getElementById('coupon_key').value.trim();
+        let requiredInput = document.getElementById("order-request").value;
+
+        if (!requiredInput) {
+            alert("Bạn phải nhập yêu cầu để tiếp tục!");
+            return;
+        }
+
+        submitOrder(selectedVariant.value, quantity, couponKey, requiredInput);
+        document.getElementById("request-modal").style.display = "none";
+    });
+
+    // Close the modal when clicking the close button
+    document.querySelector(".close").addEventListener('click', function () {
+        document.getElementById("request-modal").style.display = "none";
+    });
+
+    // Unified submission function using JSON format
+    async function submitOrder(variantId, quantity, couponKey, required) {
+        let requestData = {
+            product_variant_id: variantId,
+            quantity: quantity,
+            coupon_key: couponKey || null
+        };
+
+        // Only include required field if it has a value
+        if (required) {
+            requestData.required = required;
+        }
+
+        try {
+            let response = await fetch("{{ route('order.store') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            let data = await response.json();
+
+            if (response.ok) {
+                alert("Đơn hàng đã được tạo thành công!");
+                location.reload();
+            } else {
+                alert(data.error || "Đã xảy ra lỗi khi đặt hàng!");
+            }
+        } catch (error) {
+            console.error("Error submitting order:", error);
+            alert("Lỗi kết nối! Vui lòng thử lại.");
+        }
+    }
+});
     </script>
 
     <style>

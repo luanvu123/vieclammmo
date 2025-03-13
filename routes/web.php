@@ -16,6 +16,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderManageController;
 use App\Http\Controllers\OrderManageServiceController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostManageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductManageController;
 use App\Http\Controllers\ProductVariantController;
@@ -111,6 +112,7 @@ Route::middleware('customer', '2fa')->group(function () {
     Route::put('/update-password', [CustomerController::class, 'updatePassword'])->name('customer.updatePassword');
     Route::resource('product_variants', ProductVariantController::class);
     Route::resource('posts', PostController::class);
+
     Route::resource('order-manage', OrderManageController::class);
     Route::get('orders/{id}/detail', [OrderManageController::class, 'orderDetail'])->name('order-detail.show');
     Route::post('order-manage/{id}/update-status', [OrderManageController::class, 'updateStatus'])->name('order-manage.update-status');
@@ -160,6 +162,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('product-manage', ProductManageController::class)
         ->parameters(['product-manage' => 'product'])
         ->except(['create', 'show']);
+    Route::resource('post-manage', PostManageController::class);
+
     Route::get('product/{product}/variants', [ProductVariantManageController::class, 'listByProduct'])
         ->name('product-variants.list');
     Route::resource('product-variant-manage', ProductVariantManageController::class)
@@ -183,6 +187,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/order/{orderId}', [HomeController::class, 'OrderDetail'])->name('admin.order_detail.index');
     Route::get('/admin/withdrawals', [HomeController::class, 'IndexWithdrawal'])->name('admin.withdrawals.index');
     Route::post('/admin/withdrawals/{id}/update-status', [HomeController::class, 'updateWithdrawalStatus'])->name('admin.withdrawals.updateStatus');
-Route::get('/admin/stocks/all', [StockManageController::class, 'indexAll'])->name('admin.stocks.indexAll');
+    Route::get('/admin/stocks/all', [StockManageController::class, 'indexAll'])->name('admin.stocks.indexAll');
 
 });

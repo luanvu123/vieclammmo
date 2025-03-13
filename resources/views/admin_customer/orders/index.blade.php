@@ -112,6 +112,7 @@
                                 <th>Trạng thái</th>
                                 <th>Đánh giá</th>
                                 <th>Chat</th>
+                                <th>Y/c( nếu có)</th>
                                 <th>Khiếu nại</th>
                                 <th>Ngày đặt</th>
                                 <th>Ngày cập nhật</th>
@@ -212,6 +213,7 @@
 
                                                                  <a href="{{ route('messages.create', ['customerId' => $order->productVariant->product->customer_id]) }}"> <i class="fas fa-comments text-primary"></i></a>
                                                         </td>
+                                                        <td>{{ $order->required}}</td>
                                                         <td class="text-center">
     @if($order->status == 'completed' || $order->status == 'pending')
         <!-- Icon Khiếu nại -->
@@ -246,6 +248,7 @@
         <i class="fas fa-exclamation-circle text-muted" title="Không thể khiếu nại"></i>
     @endif
 </td>
+
 
                                                         <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                                                         <td>{{ $order->updated_at->format('d/m/Y H:i') }}</td>

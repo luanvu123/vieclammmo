@@ -305,6 +305,22 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
         </a>
     </li>
 @endif
+@if (Auth::check())
+    @php
+        $recentPostCount = \App\Models\Post::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+    @endphp
+
+    <li class="{{ Request::is('post-manage*') ? 'active' : '' }}">
+        <a href="{{ route('post-manage.index') }}">
+            <img src="{{ asset('backend_admin/images/register-svgrepo-com.svg') }}"
+                alt="Quản lý bài viết" width="20" height="20"> Quản lý bài viết
+            @if ($recentPostCount > 0)
+                <span class="label label-primary pull-right">{{ $recentPostCount }}</span>
+            @endif
+        </a>
+    </li>
+@endif
+
 
 
                             </ul>

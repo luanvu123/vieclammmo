@@ -3,7 +3,7 @@
 @section('title', 'Thêm UID Facebook')
 
 @section('content_header')
-    <h1>Thêm UID cho Stock ID: {{ $stock->id }}</h1>
+<h1>Thêm UID cho Stock ID: {{ $stock->id }}</h1>
 @stop
 
 @section('content')
@@ -14,14 +14,20 @@
             <div class="form-group">
                 <label for="type">Chọn loại dữ liệu</label>
                 <select name="type" id="type" class="form-control">
-                    <option value="facebook">Nhập nhiều UID Facebook</option>
-                    <option value="email">Nhập nhiều UID Email</option>
+                    <option value="facebook" @if($stock->productVariant->type === "Tài khoản") disabled @endif>
+                        Nhập nhiều UID Facebook
+                    </option>
+                    <option value="email" @if($stock->productVariant->type === "Email") disabled @endif>
+                        Nhập nhiều UID Email
+                    </option>
                 </select>
             </div>
 
+
             <div class="form-group">
                 <label for="uids">Nhập nhiều UID hoặc Email (mỗi dòng một giá trị)</label>
-                <textarea name="uids" class="form-control @error('uids') is-invalid @enderror" rows="5" required></textarea>
+                <textarea name="uids" class="form-control @error('uids') is-invalid @enderror" rows="5"
+                    required></textarea>
                 @error('uids')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
@@ -41,7 +47,7 @@
 </div>
 
 <script>
-    document.getElementById('uidForm').addEventListener('submit', function(event) {
+    document.getElementById('uidForm').addEventListener('submit', function (event) {
         const type = document.getElementById('type').value;
         if (type === 'email') {
             this.action = "{{ route('stock.uid_email_store', $stock->id) }}";

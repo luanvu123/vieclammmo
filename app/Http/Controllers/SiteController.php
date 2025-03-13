@@ -59,15 +59,21 @@ public function search(Request $request)
 
 public function showProductDetail($slug)
 {
-    // Tìm sản phẩm theo slug
     $product = Product::where('slug', $slug)
-        ->with(['category', 'subcategory', 'productVariants.stocks'])
+        ->with(['category', 'subcategory', 'productVariants.stocks.uidFacebooks', 'productVariants.stocks.uidEmails'])
         ->firstOrFail();
 
-    // Lấy biến thể đầu tiên (nếu có)
     $productVariant = $product->productVariants->first();
 
-    // Lấy sản phẩm tương tự
+
+    $totalQuantitySuccess = 0;
+
+    if ($productVariant && $productVariant->type === "Tài khoản") {
+        $totalQuantitySuccess = $productVariant->stocks->flatMap->uidFacebooks->count();
+    } elseif ($productVariant && $productVariant->type === "Email") {
+        $totalQuantitySuccess = $productVariant->stocks->flatMap->uidEmails->count();
+    }
+
     $relatedProducts = Product::where('customer_id', $product->customer_id)
         ->where('id', '!=', $product->id)
         ->with('productVariants')
@@ -75,13 +81,11 @@ public function showProductDetail($slug)
         ->take(10)
         ->get();
 
-    // Lấy đánh giá của sản phẩm
     $reviews = Review::where('product_id', $product->id)
-        ->with('customer') // Eager load customer information
+        ->with('customer')
         ->orderBy('created_at', 'desc')
         ->get();
 
-    // Tính điểm đánh giá trung bình
     $averageRating = $reviews->count() > 0 ? $reviews->avg('rating') : 0;
     $reviewCount = $reviews->count();
 
@@ -91,7 +95,8 @@ public function showProductDetail($slug)
         'relatedProducts',
         'reviews',
         'averageRating',
-        'reviewCount'
+        'reviewCount',
+        'totalQuantitySuccess'
     ));
 }
 
@@ -163,8 +168,6 @@ public function showProductDetail($slug)
     {
         // Lấy các thể loại có status = 1
         $genres = GenrePost::where('status', 1)->get();
-
-        // Nếu là request Ajax, trả về JSON
         if ($request->ajax()) {
             $postsQuery = Post::where('status', 1)->with('customer');
 

@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->string('account');
             $table->text('value');
-            $table->enum('status', ['success', 'error'])->default('success');
+            $table->enum('status', ['success', 'error','warranty'])->default('success');
             $table->timestamps();
         });
     }

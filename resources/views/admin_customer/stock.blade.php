@@ -10,7 +10,8 @@
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item"><a href="{{ route('home') }}">TaphoaMMO</a>
                                 </li><!--end nav-item-->
-                                <li class="breadcrumb-item"><a href="{{ route('products.index') }}">{{ $variant->product->name }}</a>
+                                <li class="breadcrumb-item"><a
+                                        href="{{ route('products.index') }}">{{ $variant->product->name }}</a>
                                 </li><!--end nav-item-->
                                 <li class="breadcrumb-item active">{{ $variant->name }}</li>
                             </ol>
@@ -92,16 +93,36 @@
                         <div class="card-body pt-0">
                             <div class="table-responsive">
                                 <table class="table datatable" id="datatable_2">
-                                    <thead class="">
-
+                                    <thead>
+                                        <tr>
+                                            @if ($variant->type === "Tài khoản")
+                                                <th>UID Facebook</th>
+                                                <th>Value</th>
+                                                <th>Status</th>
+                                            @elseif ($variant->type === "Email")
+                                                <th>Email</th>
+                                                <th>Value</th>
+                                                <th>Status</th>
+                                            @endif
+                                        </tr>
                                     </thead>
                                     <tbody>
-
+                                        @foreach ($data as $item)
+                                            <tr>
+                                                @if ($variant->type === "Tài khoản")
+                                                    <td>{{ $item->uid }}</td>
+                                                @elseif ($variant->type === "Email")
+                                                    <td>{{ $item->email }}</td>
+                                                @endif
+                                                <td>{{ $item->value }}</td>
+                                                <td>{{ $item->status }}</td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
-
                             </div>
-                        </div><!--end card-body-->
+                        </div>
+
                     </div><!--end card-->
                 </div> <!--end col-->
             </div><!--end row-->

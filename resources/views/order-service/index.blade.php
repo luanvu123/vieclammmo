@@ -42,7 +42,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($orders as $order)
+                                    @foreach ($orders as $key=> $order)
                                                                     <tr>
                                                                        <th>
     {{$key}}
@@ -50,9 +50,10 @@
         <span class="badge text-bg-info ms-auto">New</span>
     @endif
 </th>
-                                                                        <td>{{ $order->order_key }}</td>
+                                                                        <td><a
+                                                                                        href="{{ route('order-detail.show', $order->id) }}">{{ $order->order_key }}</td>
                                                                         <td>{{ $order->required }}</td>
-                                                                        <td><a href="{{ route('messages.create', ['customerId' => $order->productVariant->product->customer_id]) }}">
+                                                                        <td><a href="{{ route('messages.create', ['customerId' => $order->customer_id]) }}">
                                  {{ $order->customer->name}}
                             </a></td>
                                                                         <td>{{ $order->created_at->format('d/m/Y') }}</td>

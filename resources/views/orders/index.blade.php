@@ -61,7 +61,7 @@
                                                                                         href="{{ route('order-detail.show', $order->id) }}">{{ $order->order_key }}</a>
                                                                                 </td>
                                                                                 <td>
-                                                                                      <a href="{{ route('messages.create', ['customerId' => $order->productVariant->product->customer_id]) }}">
+                                                                                      <a href="{{ route('messages.create', ['customerId' => $order->customer_id]) }}">
                                  {{ $order->customer->name}}
                             </a>
 

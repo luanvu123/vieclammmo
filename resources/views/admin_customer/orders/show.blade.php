@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header bg-success text-white">
                         <h5 class="mb-0">Chi tiết tài khoản/dữ liệu</h5>
@@ -92,6 +92,7 @@
                                             <th>Tài khoản/Email</th>
                                             <th>Giá trị</th>
                                             <th>Trạng thái</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -106,13 +107,19 @@
                                                             style="display: inline-block; padding: 3px 8px; background-color: #28a745; color: #fff; border-radius: 4px; font-size: 12px; cursor: pointer;">
                                                             Thành công
                                                         </span>
-                                                    @else
+                                                    @elseif($detail->status == 'error')
                                                         <span class="status-span" data-id="{{ $detail->id }}" data-status="error"
                                                             style="display: inline-block; padding: 3px 8px; background-color: #dc3545; color: #fff; border-radius: 4px; font-size: 12px; cursor: pointer;">
                                                             Lỗi
                                                         </span>
+                                                    @else
+                                                        <span class="status-span"
+                                                            style="display: inline-block; padding: 3px 8px; background-color: #b0dc35; color: #fff; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                                            Đã bảo hành
+                                                        </span>
                                                     @endif
                                                 </td>
+
                                             </tr>
                                         @endforeach
                                     </tbody>

@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\ProductVariant;
 use App\Models\Review;
+use App\Models\Stock;
 use App\Models\UidEmail;
 use App\Models\UidFacebook;
 use Illuminate\Support\Facades\Auth;
@@ -66,12 +67,17 @@ class OrderController extends Controller
 
         $customer = Auth::guard('customer')->user();
         $productVariant = ProductVariant::findOrFail($request->product_variant_id);
-
+        $stocks = Stock::whereHas('productVariant', function ($query) use ($productVariant) {
+            $query->where('product_id', $productVariant->product->id);
+        })->get();
         if ($productVariant->product->customer_id == $customer->id) {
             return response()->json(['error' => 'Bạn không thể mua gian hàng của mình!'], 403);
         }
-        $totalQuantitySuccess = $productVariant->stocks->sum('quantity_success');
-
+        if ($productVariant->type === "Tài khoản") {
+            $totalQuantitySuccess = $stocks->flatMap->uidFacebooks->count();
+        } elseif ($productVariant->type === "Email") {
+            $totalQuantitySuccess = $stocks->flatMap->uidEmails->count();
+        }
         if ($request->quantity > $totalQuantitySuccess) {
             return response()->json(['error' => 'Số lượng không hợp lệ!'], 400);
         }
@@ -140,30 +146,32 @@ class OrderController extends Controller
         CreateDepositJob::dispatch($order, $seller, $total)->delay(now()->addDays(3));
 
         if ($productVariant->type === "Tài khoản") {
-            $stocks = $productVariant->stocks->flatMap->uidFacebooks->take($request->quantity);
-            foreach ($stocks as $stock) {
+            $uidFacebooks = $stocks->flatMap->uidFacebooks->take($request->quantity);
+
+            foreach ($uidFacebooks as $facebook) {
                 OrderDetail::create([
                     'order_id' => $order->id,
-                    'account' => $stock->uid,
-                    'value' => $stock->value,
+                    'account' => $facebook->uid,
+                    'value' => $facebook->value,
                     'status' => 'success'
                 ]);
 
-                // Xóa UidFacebook có uid tương ứng
-                UidFacebook::where('uid', $stock->uid)->delete();
+                // Xóa UidFacebook khỏi cơ sở dữ liệu
+                $facebook->delete();
             }
         } elseif ($productVariant->type === "Email") {
-            $stocks = $productVariant->stocks->flatMap->uidEmails->take($request->quantity);
-            foreach ($stocks as $stock) {
+            $uidEmails = $stocks->flatMap->uidEmails->take($request->quantity);
+
+            foreach ($uidEmails as $email) {
                 OrderDetail::create([
                     'order_id' => $order->id,
-                    'account' => $stock->email,
-                    'value' => $stock->value,
+                    'account' => $email->email,
+                    'value' => $email->value,
                     'status' => 'success'
                 ]);
 
-                // Xóa UidEmail có email tương ứng
-                UidEmail::where('email', $stock->email)->delete();
+                // Xóa UidEmail khỏi cơ sở dữ liệu
+                $email->delete();
             }
         } else {
             $stocks = collect();

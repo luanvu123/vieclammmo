@@ -203,74 +203,51 @@
                             </a>
                         </li>
 
-                      <!-- Quản lý khiếu nại -->
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('complaints.index') }}">
-        <i class="fab fa-hacker-news-square menu-icon"></i>
-        <span>Quản lý khiếu nại</span>
-
-        @if (Auth::guard('customer')->check())
-            @php
-                $recentComplaintCount = \App\Models\Complaint::whereHas('order.productVariant.product', function ($query) {
-                        $query->where('customer_id', Auth::guard('customer')->id());
-                    })
-                    ->where('created_at', '>=', \Carbon\Carbon::now()->subDay())
-                    ->count();
-            @endphp
-
-            @if ($recentComplaintCount > 0)
-                <span class="badge text-bg-pink ms-auto">{{ str_pad($recentComplaintCount, 2, '0', STR_PAD_LEFT) }}</span>
-            @endif
-        @endif
-    </a>
-</li>
-
-<!-- Quản lý đánh giá -->
-<li class="nav-item">
-    <a class="nav-link" href="{{ route('review-manage.index') }}">
-        <i class="fas fa-check-square menu-icon"></i>
-        <span>Quản lý đánh giá</span>
-
-        @if (Auth::guard('customer')->check())
-            @php
-                $recentReviewCount = \App\Models\Review::whereHas('order.productVariant.product', function ($query) {
-                        $query->where('customer_id', Auth::guard('customer')->id());
-                    })
-                    ->where('created_at', '>=', \Carbon\Carbon::now()->subDay())
-                    ->count();
-            @endphp
-
-            @if ($recentReviewCount > 0)
-                <span class="badge text-bg-pink ms-auto">{{ str_pad($recentReviewCount, 2, '0', STR_PAD_LEFT) }}</span>
-            @endif
-        @endif
-    </a>
-</li>
-
+                        <!-- Quản lý khiếu nại -->
                         <li class="nav-item">
-                            <a class="nav-link" href="#sidebarTransactions" data-bs-toggle="collapse" role="button"
-                                aria-expanded="false" aria-controls="sidebarTransactions">
-                                <i class="iconoir-task-list menu-icon"></i>
-                                <span>Transactions</span>
+                            <a class="nav-link" href="{{ route('complaints.index') }}">
+                                <i class="fab fa-hacker-news-square menu-icon"></i>
+                                <span>Quản lý khiếu nại</span>
+
+                                @if (Auth::guard('customer')->check())
+                                                                @php
+                                                                    $recentComplaintCount = \App\Models\Complaint::whereHas('order.productVariant.product', function ($query) {
+                                                                        $query->where('customer_id', Auth::guard('customer')->id());
+                                                                    })
+                                                                        ->where('created_at', '>=', \Carbon\Carbon::now()->subDay())
+                                                                        ->count();
+                                                                @endphp
+
+                                                                @if ($recentComplaintCount > 0)
+                                                                    <span
+                                                                        class="badge text-bg-pink ms-auto">{{ str_pad($recentComplaintCount, 2, '0', STR_PAD_LEFT) }}</span>
+                                                                @endif
+                                @endif
                             </a>
-                            <div class="collapse " id="sidebarTransactions">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="transactions.html">Overview</a>
-                                    </li><!--end nav-item-->
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="new-transaction.html">Add Transactions</a>
-                                    </li><!--end nav-item-->
-                                </ul><!--end nav-->
-                            </div><!--end startbarTables-->
-                        </li><!--end nav-item-->
+                        </li>
+
+                        <!-- Quản lý đánh giá -->
                         <li class="nav-item">
-                            <a class="nav-link" href="cards.html">
-                                <i class="iconoir-credit-cards menu-icon"></i>
-                                <span>Cards</span>
-                                <span class="badge text-bg-pink ms-auto">03</span>
+                            <a class="nav-link" href="{{ route('review-manage.index') }}">
+                                <i class="fas fa-check-square menu-icon"></i>
+                                <span>Quản lý đánh giá</span>
+
+                                @if (Auth::guard('customer')->check())
+                                                                @php
+                                                                    $recentReviewCount = \App\Models\Review::whereHas('order.productVariant.product', function ($query) {
+                                                                        $query->where('customer_id', Auth::guard('customer')->id());
+                                                                    })
+                                                                        ->where('created_at', '>=', \Carbon\Carbon::now()->subDay())
+                                                                        ->count();
+                                                                @endphp
+
+                                                                @if ($recentReviewCount > 0)
+                                                                    <span
+                                                                        class="badge text-bg-pink ms-auto">{{ str_pad($recentReviewCount, 2, '0', STR_PAD_LEFT) }}</span>
+                                                                @endif
+                                @endif
                             </a>
-                        </li><!--end nav-item-->
+                        </li>
                     </ul><!--end navbar-nav--->
                 </div>
             </div><!--end startbar-collapse-->

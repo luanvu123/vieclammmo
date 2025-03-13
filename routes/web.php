@@ -183,5 +183,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/order/{orderId}', [HomeController::class, 'OrderDetail'])->name('admin.order_detail.index');
     Route::get('/admin/withdrawals', [HomeController::class, 'IndexWithdrawal'])->name('admin.withdrawals.index');
     Route::post('/admin/withdrawals/{id}/update-status', [HomeController::class, 'updateWithdrawalStatus'])->name('admin.withdrawals.updateStatus');
+Route::get('/admin/stocks/all', [StockManageController::class, 'indexAll'])->name('admin.stocks.indexAll');
 
 });

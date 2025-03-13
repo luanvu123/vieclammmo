@@ -47,13 +47,13 @@
                     <span>Danh mục: </span>
                     <a href="#" class="category-link">{{ $product->category->name }}</a>
                 </div>
-
-                <div class="product-stock">
-                    <span>Kho: <span id="stock-quantity">
-                            {{ $product->productVariants->first()->stocks->sum('quantity_success') ?? 0 }}
-                        </span></span>
-                </div>
-
+                @if ($productVariant && ($productVariant->type === "Tài khoản" || $productVariant->type === "Email"))
+                    <div class="product-stock">
+                        <span>Kho: <span id="stock-quantity">
+                                {{ $totalQuantitySuccess }}
+                            </span></span>
+                    </div>
+                @endif
 
                 <div class="price">
                     <span id="product-price">
@@ -63,22 +63,25 @@
 
                 <!-- Hiển thị danh sách biến thể -->
                 @if ($product->productVariants->count() > 0)
-                    <div class="product-action">
-                        @foreach ($product->productVariants as $variant)
-                            <label class="radio-option">
-                                <input type="radio" name="product_variant" value="{{ $variant->id }}"
-                                    data-price="{{ $variant->price }}" data-stock="{{ $variant->stocks->sum('quantity_success') }}"
-                                    {{ $loop->first ? 'checked' : '' }}>
-                                {{ $variant->name }} - {{ number_format($variant->price, 0, ',', '.') }} VNĐ
-                                @if ($variant->stocks->sum('quantity_success') > 0)
-                                    (Còn hàng: {{ $variant->stocks->sum('quantity_success') }})
-                                @else
-                                    (Hết hàng)
-                                @endif
-                            </label>
-                        @endforeach
-                    </div>
+                        <div class="product-action">
+                            @foreach ($product->productVariants as $variant)
+                                        @php
+                                            $dataStock = 1;
+                                            if ($variant->type === "Tài khoản") {
+                                                $dataStock = $variant->stocks->flatMap->uidFacebooks->count();
+                                            } elseif ($variant->type === "Email") {
+                                                $dataStock = $variant->stocks->flatMap->uidEmails->count();
+                                            }
+                                        @endphp
+                                        <label class="radio-option">
+                                            <input type="radio" name="product_variant" value="{{ $variant->id }}"
+                                                data-price="{{ $variant->price }}" data-stock="{{ $dataStock }}" {{ $loop->first ? 'checked' : '' }}>
+                                            {{ $variant->name }} - {{ number_format($variant->price, 0, ',', '.') }} VNĐ
+                                        </label>
+                            @endforeach
+                        </div>
                 @endif
+
 
                 <!-- Nhập số lượng -->
                 <div class="quantity-box">
@@ -250,11 +253,11 @@
                                         @endif
                                     @endfor
                                 </span>
-                               <span class="reviews">
-    {{ $product->reviews()->count() }} Reviews |
-    Đơn hoàn thành: {{ $product->completedOrders()->count() }} |
-    Khiếu nại: {{ $product->complaintRate() }}%
-</span>
+                                <span class="reviews">
+                                    {{ $product->reviews()->count() }} Reviews |
+                                    Đơn hoàn thành: {{ $product->completedOrders()->count() }} |
+                                    Khiếu nại: {{ $product->complaintRate() }}%
+                                </span>
 
                             </div>
 
@@ -294,20 +297,6 @@
                     document.getElementById(this.getAttribute("data-tab")).classList.add("active");
                 });
             });
-
-            // Dữ liệu giả định đánh giá từ khách hàng (có thể thay bằng dữ liệu thật từ API)
-            const customerReviews = [{
-                name: "Nguyễn Văn A",
-                rating: 5,
-                comment: "Sản phẩm rất tốt!"
-            },
-            {
-                name: "Trần Thị B",
-                rating: 4,
-                comment: "Chất lượng khá ổn."
-            }
-            ];
-
             const reviewsContainer = document.getElementById("reviews-container");
 
             if (customerReviews.length > 0) {
@@ -315,10 +304,10 @@
                     const reviewElement = document.createElement("div");
                     reviewElement.classList.add("review");
                     reviewElement.innerHTML = `
-                                            <div class="customer-name">${review.name}</div>
-                                            <div class="rating">⭐ ${"⭐".repeat(review.rating)}</div>
-                                            <p>${review.comment}</p>
-                                        `;
+                                                        <div class="customer-name">${review.name}</div>
+                                                        <div class="rating">⭐ ${"⭐".repeat(review.rating)}</div>
+                                                        <p>${review.comment}</p>
+                                                    `;
                     reviewsContainer.appendChild(reviewElement);
                 });
             } else {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Stock;
 use App\Models\UidEmail;
 use App\Models\UidFacebook;
 use Illuminate\Http\Request;
@@ -39,30 +40,36 @@ public function warranty(Request $request, Order $order)
     ]);
 
     $quantity = $request->quantity;
+    $productId = $order->productVariant->product_id;
+
+    // Lấy các stocks có product_variant thuộc về cùng một product
+    $stocks = Stock::whereHas('productVariant', function ($query) use ($productId) {
+        $query->where('product_id', $productId);
+    })->get();
 
     if ($order->productVariant->type === "Tài khoản") {
-        $stocks = $order->productVariant->stocks->flatMap->uidFacebooks->take($quantity);
+        $uidFacebooks = $stocks->flatMap->uidFacebooks->take($quantity);
 
-        foreach ($stocks as $stock) {
+        foreach ($uidFacebooks as $stock) {
             OrderDetail::create([
                 'order_id' => $order->id,
                 'account' => $stock->uid,
                 'value' => $stock->value,
-                'status' => 'success'
+                'status' => 'warranty'
             ]);
 
             // Xóa UidFacebook có uid tương ứng
             UidFacebook::where('uid', $stock->uid)->delete();
         }
     } elseif ($order->productVariant->type === "Email") {
-        $stocks = $order->productVariant->stocks->flatMap->uidEmails->take($quantity);
+        $uidEmails = $stocks->flatMap->uidEmails->take($quantity);
 
-        foreach ($stocks as $stock) {
+        foreach ($uidEmails as $stock) {
             OrderDetail::create([
                 'order_id' => $order->id,
                 'account' => $stock->email,
                 'value' => $stock->value,
-                'status' => 'success'
+                'status' => 'warranty'
             ]);
 
             // Xóa UidEmail có email tương ứng
@@ -74,6 +81,7 @@ public function warranty(Request $request, Order $order)
 
     return redirect()->back()->with('success', 'Yêu cầu bảo hành đã được xử lý thành công.');
 }
+
 
 
 

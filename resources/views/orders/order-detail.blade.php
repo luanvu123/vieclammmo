@@ -47,8 +47,10 @@
                                                         <td>
                                                             @if($detail->status == 'success')
                                                                 <span class="badge bg-success">Thành công</span>
-                                                            @else
+                                                            @elseif($detail->status == 'error')
                                                                 <span class="badge bg-danger">Lỗi</span>
+                                                            @else
+                                                                <span class="badge bg-warning">Bảo hành</span>
                                                             @endif
                                                         </td>
                                                     </tr>

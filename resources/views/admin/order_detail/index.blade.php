@@ -46,8 +46,10 @@
                                 <td>
                                     @if ($orderDetail->status === 'success')
                                         <span class="badge badge-success">Hoàn thành</span>
-                                    @else
+                                    @elseif($orderDetail->status ==='error')
                                         <span class="badge badge-error">Lỗi</span>
+                                        @else
+                                         <span class="badge badge-warning">BH</span>
                                     @endif
                                 </td>
                                 <td>

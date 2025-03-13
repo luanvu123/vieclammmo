@@ -231,23 +231,25 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                     </a>
                                 </li>
 
-                              <li class="{{ Request::is('/admin/order-details*') ? 'active' : '' }}">
-    <a href="{{ route('admin.order_details.index') }}">
-        <img src="{{ asset('backend_admin/images/image-svgrepo-com.svg') }}" width="20" height="20">
-        <span> Tài khoản đã bán</span>
+                                <li class="{{ Request::is('/admin/order-details*') ? 'active' : '' }}">
+                                    <a href="{{ route('admin.order_details.index') }}">
+                                        <img src="{{ asset('backend_admin/images/image-svgrepo-com.svg') }}" width="20"
+                                            height="20">
+                                        <span> Tài khoản đã bán</span>
 
-        @if (Auth::check())
-            @php
-                $recentOrderDetailCount = \App\Models\OrderDetail::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
-            @endphp
+                                        @if (Auth::check())
+                                                                        @php
+                                                                            $recentOrderDetailCount = \App\Models\OrderDetail::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+                                                                        @endphp
 
-            @if ($recentOrderDetailCount > 0)
-                <span class="label label-primary pull-right">{{ str_pad($recentOrderDetailCount, 2, '0', STR_PAD_LEFT) }}</span>
-              
-            @endif
-        @endif
-    </a>
-</li>
+                                                                        @if ($recentOrderDetailCount > 0)
+                                                                            <span
+                                                                                class="label label-primary pull-right">{{ str_pad($recentOrderDetailCount, 2, '0', STR_PAD_LEFT) }}</span>
+
+                                                                        @endif
+                                        @endif
+                                    </a>
+                                </li>
 
                                 <li class="{{ Request::is('/admin/orders*') ? 'active' : '' }}">
                                     <a href="{{ route('admin.orders.index') }}">
@@ -288,6 +290,22 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                         @endif
                                     </a>
                                 </li>
+                                @if (Auth::check())
+    @php
+        $recentStockCount = \App\Models\Stock::where('created_at', '>=', \Carbon\Carbon::now()->subDay())->count();
+    @endphp
+
+    <li class="{{ Request::is('admin/stocks/all*') ? 'active' : '' }}">
+        <a href="{{ route('admin.stocks.indexAll') }}">
+            <img src="{{ asset('backend_admin/images/3018587_admin_administrator_ajax_options_permission_icon.svg') }}"
+                alt="Google" width="20" height="20"> Check file UID
+            @if ($recentStockCount > 0)
+                <span class="label label-primary pull-right">{{ $recentStockCount }}</span>
+            @endif
+        </a>
+    </li>
+@endif
+
 
                             </ul>
                         </div>
@@ -346,7 +364,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
                                         <li>
                                             <a class="dropdown-item" href="{{ route('logout') }}"
                                                 onclick="event.preventDefault();
-                                                                                     document.getElementById('logout-form').submit();">
+                                                                                             document.getElementById('logout-form').submit();">
                                                 <i class="fa fa-sign-out"></i> Đăng xuất
                                             </a>
 

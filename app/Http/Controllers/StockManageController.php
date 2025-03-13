@@ -16,6 +16,11 @@ class StockManageController extends Controller
         $stocks = $variant->stocks()->with(['uidFacebooks', 'uidEmails'])->get();
         return view('admin.stock.index', compact('stocks', 'variant'));
     }
+    public function indexAll()
+{
+    $stocks = Stock::with(['productVariant.product.customer'])->get();
+    return view('admin.stock.indexAll', compact('stocks'));
+}
 
     public function UidIndex($stockId)
     {

@@ -312,6 +312,55 @@
             toggleFields();
         });
     </script>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var themeColorToggle = document.getElementById("light-dark-mode");
+            themeColorToggle &&
+                themeColorToggle.addEventListener("click", function (e) {
+                    "light" === document.documentElement.getAttribute("data-bs-theme")
+                        ? document.documentElement.setAttribute("data-bs-theme", "dark")
+                        : document.documentElement.setAttribute(
+                            "data-bs-theme",
+                            "light"
+                        );
+                });
+
+            // Get the toggle button
+            const themeToggleBtn = document.getElementById("light-dark-mode");
+
+            // Check if there's a theme preference in localStorage
+            const savedTheme = localStorage.getItem("theme");
+
+            // Apply saved theme or default to light
+            if (savedTheme) {
+                document.documentElement.setAttribute("data-bs-theme", savedTheme);
+            } else {
+                // You can use system preference as default or set a default
+                const prefersDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                const defaultTheme = prefersDarkMode ? "dark" : "light";
+                document.documentElement.setAttribute("data-bs-theme", defaultTheme);
+                localStorage.setItem("theme", defaultTheme);
+            }
+
+            // Add click event listener to toggle button
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener("click", function () {
+                    // Get current theme
+                    const currentTheme = document.documentElement.getAttribute("data-bs-theme");
+
+                    // Toggle theme
+                    const newTheme = currentTheme === "light" ? "dark" : "light";
+
+                    // Apply new theme
+                    document.documentElement.setAttribute("data-bs-theme", newTheme);
+
+                    // Save preference to localStorage
+                    localStorage.setItem("theme", newTheme);
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SubCategory;
+use App\Models\Subcategory;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -11,7 +11,7 @@ class SubCategoryController extends Controller
 {
     public function index()
     {
-        $subcategories = SubCategory::with('category')->get();
+        $subcategories = Subcategory::with('category')->get();
         return view('admin.subcategories.index', compact('subcategories'));
     }
 
@@ -31,23 +31,23 @@ class SubCategoryController extends Controller
         $data = $request->only(['name', 'category_id', 'status']);
         $data['slug'] = Str::slug($request->name);
 
-        SubCategory::create($data);
+        Subcategory::create($data);
 
         return redirect()->route('subcategories.index')->with('success', 'Danh mục con đã được tạo thành công.');
     }
 
-    public function show(SubCategory $subcategory)
+    public function show(Subcategory $subcategory)
     {
         return view('admin.subcategories.show', compact('subcategory'));
     }
 
-    public function edit(SubCategory $subcategory)
+    public function edit(Subcategory $subcategory)
     {
         $categories = Category::where('status', 'active')->get();
         return view('admin.subcategories.edit', compact('subcategory', 'categories'));
     }
 
-    public function update(Request $request, SubCategory $subcategory)
+    public function update(Request $request, Subcategory $subcategory)
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:subcategories,name,' . $subcategory->id,
@@ -62,7 +62,7 @@ class SubCategoryController extends Controller
         return redirect()->route('subcategories.index')->with('success', 'Danh mục con đã được cập nhật.');
     }
 
-    public function destroy(SubCategory $subcategory)
+    public function destroy(Subcategory $subcategory)
     {
         $subcategory->delete();
         return redirect()->route('subcategories.index')->with('success', 'Danh mục con đã bị xóa.');
